@@ -5,21 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
         'email',
-        'google_id',
         'password',
         'role',
-        'is_pro',
         'phone',
-        'goal',
-        'daily_study_goal_minutes',
+        'company_name',
+        'wallet_balance',
     ];
 
     protected $hidden = [
@@ -32,28 +31,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_pro' => 'boolean',
         ];
-    }
-
-    public function testAttempts()
-    {
-        return $this->hasMany(TestAttempt::class);
-    }
-
-    public function certificates()
-    {
-        return $this->hasMany(Certificate::class);
-    }
-
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
-
-    public function studySessions()
-    {
-        return $this->hasMany(StudySession::class);
     }
 
     public function isAdmin(): bool
@@ -61,28 +39,19 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isStudent(): bool
+    public function isSeller(): bool
     {
-        return $this->role === 'student';
+        return $this->role === 'seller';
     }
 
-    public function enrollments()
+    public function isFranchise(): bool
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->role === 'franchise';
     }
 
-    public function courses()
+    public function isRider(): bool
     {
-        return $this->belongsToMany(Course::class, 'enrollments');
-    }
-
-    public function isProFor($courseId): bool
-    {
-        return $this->enrollments()->where('course_id', $courseId)->where('is_pro', true)->exists();
-    }
-
-    public function hasCourse($courseId): bool
-    {
-        return $this->enrollments()->where('course_id', $courseId)->exists();
+        return $this->role === 'rider';
     }
 }
+

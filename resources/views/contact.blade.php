@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us - Testwise MP Police GD 2026')
+@section('title', 'Contact Us - OneStall Cargo Logistics Network GD 2026')
 
 @section('content')
 <div class="max-w-4xl mx-auto py-12 px-4 space-y-10">
     <div class="text-center space-y-3">
         <h1 class="text-3xl font-extrabold" style="color: var(--text-main) !important;">Help & Support Center</h1>
-        <p class="text-sm" style="color: var(--text-muted);">Have questions about MP Police GD 2026 course access? Write to us.</p>
+        <p class="text-sm" style="color: var(--text-muted);">Have questions about Logistics Network GD 2026 course access? Write to us.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -42,7 +42,7 @@
                         <i class="fa-solid fa-envelope text-base" style="color: var(--theme-active);"></i>
                         <div>
                             <span class="block text-[10px]" style="color: var(--text-muted);">EMAIL SUPPORT</span>
-                            <span class="font-bold" style="color: var(--text-main) !important;">support@testwise.in</span>
+                            <span class="font-bold" style="color: var(--text-main) !important;">support@OneStall Cargo.in</span>
                         </div>
                     </div>
                     <div class="p-3.5 rounded-2xl flex items-center gap-3 border" style="background-color: var(--bg-main); border-color: var(--border-hard);">
@@ -56,10 +56,11 @@
             </div>
 
             <div class="p-4 rounded-2xl text-xs" style="background-color: rgba(217,154,43,0.1); border: 1px solid var(--gold); color: var(--gold-deep);">
-                <span class="font-bold">Testwise EdTech Center</span><br>
+                <span class="font-bold">OneStall Cargo EdTech Center</span><br>
                 Bhopal, Madhya Pradesh, India - 462001
             </div>
         </div>
     </div>
 </div>
 @endsection
+

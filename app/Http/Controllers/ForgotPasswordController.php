@@ -35,7 +35,7 @@ class ForgotPasswordController extends Controller
         try {
             Mail::send('emails.reset_password', ['resetUrl' => $resetUrl], function ($message) use ($email) {
                 $message->to($email)
-                        ->subject('🔐 Password Reset Link - Testwise');
+                        ->subject('🔐 Password Reset Link - OneStall Cargo');
             });
 
             return back()->with('status', 'पासवर्ड रीसेट लिंक आपके ईमेल ' . $email . ' पर भेज दिया गया है। (Password reset link sent!)');
@@ -75,3 +75,4 @@ class ForgotPasswordController extends Controller
         return redirect()->route('login')->with('success', 'आपका पासवर्ड सफलतापूर्वक अपडेट हो गया है! कृपया नए पासवर्ड के साथ लॉगिन करें।');
     }
 }
+

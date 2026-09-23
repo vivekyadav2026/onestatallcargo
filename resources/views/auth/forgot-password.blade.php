@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Forgot Password - Testwise')
+@section('title', 'Forgot Password - OneStall Cargo')
 
 @section('content')
 <div class="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6">
@@ -44,3 +44,5 @@
     </div>
 </div>
 @endsection
+
+

@@ -9,20 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function showLogin(Request $request)
+    public function showLogin()
     {
-        if ($request->has('course_id')) {
-            session(['pending_course_id' => $request->query('course_id')]);
-        }
-
         if (Auth::check()) {
-            $pendingCourseId = session()->pull('pending_course_id');
-            if ($pendingCourseId) {
-                return redirect()->route('enroll', $pendingCourseId);
-            }
-            return Auth::user()->isAdmin()
-                ? redirect()->route('admin.dashboard')
-                : redirect()->route('student.my-courses');
+            return $this->redirectBasedOnRole(Auth::user());
         }
         return view('auth.login');
     }
@@ -34,24 +24,10 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            if (Auth::user()->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-
-            $pendingCourseId = session()->pull('pending_course_id') ?? $request->input('course_id');
-            if ($pendingCourseId) {
-                \App\Models\Enrollment::firstOrCreate([
-                    'user_id' => Auth::id(),
-                    'course_id' => $pendingCourseId,
-                ]);
-                session(['current_course_id' => $pendingCourseId]);
-                return redirect()->route('student.course')->with('success', 'Logged in and course enrolled successfully!');
-            }
-
-            return redirect()->intended(route('student.my-courses'));
+            return $this->redirectBasedOnRole(Auth::user());
         }
 
         return back()->withErrors([
@@ -59,18 +35,10 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    public function showRegister(Request $request)
+    public function showRegister()
     {
-        if ($request->has('course_id')) {
-            session(['pending_course_id' => $request->query('course_id')]);
-        }
-
         if (Auth::check()) {
-            $pendingCourseId = session()->pull('pending_course_id');
-            if ($pendingCourseId) {
-                return redirect()->route('enroll', $pendingCourseId);
-            }
-            return redirect()->route('student.my-courses');
+            return $this->redirectBasedOnRole(Auth::user());
         }
         return view('auth.register');
     }
@@ -89,41 +57,12 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'role' => 'student',
-            'is_pro' => false,
+            'role' => 'seller', // default public signups are sellers
         ]);
 
         Auth::login($user);
 
-        $pendingCourseId = session()->pull('pending_course_id') ?? $request->input('course_id');
-        if ($pendingCourseId) {
-            \App\Models\Enrollment::firstOrCreate([
-                'user_id' => $user->id,
-                'course_id' => $pendingCourseId,
-            ]);
-            session(['current_course_id' => $pendingCourseId]);
-            return redirect()->route('student.course')->with('success', 'Account created and course enrolled successfully!');
-        }
-
-        return redirect()->route('student.my-courses')->with('success', 'Account created successfully! Welcome to Testwise.');
-    }
-
-    public function switchRole(Request $request, $role)
-    {
-        if ($role === 'admin') {
-            $admin = User::where('role', 'admin')->first();
-            if ($admin) {
-                Auth::login($admin);
-                return redirect()->route('admin.dashboard')->with('success', 'Switched to Admin Console.');
-            }
-        } else {
-            $student = User::where('email', 'rahul.sharma@testwise.edu')->first() ?: User::where('role', 'student')->first();
-            if ($student) {
-                Auth::login($student);
-                return redirect()->route('student.my-courses')->with('success', 'Switched to Student Portal.');
-            }
-        }
-        return redirect()->back();
+        return $this->redirectBasedOnRole($user);
     }
 
     public function logout(Request $request)
@@ -132,6 +71,39 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Logged out successfully.');
+        return redirect('/');
+    }
+
+    private function redirectBasedOnRole($user)
+    {
+        switch ($user->role) {
+            case 'admin':
+            case 'operations':
+                return redirect()->intended(route('admin.dashboard'));
+            
+            case 'seller':
+            case 'aggregator':
+            case 'b2b_customer':
+            case 'corporate':
+                return redirect()->intended(route('seller.dashboard'));
+            
+            case 'franchise':
+                return redirect()->intended(route('hub.dashboard'));
+            
+            case 'pickup_rider':
+            case 'delivery_rider':
+            case 'rider':
+                return redirect()->intended(route('rider.dashboard'));
+                
+            case 'b2c_customer':
+                return redirect('/track');
+                
+            case 'courier_partner':
+                // For now, route courier partners to a basic tracking view or their own pending dashboard if built.
+                return redirect('/track');
+                
+            default:
+                return redirect('/');
+        }
     }
 }

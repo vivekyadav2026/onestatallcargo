@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Testwise - MP Police Constable GD 2026 Batch & Exam Engine')</title>
+    <title>@yield('title', 'OneStall Cargo - End-to-End Logistics Solution')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,7 +155,7 @@
                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold" style="background-color: var(--theme-active); color: var(--theme-active-text);">
                     BILINGUAL LIVE BATCH
                 </span>
-                <span style="color: white !important;">MP Police Constable GD 2026 - New Pattern & Chapter Notes Live</span>
+                <span style="color: white !important;">OneStall Cargo - New Pattern & Chapter Notes Live</span>
             </div>
 
             <div class="flex items-center gap-2">
@@ -165,7 +165,7 @@
                             <i class="fa-solid fa-user-shield"></i> Go to Admin Panel
                         </a>
                     @else
-                        <a href="{{ route('student.dashboard') }}" class="px-2.5 py-1 rounded transition flex items-center gap-1 hover:opacity-80" style="background-color: var(--theme-active); color: var(--theme-active-text);">
+                        <a href="#" class="px-2.5 py-1 rounded transition flex items-center gap-1 hover:opacity-80" style="background-color: var(--theme-active); color: var(--theme-active-text);">
                             <i class="fa-solid fa-graduation-cap"></i> Go to Dashboard
                         </a>
                     @endif
@@ -183,25 +183,25 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             
             <!-- Brand Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 group shrink-0">
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5 group shrink-0">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl shadow-sm transition" style="background-color: var(--gold); color: var(--theme-bg);">
                     T
                 </div>
                 <div>
                     <div class="flex items-center gap-1.5">
-                        <span class="font-extrabold text-lg tracking-tight" style="color: var(--text-main) !important;">Testwise</span>
+                        <span class="font-extrabold text-lg tracking-tight" style="color: var(--text-main) !important;">OneStall Cargo</span>
                         <span class="hidden sm:inline-block text-[10px] font-bold px-1.5 py-0.2 rounded border" style="background-color: var(--teal-soft); color: var(--teal); border-color: var(--teal);">GD 2026</span>
                     </div>
-                    <p class="hidden sm:block text-[10px] -mt-1 font-medium" style="color: var(--text-muted);">MP Police Exam Portal</p>
+                    <p class="hidden sm:block text-[10px] -mt-1 font-medium" style="color: var(--text-muted);">Logistics Platform</p>
                 </div>
             </a>
 
             <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
-                <a href="{{ route('home') }}" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('home') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Home</a>
-                <a href="{{ route('courses') }}" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('courses') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Courses</a>
-                <a href="{{ route('free-content') }}" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('free-content') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Free Content</a>
-                <a href="{{ route('exam-info') }}" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('exam-info') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Exam Info</a>
+                <a href="{{ url('/') }}" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('home') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Home</a>
+                <a href="#" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('courses') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Courses</a>
+                <a href="#" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('free-content') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Free Content</a>
+                <a href="#" class="transition hover:text-[var(--gold-deep)] {{ request()->routeIs('exam-info') ? 'font-bold' : '' }}" style="color: var(--text-main) !important;">Exam Info</a>
             </nav>
 
             <!-- Desktop Action Buttons -->
@@ -212,7 +212,7 @@
                             <i class="fa-solid fa-gauge"></i> Admin Console
                         </a>
                     @else
-                        <a href="{{ route('student.dashboard') }}" class="btn btn-secondary text-sm">
+                        <a href="#" class="btn btn-secondary text-sm">
                             <i class="fa-solid fa-table-columns"></i> My Dashboard
                         </a>
                     @endif
@@ -241,10 +241,10 @@
         <!-- Mobile Menu Dropdown -->
         <div x-show="mobileMenuOpen" class="md:hidden border-t border-gray-200" style="background-color: var(--bg-card); display: none;">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{{ route('home') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('home') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Home</a>
-                <a href="{{ route('courses') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('courses') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Courses</a>
-                <a href="{{ route('free-content') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('free-content') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Free Content</a>
-                <a href="{{ route('exam-info') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('exam-info') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Exam Info</a>
+                <a href="{{ url('/') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('home') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Home</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('courses') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Courses</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('free-content') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Free Content</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('exam-info') ? 'bg-gray-100 font-bold' : '' }}" style="color: var(--text-main) !important;">Exam Info</a>
             </div>
             <div class="pt-4 pb-3 border-t border-gray-200 px-5 space-y-3">
                 @auth
@@ -253,7 +253,7 @@
                             <i class="fa-solid fa-gauge"></i> Admin Console
                         </a>
                     @else
-                        <a href="{{ route('student.dashboard') }}" class="block w-full text-center btn btn-secondary text-sm">
+                        <a href="#" class="block w-full text-center btn btn-secondary text-sm">
                             <i class="fa-solid fa-table-columns"></i> My Dashboard
                         </a>
                     @endif
@@ -293,7 +293,7 @@
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center font-extrabold text-lg" style="background-color: var(--gold); color: var(--theme-bg);">T</div>
-                    <span class="font-bold text-lg tracking-tight" style="color: var(--text-main) !important;">Testwise</span>
+                    <span class="font-bold text-lg tracking-tight" style="color: var(--text-main) !important;">OneStall Cargo</span>
                 </div>
                 <p class="text-xs leading-relaxed mb-4" style="color: var(--text-muted);">
                     मध्य प्रदेश पुलिस आरक्षक (GD) 2026 भर्ती परीक्षा हेतु भारत का सर्वश्रेष्ठ डिजिटल लर्निंग प्लेटफॉर्म।
@@ -308,10 +308,10 @@
             <div>
                 <h4 class="font-semibold mb-3 text-sm" style="color: var(--text-main) !important;">त्वरित लिंक्स</h4>
                 <ul class="space-y-2 text-xs" style="color: var(--text-muted);">
-                    <li><a href="{{ route('courses') }}" class="hover:text-[var(--gold-deep)]">MP Police GD 2026 कोर्स</a></li>
-                    <li><a href="{{ route('free-content') }}" class="hover:text-[var(--gold-deep)]">निःशुल्क ट्रायल (First 3 Chapters)</a></li>
-                    <li><a href="{{ route('verify-certificate') }}" class="hover:text-[var(--gold-deep)]">सर्टिफिकेट सत्यापन (Verify Certificate)</a></li>
-                    <li><a href="{{ route('exam-info') }}" class="hover:text-[var(--gold-deep)]">परीक्षा पैटर्न व सिलेबस</a></li>
+                    <li><a href="#" class="hover:text-[var(--gold-deep)]">Logistics Network GD 2026 कोर्स</a></li>
+                    <li><a href="#" class="hover:text-[var(--gold-deep)]">निःशुल्क ट्रायल (First 3 Chapters)</a></li>
+                    <li><a href="#" class="hover:text-[var(--gold-deep)]">सर्टिफिकेट सत्यापन (Verify Certificate)</a></li>
+                    <li><a href="#" class="hover:text-[var(--gold-deep)]">परीक्षा पैटर्न व सिलेबस</a></li>
                 </ul>
             </div>
 
@@ -322,7 +322,7 @@
                         @if(auth()->user()->isAdmin())
                             <li><a href="{{ route('admin.dashboard') }}" class="hover:text-[var(--gold-deep)]">एडमिन कंसोल</a></li>
                         @else
-                            <li><a href="{{ route('student.dashboard') }}" class="hover:text-[var(--gold-deep)]">स्टूडेंट डैशबोर्ड</a></li>
+                            <li><a href="#" class="hover:text-[var(--gold-deep)]">स्टूडेंट डैशबोर्ड</a></li>
                         @endif
                         <li>
                             <form action="{{ route('logout') }}" method="POST" class="inline">
@@ -339,15 +339,19 @@
 
             <div>
                 <h4 class="font-semibold mb-3 text-sm" style="color: var(--text-main) !important;">संपर्क एवं सहायता</h4>
-                <p class="text-xs mb-2" style="color: var(--text-muted);"><i class="fa-solid fa-envelope mr-1.5"></i> support@testwise.in</p>
+                <p class="text-xs mb-2" style="color: var(--text-muted);"><i class="fa-solid fa-envelope mr-1.5"></i> support@OneStall Cargo.in</p>
                 <p class="text-xs mb-2" style="color: var(--text-muted);"><i class="fa-solid fa-phone mr-1.5"></i> +91 98765 43210</p>
                 <p class="text-xs" style="color: var(--text-muted);"><i class="fa-solid fa-location-dot mr-1.5"></i> Bhopal, Madhya Pradesh</p>
             </div>
         </div>
         <div class="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t flex flex-col sm:flex-row justify-between items-center text-xs gap-2" style="border-color: var(--border-color); color: var(--text-muted);">
-            <p>© 2026 Testwise EdTech Platform. All rights reserved.</p>
-            <p>Designed for MP Police Constable GD 2026 Batch Systems</p>
+            <p>© 2026 OneStall Cargo EdTech Platform. All rights reserved.</p>
+            <p>Designed for OneStall Cargo Batch Systems</p>
         </div>
     </footer>
 </body>
 </html>
+
+
+
+

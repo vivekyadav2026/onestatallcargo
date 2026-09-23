@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Reset Password - Testwise')
+@section('title', 'Reset Password - OneStall Cargo')
 
 @section('content')
 <div class="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6">
@@ -12,7 +12,7 @@
                 <i class="fa-solid fa-lock"></i>
             </div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" style="color: #0f172a !important;">Set New Password</h1>
-            <p class="text-xs text-gray-500">Choose a new password for your Testwise account</p>
+            <p class="text-xs text-gray-500">Choose a new password for your OneStall Cargo account</p>
         </div>
 
         <form method="POST" action="{{ route('password.update') }}" class="space-y-4">
@@ -48,3 +48,4 @@
     </div>
 </div>
 @endsection
+
