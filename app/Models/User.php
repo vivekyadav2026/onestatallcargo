@@ -19,6 +19,9 @@ class User extends Authenticatable
         'phone',
         'company_name',
         'wallet_balance',
+        'latitude',
+        'longitude',
+        'last_location_at',
     ];
 
     protected $hidden = [
@@ -36,7 +39,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'super_admin', 'operations']);
     }
 
     public function isSeller(): bool

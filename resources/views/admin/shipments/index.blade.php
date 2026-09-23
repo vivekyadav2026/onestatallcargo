@@ -10,31 +10,31 @@
             <p class="text-sm text-gray-500 mt-1">View and manage all B2B and B2C shipments</p>
         </div>
         <div class="flex gap-2">
-            <button class="btn btn-secondary text-sm"><i class="fa-solid fa-download"></i> Export CSV</button>
+            <a href="{{ route('admin.reports.export') }}" class="btn btn-secondary text-sm"><i class="fa-solid fa-download"></i> Export CSV</a>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-end">
+    <form action="{{ route('admin.shipments.index') }}" method="GET" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-end">
         <div class="flex-1 min-w-[200px]">
             <label class="block text-xs font-bold text-gray-700 mb-1">Search AWB / Seller</label>
-            <input type="text" placeholder="OSC123456789" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="AWB or Seller Name" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
         </div>
         <div class="w-48">
             <label class="block text-xs font-bold text-gray-700 mb-1">Status</label>
-            <select class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+            <select name="status" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
                 <option value="">All Statuses</option>
-                <option value="Manifested">Manifested</option>
-                <option value="In Transit">In Transit</option>
-                <option value="Out for Delivery">Out for Delivery</option>
-                <option value="Delivered">Delivered</option>
-                <option value="NDR">NDR</option>
+                <option value="Manifested" {{ request('status') == 'Manifested' ? 'selected' : '' }}>Manifested</option>
+                <option value="In Transit" {{ request('status') == 'In Transit' ? 'selected' : '' }}>In Transit</option>
+                <option value="Out for Delivery" {{ request('status') == 'Out for Delivery' ? 'selected' : '' }}>Out for Delivery</option>
+                <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                <option value="NDR" {{ request('status') == 'NDR' ? 'selected' : '' }}>NDR</option>
             </select>
         </div>
-        <button class="px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
+        <button type="submit" class="px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
             Filter
         </button>
-    </div>
+    </form>
 
     <!-- Data Table -->
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
@@ -79,7 +79,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button class="text-[var(--gold-deep)] hover:text-yellow-600 font-bold text-xs"><i class="fa-solid fa-eye"></i> View</button>
+                                <a href="{{ route('track') }}?awb_number={{ $shipment->awb_number }}" target="_blank" class="text-[var(--gold-deep)] hover:text-yellow-600 font-bold text-xs"><i class="fa-solid fa-eye"></i> View</a>
                             </td>
                         </tr>
                     @empty

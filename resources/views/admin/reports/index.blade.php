@@ -7,7 +7,7 @@
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Analytics & Reports</h1>
             <p class="text-sm text-gray-500 mt-1">Export daily, monthly, seller-wise, and courier-wise reports.</p>
         </div>
-        <button class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)] transition-colors"><i class="fa-solid fa-download"></i> Generate Master Report</button>
+        <a href="{{ route('admin.reports.export') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#FFD700] text-gray-900 shadow-md hover:bg-[#E5C100] transition-colors inline-block"><i class="fa-solid fa-download"></i> Export Master Excel/CSV</a>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition">
@@ -28,3 +28,4 @@
     </div>
 </div>
 @endsection
+

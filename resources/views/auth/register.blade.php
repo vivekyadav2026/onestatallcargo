@@ -9,10 +9,10 @@
         <!-- Header -->
         <div class="text-center space-y-2">
             <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-2xl mx-auto shadow-sm bg-[var(--gold)] text-gray-900">
-                T
+                O
             </div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" style="color: #0f172a !important;">Create Account</h1>
-            <p class="text-xs text-gray-500">Join OneStall Cargo to access Webbooks, Chapter Notes & CBT Mock Tests</p>
+            <p class="text-xs text-gray-500">Join OneStall Cargo to start shipping B2B, B2C and International parcels today.</p>
         </div>
 
         <!-- Google Auth Button -->
@@ -72,7 +72,7 @@
             </div>
 
             <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-[var(--gold)] hover:bg-yellow-500 text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
-                Create Account & Start Learning &rarr;
+                Create Account & Start Shipping &rarr;
             </button>
         </form>
 

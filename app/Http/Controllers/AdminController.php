@@ -72,8 +72,10 @@ class AdminController extends Controller
     }
     public function liveMap()
     {
-        // Mocked active riders
-        $activeRiders = \App\Models\User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])->take(5)->get();
+        $activeRiders = \App\Models\User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])
+                        ->whereNotNull('latitude')
+                        ->whereNotNull('longitude')
+                        ->get();
         return view('admin.map', compact('activeRiders'));
     }
 }

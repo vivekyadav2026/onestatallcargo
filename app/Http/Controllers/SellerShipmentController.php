@@ -126,4 +126,11 @@ class SellerShipmentController extends Controller
 
         return redirect()->route('seller.dashboard')->with('success', 'Bulk file processed! 3 shipments successfully created and pushed to Couriers.');
     }
+    public function index()
+    {
+        $shipments = \App\Models\Shipment::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+        return view('seller.shipments', compact('shipments'));
+    }
 }

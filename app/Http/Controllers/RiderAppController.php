@@ -9,10 +9,17 @@ class RiderAppController extends Controller
 {
     public function index()
     {
-        // Mock rider assigned shipments
-        // In real app, we filter by rider_id = Auth::id() and status
-        $pendingPickups = Shipment::where('status', 'Manifested')->orderBy('created_at', 'desc')->get();
-        $pendingDeliveries = Shipment::where('status', 'Out for Delivery')->orderBy('created_at', 'desc')->get();
+        $riderId = Auth::id();
+        
+        $pendingPickups = Shipment::where('status', 'Manifested')
+                            ->where('assigned_rider_id', $riderId)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                            
+        $pendingDeliveries = Shipment::where('status', 'Out for Delivery')
+                            ->where('assigned_rider_id', $riderId)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
         
         return view('rider.dashboard', compact('pendingPickups', 'pendingDeliveries'));
     }

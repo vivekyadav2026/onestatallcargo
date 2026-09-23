@@ -1,158 +1,155 @@
 @extends('layouts.app')
-
-@section('title', 'OneStall Cargo - Complete End-to-End Logistics Software')
+@section('title', 'OneStall Cargo - Global Logistics & Courier Aggregator')
 
 @section('content')
 <!-- Hero Section -->
-<div class="relative bg-[#0f172a] overflow-hidden">
-    <div class="absolute inset-0">
-        <div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-[#1e293b] to-gray-900 opacity-90"></div>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiMzMzQiIGZpbGwtb3BhY2l0eT0iMC4xNSIvPjwvc3ZnPg==')] opacity-20"></div>
-    </div>
-    
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 flex flex-col items-center text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-[var(--gold)] text-sm font-bold uppercase tracking-widest mb-8">
-            <span class="w-2 h-2 rounded-full bg-[var(--gold)] animate-pulse"></span>
-            India's Premium Logistics Network
+<div class="relative bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+        <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32 pt-20">
+            <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                <div class="sm:text-center lg:text-left">
+                    <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest border border-blue-100 mb-4 inline-block">India's #1 Shipping Platform</span>
+                    <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                        <span class="block xl:inline">Deliver anywhere with</span>
+                        <span class="block text-[#FFD700] drop-shadow-sm">OneStall Cargo</span>
+                    </h1>
+                    <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                        B2C, B2B, and International shipping powered by our smart Courier Aggregator API. Automate your logistics, print labels, and track in real-time.
+                    </p>
+                    <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                        <div class="rounded-xl shadow">
+                            <a href="{{ route('register') }}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-extrabold rounded-xl text-gray-900 bg-[#FFD700] hover:bg-[#E5C100] md:py-4 md:text-lg md:px-10 transition">
+                                Start Shipping Now
+                            </a>
+                        </div>
+                        <div class="mt-3 sm:mt-0 sm:ml-3">
+                            <a href="{{ route('track') }}" class="w-full flex items-center justify-center px-8 py-3 border-2 border-gray-200 text-base font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 transition">
+                                Track a Parcel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
-        
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-6">
-            Ship Anywhere. <span class="text-[var(--gold)]">Track Everything.</span>
-        </h1>
-        <p class="text-lg md:text-xl text-gray-300 max-w-3xl mb-12">
-            OneStall Cargo brings B2C, B2B Cargo, and Hyperlocal deliveries into one platform. Integrated with top couriers and powered by our unique Video Evidence system.
-        </p>
-
-        <!-- Tracking Box -->
-        <div class="w-full max-w-2xl bg-white p-2 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-2 relative z-20">
-            <div class="relative flex-grow flex items-center">
-                <i class="fa-solid fa-box text-gray-400 absolute left-4"></i>
-                <input type="text" placeholder="Enter AWB Number or Shipment ID (e.g. OSC10004561)" class="w-full pl-12 pr-4 py-4 rounded-xl text-gray-900 font-bold focus:outline-none focus:ring-2 focus:ring-[var(--gold)] placeholder-gray-400">
+    </div>
+    <!-- Decorative Image Area (Abstract representation since we don't have a real asset) -->
+    <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 bg-[#1e293b] flex items-center justify-center p-12">
+        <div class="grid grid-cols-2 gap-4 w-full max-w-md opacity-80">
+            <div class="bg-gray-800 rounded-2xl h-32 flex items-center justify-center border border-gray-700 shadow-xl transform -translate-y-4">
+                <i class="fa-solid fa-truck-fast text-4xl text-[#FFD700]"></i>
             </div>
-            <button class="bg-[var(--gold)] hover:bg-[var(--gold-deep)] text-gray-900 font-extrabold px-8 py-4 rounded-xl transition-colors whitespace-nowrap shadow-md">
-                Track Parcel <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
+            <div class="bg-gray-800 rounded-2xl h-48 flex items-center justify-center border border-gray-700 shadow-xl">
+                <i class="fa-solid fa-plane-departure text-4xl text-[#FFD700]"></i>
+            </div>
+            <div class="bg-gray-800 rounded-2xl h-48 flex items-center justify-center border border-gray-700 shadow-xl transform -translate-y-8">
+                <i class="fa-solid fa-boxes-stacked text-4xl text-[#FFD700]"></i>
+            </div>
+            <div class="bg-gray-800 rounded-2xl h-32 flex items-center justify-center border border-gray-700 shadow-xl transform translate-y-4">
+                <i class="fa-solid fa-qrcode text-4xl text-[#FFD700]"></i>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Key Features -->
+<!-- Features Section -->
 <div class="py-20 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-extrabold text-gray-900">Why Choose OneStall Cargo?</h2>
-            <p class="mt-4 text-gray-600 max-w-2xl mx-auto">We provide an end-to-end ecosystem for sellers, franchises, and enterprise clients with unparalleled transparency.</p>
+        <div class="text-center">
+            <h2 class="text-base text-[#D4AF37] font-extrabold tracking-wide uppercase">All-in-One Logistics</h2>
+            <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Everything you need to scale</p>
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">From single D2C orders to heavy Freight cargo, we handle the complex logistics so you don't have to.</p>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Feature 1 -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6">
-                    <i class="fa-solid fa-video"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">100% Video Evidence</h3>
-                <p class="text-gray-600 text-sm leading-relaxed">
-                    Our flagship feature. We record video proof at pickup, sorting hubs, and delivery. Say goodbye to fake return claims and damaged parcel disputes.
-                </p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-6">
-                    <i class="fa-solid fa-network-wired"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Multi-Courier Aggregation</h3>
-                <p class="text-gray-600 text-sm leading-relaxed">
-                    Connected with Delhivery, Blue Dart, DTDC, and more. Our dynamic rate engine automatically selects the best carrier for your pincode and weight.
-                </p>
-            </div>
 
-            <!-- Feature 3 -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg transition-shadow">
-                <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl mb-6">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">Automated COD Settlement</h3>
-                <p class="text-gray-600 text-sm leading-relaxed">
-                    Reliable Cash-on-Delivery collections with fast wallet settlements, digital ledgers for franchises, and real-time reconciliation.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Services Breakdown -->
-<div class="py-20 bg-white border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-6">
-                <div class="text-[var(--gold-deep)] font-bold uppercase tracking-widest text-sm">Comprehensive Services</div>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-                    One Platform for All Your Delivery Needs
-                </h2>
-                <p class="text-gray-600 text-lg">Whether you are an online seller, a corporate entity shipping heavy cargo, or an individual, we have a service tailored for you.</p>
+        <div class="mt-16">
+            <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
                 
-                <ul class="space-y-4 mt-8">
-                    <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check mt-1 text-emerald-500"></i>
-                        <div>
-                            <strong class="block text-gray-900">B2C & E-Commerce</strong>
-                            <span class="text-sm text-gray-500">Shopify/WooCommerce API integration with smart NDR management.</span>
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-blue-100 text-blue-600 border border-blue-200">
+                            <i class="fa-solid fa-truck text-xl"></i>
                         </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check mt-1 text-emerald-500"></i>
-                        <div>
-                            <strong class="block text-gray-900">B2B Cargo & Heavy Freight</strong>
-                            <span class="text-sm text-gray-500">PTL/FTL support, Lorry Receipts (LR), and multiple-piece shipment handling.</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-circle-check mt-1 text-emerald-500"></i>
-                        <div>
-                            <strong class="block text-gray-900">Quick Delivery (Hyperlocal)</strong>
-                            <span class="text-sm text-gray-500">Same Day and Next Day deliveries via our dedicated Rider App with live GPS tracking.</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="relative">
-                <div class="absolute inset-0 bg-gradient-to-tr from-[var(--gold)] to-yellow-300 rounded-3xl transform rotate-3 scale-105 opacity-20"></div>
-                <div class="bg-gray-900 rounded-3xl p-8 relative shadow-2xl text-white">
-                    <h3 class="text-xl font-bold mb-6">Developer Ready API</h3>
-                    <div class="bg-[#1e293b] rounded-xl p-4 font-mono text-sm text-green-400 overflow-x-auto">
-                        <span class="text-pink-400">POST</span> /api/v1/shipments<br><br>
-                        {<br>
-                        &nbsp;&nbsp;"pickup_pincode": "110001",<br>
-                        &nbsp;&nbsp;"delivery_pincode": "400001",<br>
-                        &nbsp;&nbsp;"weight": 1.5,<br>
-                        &nbsp;&nbsp;"payment_mode": "COD",<br>
-                        &nbsp;&nbsp;"cod_amount": 1499.00<br>
-                        }
-                    </div>
-                    <div class="mt-6 flex justify-end">
-                        <a href="#" class="text-[var(--gold)] font-bold text-sm hover:underline">Read API Documentation &rarr;</a>
-                    </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">Courier Aggregator</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Automatically assign the best courier partner (Delhivery, BlueDart, Ecom Express) based on real-time routing algorithms and costs.
+                    </dd>
                 </div>
-            </div>
+
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-orange-100 text-orange-600 border border-orange-200">
+                            <i class="fa-solid fa-weight-hanging text-xl"></i>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">B2B Heavy Cargo</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Require FTL or PTL? Book heavy cargo easily. Generate instant E-Way bills and Consignment Notes (LR) right from the dashboard.
+                    </dd>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-purple-100 text-purple-600 border border-purple-200">
+                            <i class="fa-solid fa-globe text-xl"></i>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">International Shipping</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Cross-border made simple. Generate customs declarations, define HS Codes, and ship to over 200+ countries with transparent pricing.
+                    </dd>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-green-100 text-green-600 border border-green-200">
+                            <i class="fa-solid fa-file-csv text-xl"></i>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">Bulk CSV Upload</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Have 1,000 orders to ship today? Upload a single Excel/CSV file to book them all at once and instantly download thermal AWB labels.
+                    </dd>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-red-100 text-red-600 border border-red-200">
+                            <i class="fa-solid fa-video text-xl"></i>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">Video Evidence & NDR</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Our Rider App records video proof for every pickup and delivery. Dispute fake RTOs easily with immutable video evidence.
+                    </dd>
+                </div>
+
+                <div class="relative bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition">
+                    <dt>
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-xl bg-indigo-100 text-indigo-600 border border-indigo-200">
+                            <i class="fa-solid fa-code text-xl"></i>
+                        </div>
+                        <p class="ml-16 text-lg leading-6 font-bold text-gray-900">Developer API</p>
+                    </dt>
+                    <dd class="mt-4 ml-16 text-base text-gray-500">
+                        Integrate our shipping engine directly into Shopify, WooCommerce, or your custom ERP with our comprehensive REST API.
+                    </dd>
+                </div>
+
+            </dl>
         </div>
     </div>
 </div>
 
-<!-- CTA Section -->
-<div class="bg-gradient-to-r from-gray-900 to-[#1e293b] py-16">
-    <div class="max-w-4xl mx-auto px-4 text-center space-y-8">
-        <h2 class="text-3xl font-extrabold text-white">Ready to streamline your logistics?</h2>
-        <p class="text-gray-300">Join thousands of sellers and franchises operating on the OneStall Cargo network.</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            <a href="{{ route('register') }}" class="px-8 py-4 rounded-xl font-extrabold bg-[var(--gold)] text-gray-900 shadow-lg hover:bg-[var(--gold-deep)] transition-colors">
-                Create Seller Account
-            </a>
-            <a href="#" class="px-8 py-4 rounded-xl font-extrabold bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors">
-                Apply for Franchise
-            </a>
-        </div>
+<!-- CTA -->
+<div class="bg-[#1e293b]">
+    <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+            <span class="block">Ready to streamline your shipping?</span>
+        </h2>
+        <p class="mt-4 text-lg leading-6 text-gray-300">Join thousands of sellers shipping millions of parcels daily with OneStall Cargo.</p>
+        <a href="{{ route('register') }}" class="mt-8 w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-base font-bold rounded-xl text-gray-900 bg-[#FFD700] hover:bg-[#E5C100] sm:w-auto transition shadow-lg">
+            Create Free Account
+        </a>
     </div>
 </div>
 @endsection

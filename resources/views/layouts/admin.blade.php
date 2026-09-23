@@ -51,7 +51,7 @@
                         <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                         <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                         <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
-                        <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>
+                        <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
                         <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                         <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
@@ -64,7 +64,7 @@
 
                         <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
                         <a href="{{ route('admin.reports.index') }}" class="sidebar-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice w-4 text-center"></i> <span>Reports</span></a>
-                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>
+                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
                     </nav>
                 </div>
                 
@@ -87,12 +87,13 @@
             <nav class="flex-1 space-y-1 px-2 pb-4">
                 <div class="px-2 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Main Navigation</div></div>
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="fa-solid fa-chart-pie w-4 text-center"></i> <span>Overview</span></a>
+                <a href="{{ route('admin.map') }}" class="sidebar-item {{ request()->routeIs('admin.map') ? 'active' : '' }}"><i class="fa-solid fa-map-location-dot w-4 text-center"></i> <span>Live Fleet Map</span></a>
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Operations</div></div>
                 <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                 <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                 <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
-                <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>
+                <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                 <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
@@ -105,7 +106,7 @@
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
                 <a href="{{ route('admin.reports.index') }}" class="sidebar-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice w-4 text-center"></i> <span>Reports</span></a>
-                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>
+                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
             </nav>
             
             <div class="p-4 border-t border-white/10 shrink-0">
@@ -139,4 +140,6 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>
+
+
 

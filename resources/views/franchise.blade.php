@@ -1,95 +1,54 @@
 @extends('layouts.app')
-
-@section('title', 'Become a Franchise Partner - OneStall Cargo')
+@section('title', 'Become a Franchise - OneStall Cargo')
 
 @section('content')
-<div class="bg-gradient-to-r from-gray-900 to-[#1e293b] py-20 text-center">
-    <div class="max-w-4xl mx-auto px-4">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-yellow-400 text-sm font-bold uppercase tracking-widest mb-6">
-            <i class="fa-solid fa-handshake"></i> Partner Network
-        </div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6">Join the Fastest Growing Logistics Network</h1>
-        <p class="text-lg text-gray-300">Open a OneStall Cargo Franchise or Hub in your city and become part of our Pan-India delivery ecosystem.</p>
+<div class="relative bg-[#1e293b] py-24 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight sm:text-6xl mb-6">Open a Delivery Hub</h1>
+        <p class="mt-4 text-xl text-gray-300 max-w-3xl mx-auto mb-10">Join India's fastest-growing logistics network. Become a OneStall Cargo Franchise and turn your space into a high-yield delivery hub.</p>
+        <a href="{{ route('contact') }}" class="px-8 py-4 bg-[#FFD700] text-gray-900 font-extrabold rounded-xl shadow-lg hover:bg-[#E5C100] transition text-lg">Apply for Franchise</a>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-2 gap-16">
-    <!-- Benefits -->
-    <div class="space-y-10">
-        <div>
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Why Partner with Us?</h2>
-            <p class="text-gray-600">As a Hub Manager, you get full access to our Franchise Dashboard, automated ledgers, and real-time scanning tools.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="text-center mb-16">
+        <h2 class="text-3xl font-extrabold text-gray-900">Why Partner With Us?</h2>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="text-center">
+            <div class="w-20 h-20 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl mb-6">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Earn Per Scan</h3>
+            <p class="text-gray-500">You earn a fixed commission for every parcel you scan in (Receive) and every parcel your riders deliver (Out for Delivery).</p>
         </div>
-        
-        <div class="space-y-6">
-            <div class="flex gap-4">
-                <div class="w-12 h-12 shrink-0 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-line"></i></div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900">High ROI & Commissions</h3>
-                    <p class="text-sm text-gray-600 mt-1">Earn competitive margins on every inbound/outbound scan, pickup, and delivery executed at your hub.</p>
-                </div>
+        <div class="text-center">
+            <div class="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center text-green-600 text-3xl mb-6">
+                <i class="fa-solid fa-laptop-code"></i>
             </div>
-            
-            <div class="flex gap-4">
-                <div class="w-12 h-12 shrink-0 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-mobile-screen"></i></div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900">Dedicated Software Suite</h3>
-                    <p class="text-sm text-gray-600 mt-1">Get the Hub Operations Panel and the Android Rider App to manage your fleet efficiently.</p>
-                </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Enterprise Software</h3>
+            <p class="text-gray-500">Get free access to our Hub Dashboard. Manage master bags, manifest generation, and rider assignments with zero technical hassle.</p>
+        </div>
+        <div class="text-center">
+            <div class="w-20 h-20 mx-auto bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-3xl mb-6">
+                <i class="fa-solid fa-motorcycle"></i>
             </div>
-
-            <div class="flex gap-4">
-                <div class="w-12 h-12 shrink-0 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-shield-halved"></i></div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900">Video Evidence Tech</h3>
-                    <p class="text-sm text-gray-600 mt-1">Our flagship video recording feature ensures you are protected from false damage claims and NDR disputes.</p>
-                </div>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Rider Mobile App</h3>
+            <p class="text-gray-500">Your local delivery fleet gets our proprietary mobile app for live route tracking, video evidence capture, and instant COD settlements.</p>
         </div>
     </div>
+</div>
 
-    <!-- Form -->
-    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 relative">
-        <div class="absolute -top-6 -right-6 w-24 h-24 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
-        <h3 class="text-2xl font-extrabold text-gray-900 mb-6">Apply for Franchise</h3>
-        
-        <form class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">First Name</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Last Name</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]">
-                </div>
-            </div>
-            
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mobile Number</label>
-                <input type="tel" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">City</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Pincode</label>
-                    <input type="text" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]">
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Business/Premises Details</label>
-                <textarea rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--gold)]"></textarea>
-            </div>
-
-            <button type="button" class="w-full py-4 rounded-xl font-extrabold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)] transition-colors mt-4">
-                Submit Application
-            </button>
-        </form>
+<div class="bg-gray-50 py-20 border-t border-gray-200">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Basic Requirements</h2>
+        <ul class="text-left bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-4">
+            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> <span class="text-gray-700">Minimum 200 sq.ft commercial space on the ground floor.</span></li>
+            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> <span class="text-gray-700">Computer, stable internet, and a barcode scanner.</span></li>
+            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> <span class="text-gray-700">2-3 delivery riders with smartphones and 2-wheelers.</span></li>
+            <li class="flex items-start"><i class="fa-solid fa-check-circle text-green-500 mt-1 mr-3 text-lg"></i> <span class="text-gray-700">Refundable security deposit (varies by Tier 1/2/3 city).</span></li>
+        </ul>
     </div>
 </div>
 @endsection

@@ -15,8 +15,8 @@ class CheckRole
 
         $user = Auth::user();
 
-        // SUPER ADMIN OVERRIDE: 'admin' role has absolute permission to bypass and view any portal
-        if ($user->role === 'admin') {
+        // SUPER ADMIN OVERRIDE: 'super_admin' and 'admin' roles have absolute permission to bypass and view any portal
+        if (in_array($user->role, ['super_admin', 'admin'])) {
             return $next($request);
         }
 
@@ -27,21 +27,26 @@ class CheckRole
 
         // If unauthorized, redirect to their respective dashboard
         switch ($user->role) {
-            case 'operations': return redirect('/admin/dashboard');
+            case 'super_admin':
+            case 'admin':
+            case 'operations': 
+                return redirect()->route('admin.dashboard');
             case 'seller': 
             case 'aggregator':
             case 'b2b_customer':
             case 'corporate': 
-                return redirect('/seller/dashboard');
-            case 'franchise': return redirect('/hub/dashboard');
+                return redirect()->route('seller.dashboard');
+            case 'franchise': 
+                return redirect()->route('hub.dashboard');
             case 'pickup_rider':
             case 'delivery_rider':
             case 'rider':
-                return redirect('/rider/dashboard');
+                return redirect()->route('rider.dashboard');
             case 'b2c_customer':
             case 'courier_partner':
-                return redirect('/track');
-            default: return redirect('/');
+                return redirect()->route('track');
+            default: 
+                return redirect('/');
         }
     }
 }

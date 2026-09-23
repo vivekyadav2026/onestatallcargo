@@ -46,7 +46,7 @@
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Shipments</div></div>
                 <a href="{{ route('seller.book') }}" class="sidebar-item {{ request()->routeIs('seller.book') ? 'active' : '' }}"><i class="fa-solid fa-plus-circle w-4 text-center"></i> <span>Book Shipment</span></a>
                 <a href="{{ route('seller.bulk') }}" class="sidebar-item {{ request()->routeIs('seller.bulk') ? 'active' : '' }}"><i class="fa-solid fa-file-csv w-4 text-center"></i> <span>Bulk Booking</span></a>
-                <a href="#" class="sidebar-item"><i class="fa-solid fa-boxes-stacked w-4 text-center"></i> <span>All Shipments</span></a>
+                <a href="{{ route('seller.shipments.index') }}" class="sidebar-item {{ request()->routeIs('seller.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-boxes-stacked w-4 text-center"></i> <span>All Shipments</span></a>
                 <a href="{{ route('seller.ndr') }}" class="sidebar-item {{ request()->routeIs('seller.ndr') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR Action</span></a>
                 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Finance</div></div>
@@ -89,4 +89,5 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>
+
 

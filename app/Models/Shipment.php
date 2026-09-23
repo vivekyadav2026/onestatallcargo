@@ -12,4 +12,9 @@ class Shipment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function assignedRider()
+    {
+        return $this->belongsTo(User::class, 'assigned_rider_id');
+    }
 }

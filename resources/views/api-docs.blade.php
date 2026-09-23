@@ -1,93 +1,69 @@
 @extends('layouts.app')
-
-@section('title', 'Developer API - OneStall Cargo')
+@section('title', 'API Documentation - OneStall Cargo')
 
 @section('content')
-<div class="bg-gray-50 py-12 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-2">OneStall REST API</h1>
-        <p class="text-gray-600">Integrate End-to-End Logistics into your ERP, Shopify, or Custom App.</p>
+<div class="bg-gray-900 pt-16 pb-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight sm:text-5xl">Developer API Docs</h1>
+        <p class="mt-4 text-xl text-gray-400 max-w-2xl mx-auto">Automate your shipping operations. Integrate our RESTful API directly into your ERP, Shopify, or WooCommerce store.</p>
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row gap-12">
-    
-    <!-- Sidebar -->
-    <div class="w-full md:w-64 flex-shrink-0 space-y-2 border-r pr-4">
-        <div class="text-xs font-bold uppercase text-gray-400 tracking-widest mb-4">Getting Started</div>
-        <a href="#" class="block py-2 text-sm font-bold text-[var(--gold-deep)]">Authentication</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">Environments</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">Webhooks</a>
-
-        <div class="text-xs font-bold uppercase text-gray-400 tracking-widest mt-8 mb-4">Endpoints</div>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">1. Serviceability Check</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">2. Rate Calculator</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">3. Create Shipment</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">4. Fetch AWB / Label</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">5. Tracking Events</a>
-        <a href="#" class="block py-2 text-sm text-gray-600 hover:text-gray-900">6. Video Evidence API</a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="flex-grow space-y-12">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 pb-16">
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-200">
         
-        <section>
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication</h2>
-            <p class="text-sm text-gray-600 mb-4">OneStall uses Bearer Token authentication. Pass your secret token in the Authorization header of every request.</p>
-            <div class="bg-gray-900 rounded-xl p-4 font-mono text-sm text-gray-300">
-                <span class="text-blue-400">Authorization:</span> Bearer <span class="text-green-400">osc_live_xxxxxxxxxxxxxxxxx</span>
-            </div>
-        </section>
+        <!-- Sidebar -->
+        <div class="w-full md:w-64 bg-gray-50 border-r border-gray-200 p-6">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Getting Started</h3>
+            <ul class="space-y-3 text-sm font-bold text-gray-700">
+                <li><a href="#" class="text-[#D4AF37]">Authentication</a></li>
+                <li><a href="#" class="hover:text-[#D4AF37]">Errors & Rate Limits</a></li>
+            </ul>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-8 mb-4">Endpoints</h3>
+            <ul class="space-y-3 text-sm font-bold text-gray-700">
+                <li><a href="#" class="hover:text-[#D4AF37]">Create Shipment</a></li>
+                <li><a href="#" class="hover:text-[#D4AF37]">Track AWB</a></li>
+                <li><a href="#" class="hover:text-[#D4AF37]">Calculate Rate</a></li>
+                <li><a href="#" class="hover:text-[#D4AF37]">Cancel Shipment</a></li>
+            </ul>
+        </div>
 
-        <hr>
-
-        <section>
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Create Shipment</h2>
-            <p class="text-sm text-gray-600 mb-4">Book a new parcel and instantly generate an AWB number and routing label.</p>
+        <!-- Content -->
+        <div class="flex-1 p-8 lg:p-12">
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-4">Authentication</h2>
+            <p class="text-gray-600 mb-6">OneStall Cargo uses Bearer token authentication via Laravel Sanctum. You can generate your API key from the Developer section of your Seller Dashboard.</p>
             
-            <div class="flex items-center gap-3 mb-4">
-                <span class="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-bold uppercase">POST</span>
-                <span class="font-mono text-sm font-bold text-gray-700">https://api.onestallcargo.com/v1/shipments</span>
+            <div class="bg-[#1e293b] rounded-xl p-4 overflow-x-auto text-sm font-mono text-gray-300 shadow-inner mb-8">
+                <span class="text-pink-400">Authorization:</span> Bearer <span class="text-green-400">1|your_super_secret_token_here...</span>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Request -->
-                <div>
-                    <div class="text-xs font-bold text-gray-500 uppercase mb-2">Request Body (JSON)</div>
-                    <div class="bg-gray-900 rounded-xl p-4 font-mono text-xs text-green-400 h-64 overflow-y-auto">
-{
-  "pickup_pincode": "110001",
-  "delivery_pincode": "400001",
-  "weight": 1.5,
-  "length": 10,
-  "width": 10,
-  "height": 10,
-  "payment_mode": "COD",
-  "cod_amount": 1499.00,
-  "shipment_type": "B2C"
-}
-                    </div>
-                </div>
-                
-                <!-- Response -->
-                <div>
-                    <div class="text-xs font-bold text-gray-500 uppercase mb-2">Success Response (200 OK)</div>
-                    <div class="bg-gray-900 rounded-xl p-4 font-mono text-xs text-blue-400 h-64 overflow-y-auto">
-{
-  "success": true,
-  "data": {
-    "shipment_id": 98452,
-    "awb_number": "OSC10004561",
-    "status": "BOOKED",
-    "label_url": "https://api.onestallcargo.com/labels/OSC10004561.pdf",
-    "routing_code": "BOM-HUB-1"
-  }
-}
-                    </div>
-                </div>
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-4 border-t pt-8">Create a Shipment</h2>
+            <p class="text-gray-600 mb-4">Endpoint: <span class="bg-gray-100 text-gray-800 font-mono px-2 py-1 rounded text-sm">POST /api/shipments/create</span></p>
+            
+            <div class="bg-[#1e293b] rounded-xl p-4 overflow-x-auto text-sm font-mono text-gray-300 shadow-inner">
+<pre class="m-0"><span class="text-blue-400">curl</span> -X POST https://api.onestallcargo.com/api/shipments/create \
+  -H <span class="text-yellow-300">"Authorization: Bearer YOUR_TOKEN"</span> \
+  -H <span class="text-yellow-300">"Content-Type: application/json"</span> \
+  -d <span class="text-yellow-300">'{
+    "receiver_name": "John Doe",
+    "delivery_phone": "9876543210",
+    "delivery_city": "Mumbai",
+    "delivery_pincode": "400001",
+    "weight_kg": 1.5,
+    "is_cod": true,
+    "invoice_value": 1500
+  }'</span></pre>
             </div>
-        </section>
-
+            
+            <div class="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
+                <h4 class="font-bold text-green-800 mb-2">Success Response (200 OK)</h4>
+                <pre class="text-xs font-mono text-green-700 m-0">{
+  "status": "success",
+  "awb_number": "OSC987654321",
+  "tracking_url": "https://onestallcargo.com/track?awb=OSC987654321"
+}</pre>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
