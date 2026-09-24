@@ -11,12 +11,11 @@ class SellerDashboardController extends Controller
     {
         $user = Auth::user();
         
-        $todayOrders = Shipment::where('user_id', $user->id)->whereDate('created_at', today())->count();
-        $pendingPickups = Shipment::where('user_id', $user->id)->where('status', 'Manifested')->count();
-        $activeNDR = Shipment::where('user_id', $user->id)->where('status', 'NDR')->count();
+        $totalOrders = Shipment::where('user_id', $user->id)->count();
+        $deliveredOrders = Shipment::where('user_id', $user->id)->where('status', 'Delivered')->count();
         
         // COD of delivered items not yet remitted
-        $pendingCOD = Shipment::where('user_id', $user->id)
+        $codPending = Shipment::where('user_id', $user->id)
             ->where('is_cod', true)
             ->where('status', 'Delivered')
             ->sum('invoice_value');
@@ -27,7 +26,7 @@ class SellerDashboardController extends Controller
             ->get();
 
         return view('seller.dashboard', compact(
-            'todayOrders', 'pendingPickups', 'activeNDR', 'pendingCOD', 'recentShipments'
+            'user', 'totalOrders', 'deliveredOrders', 'codPending', 'recentShipments'
         ));
     }
 }
