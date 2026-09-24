@@ -29,7 +29,7 @@ class AdminPickupController extends Controller
         ]);
 
         Shipment::whereIn('id', $validated['shipment_ids'])
-                ->update(['assigned_rider_id' => $validated['rider_id']]);
+                ->update(['rider_id' => $validated['rider_id']]);
 
         return back()->with('success', count($validated['shipment_ids']) . ' shipments assigned to rider successfully.');
     }
