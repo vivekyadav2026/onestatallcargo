@@ -11,7 +11,7 @@
         body { font-family: 'Nunito', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-10">
     <!-- Mobile Header -->
     <header class="bg-[#1e293b] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
         <div class="flex items-center gap-2">

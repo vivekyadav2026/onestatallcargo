@@ -71,7 +71,7 @@
 
     <!-- Add Rule Modal -->
     <div x-show="showAddModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-10 text-center sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showAddModal = false">
                 <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
             </div>
@@ -124,7 +124,7 @@
 
     <!-- Edit Rule Modal -->
     <div x-show="showEditModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-10 text-center sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showEditModal = false">
                 <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
             </div>

@@ -87,7 +87,7 @@
         </div>
 
         <!-- Declarations -->
-        <div class="text-xs text-gray-600 space-y-2 mb-12">
+        <div class="text-xs text-gray-600 space-y-2 mb-6">
             <p><strong>Reason for Export:</strong> Commercial</p>
             <p>I declare that all the information contained in this invoice to be true and correct. I declare that the goods are of India origin.</p>
         </div>

@@ -1,78 +1,56 @@
-@extends('layouts.app')
-@section('title', 'Pricing - OneStall Cargo')
+@extends('layouts.public')
+@section('title', 'Pricing | OneStall Cargo')
 
 @section('content')
-<div class="bg-gray-50 py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">Transparent Shipping Rates</h1>
-        <p class="mt-4 text-xl text-gray-500 max-w-2xl mx-auto">No hidden fees, no complex contracts. Just simple, predictable pricing based on weight and distance.</p>
+<section class="bg-brand-navy py-10 text-center text-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Transparent Logistics Pricing</h1>
+        <p class="text-xl text-gray-300">Pay only for what you ship. Enterprise-grade infrastructure at competitive rates.</p>
     </div>
-</div>
+</section>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-16">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Local -->
-        <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transform hover:-translate-y-1 transition duration-300">
-            <div class="p-8 bg-blue-50 border-b border-blue-100">
-                <h3 class="text-xl font-extrabold text-blue-900">Local (Intra-city)</h3>
-                <p class="text-blue-700 text-sm mt-2">Delivery within the same city.</p>
-                <div class="mt-4 flex items-baseline text-5xl font-extrabold text-gray-900">
-                    ₹35
-                    <span class="ml-1 text-xl font-medium text-gray-500">/ 500g</span>
-                </div>
-            </div>
-            <div class="p-8">
-                <ul class="space-y-4 text-sm text-gray-600">
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> Same-day or Next-day pickup</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> Real-time tracking</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> +₹30 per extra 500g</li>
+<section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center flex flex-col">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">B2C Shipping</h3>
+                <p class="text-gray-500 mb-6">For online sellers and D2C brands</p>
+                <div class="text-4xl font-extrabold text-brand-blue mb-6">Volume Based</div>
+                <ul class="space-y-4 mb-8 text-left text-gray-600 flex-grow">
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Zero setup fees</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Courier aggregation</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Fast COD remittance</li>
                 </ul>
+                <a href="{{ route('contact') }}" class="w-full py-3 rounded border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition">Contact Us</a>
             </div>
-        </div>
 
-        <!-- Zonal -->
-        <div class="bg-[#1e293b] rounded-3xl shadow-xl border border-gray-800 overflow-hidden transform hover:-translate-y-1 transition duration-300 relative scale-105 z-10">
-            <div class="absolute top-0 inset-x-0 h-2 bg-[#FFD700]"></div>
-            <div class="p-8 border-b border-gray-800">
-                <span class="bg-[#FFD700] text-gray-900 text-[10px] font-bold uppercase tracking-widest py-1 px-3 rounded-full mb-4 inline-block">Most Popular</span>
-                <h3 class="text-xl font-extrabold text-white">Zonal (Intra-state)</h3>
-                <p class="text-gray-400 text-sm mt-2">Delivery within the same state or adjacent regions.</p>
-                <div class="mt-4 flex items-baseline text-5xl font-extrabold text-white">
-                    ₹45
-                    <span class="ml-1 text-xl font-medium text-gray-400">/ 500g</span>
-                </div>
-            </div>
-            <div class="p-8">
-                <ul class="space-y-4 text-sm text-gray-300">
-                    <li class="flex items-center"><i class="fa-solid fa-check text-[#FFD700] mr-3"></i> 2-3 Day Delivery</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-[#FFD700] mr-3"></i> Free API Access</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-[#FFD700] mr-3"></i> +₹40 per extra 500g</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-[#FFD700] mr-3"></i> COD enabled (2% fee)</li>
+            <div class="bg-brand-navy rounded-2xl border border-brand-navy shadow-xl p-8 text-center flex flex-col relative transform md:-translate-y-4">
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-brand-yellow text-brand-navy px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
+                <h3 class="text-2xl font-bold text-white mb-2">B2B & Cargo</h3>
+                <p class="text-gray-400 mb-6">For heavy freight and PTL/FTL</p>
+                <div class="text-4xl font-extrabold text-brand-yellow mb-6">Custom Quote</div>
+                <ul class="space-y-4 mb-8 text-left text-gray-300 flex-grow">
+                    <li><i class="fa-solid fa-check text-brand-yellow mr-2"></i> Dedicated account manager</li>
+                    <li><i class="fa-solid fa-check text-brand-yellow mr-2"></i> Custom E-Way bill logic</li>
+                    <li><i class="fa-solid fa-check text-brand-yellow mr-2"></i> Digital Consignment Notes</li>
                 </ul>
-                <a href="{{ route('register') }}" class="mt-8 block w-full bg-[#FFD700] text-gray-900 font-extrabold text-center py-3 rounded-xl hover:bg-[#E5C100] transition">Create Free Account</a>
+                <a href="{{ route('contact') }}" class="w-full py-3 rounded bg-brand-yellow text-brand-navy font-bold hover:bg-brand-yellowHover transition">Talk to Sales</a>
             </div>
-        </div>
 
-        <!-- National -->
-        <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transform hover:-translate-y-1 transition duration-300">
-            <div class="p-8 bg-purple-50 border-b border-purple-100">
-                <h3 class="text-xl font-extrabold text-purple-900">National</h3>
-                <p class="text-purple-700 text-sm mt-2">Cross-country delivery.</p>
-                <div class="mt-4 flex items-baseline text-5xl font-extrabold text-gray-900">
-                    ₹65
-                    <span class="ml-1 text-xl font-medium text-gray-500">/ 500g</span>
-                </div>
-            </div>
-            <div class="p-8">
-                <ul class="space-y-4 text-sm text-gray-600">
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> Surface & Air options</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> Multi-hub routing</li>
-                    <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-3"></i> +₹60 per extra 500g</li>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center flex flex-col">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">International</h3>
+                <p class="text-gray-500 mb-6">For cross-border commerce</p>
+                <div class="text-4xl font-extrabold text-brand-blue mb-6">Get a Quote</div>
+                <ul class="space-y-4 mb-8 text-left text-gray-600 flex-grow">
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> 200+ Countries</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Customs documentation</li>
+                    <li><i class="fa-solid fa-check text-green-500 mr-2"></i> Express air freight</li>
                 </ul>
+                <a href="{{ route('contact') }}" class="w-full py-3 rounded border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition">Get Quote</a>
             </div>
+            
         </div>
-
     </div>
-</div>
+</section>
 @endsection

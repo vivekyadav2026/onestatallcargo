@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'OneStall Cargo | Premium Logistics & Courier Platform')</title>
+    <meta name="description" content="@yield('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.')">
+    
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (via CDN with custom config) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#0B1B3D',
+                            blue: '#1A365D',
+                            yellow: '#FFB800',
+                            yellowHover: '#E5A600',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- AlpineJS for interactive components -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .hero-gradient { background: linear-gradient(135deg, #0B1B3D 0%, #1A365D 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Global Navigation -->
+    <header class="bg-brand-navy text-white sticky top-0 z-50 shadow-md" x-data="{ mobileMenu: false, activeDropdown: null }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="flex items-center gap-3 group">
+                        <div class="w-10 h-10 rounded bg-brand-yellow text-brand-navy flex items-center justify-center font-bold text-xl transition-transform group-hover:scale-105">O</div>
+                        <span class="font-bold text-2xl tracking-tight text-white">OneStall Cargo</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    
+                    <!-- Solutions Dropdown -->
+                    <div class="relative" @mouseenter="activeDropdown = 'solutions'" @mouseleave="activeDropdown = null">
+                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                            Solutions <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                        </button>
+                        <div x-show="activeDropdown === 'solutions'" x-transition x-cloak class="absolute left-0 mt-0 w-64 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
+                            <a href="{{ route('solutions.b2c') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-box text-brand-blue w-5"></i> B2C Shipping</a>
+                            <a href="{{ route('solutions.b2b') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-truck-moving text-brand-blue w-5"></i> B2B & Cargo</a>
+                            <a href="{{ route('solutions.international') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-plane text-brand-blue w-5"></i> International Shipping</a>
+                            <a href="{{ route('solutions.quick') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-bolt text-brand-blue w-5"></i> Quick Delivery</a>
+                            <a href="{{ route('solutions.aggregation') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-network-wired text-brand-blue w-5"></i> Courier Aggregation</a>
+                            <a href="{{ route('solutions.ecommerce') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-store text-brand-blue w-5"></i> E-commerce Integration</a>
+                        </div>
+                    </div>
+
+                    <!-- Platform Dropdown -->
+                    <div class="relative" @mouseenter="activeDropdown = 'platform'" @mouseleave="activeDropdown = null">
+                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                            Platform <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                        </button>
+                        <div x-show="activeDropdown === 'platform'" x-transition x-cloak class="absolute left-0 mt-0 w-64 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
+                            <a href="{{ route('platform.tracking') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-location-crosshairs text-brand-blue w-5"></i> Shipment Tracking</a>
+                            <a href="{{ route('platform.evidence') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-video text-brand-blue w-5"></i> Video Evidence</a>
+                            <a href="{{ route('platform.ndr') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-phone-volume text-brand-blue w-5"></i> NDR Management</a>
+                            <a href="{{ route('platform.rto') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-arrow-rotate-left text-brand-blue w-5"></i> RTO Management</a>
+                            <a href="{{ route('platform.cod') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-indian-rupee-sign text-brand-blue w-5"></i> COD & Settlement</a>
+                            <a href="{{ route('platform.awb') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-barcode text-brand-blue w-5"></i> AWB & Labels</a>
+                        </div>
+                    </div>
+
+                    <!-- Developers Dropdown -->
+                    <div class="relative" @mouseenter="activeDropdown = 'developers'" @mouseleave="activeDropdown = null">
+                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                            Developers <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                        </button>
+                        <div x-show="activeDropdown === 'developers'" x-transition x-cloak class="absolute left-0 mt-0 w-56 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
+                            <a href="{{ route('developers') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-code text-brand-blue w-5"></i> API Platform</a>
+                            <a href="{{ route('docs') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-book text-brand-blue w-5"></i> API Documentation</a>
+                        </div>
+                    </div>
+
+                    <!-- Business Dropdown -->
+                    <div class="relative" @mouseenter="activeDropdown = 'business'" @mouseleave="activeDropdown = null">
+                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                            Business <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                        </button>
+                        <div x-show="activeDropdown === 'business'" x-transition x-cloak class="absolute left-0 mt-0 w-48 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
+                            <a href="{{ route('pricing') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-tags text-brand-blue w-5"></i> Pricing</a>
+                            <a href="{{ route('franchise') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-store-alt text-brand-blue w-5"></i> Franchise</a>
+                            <a href="{{ route('corporate') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-building text-brand-blue w-5"></i> Corporate</a>
+                            <a href="{{ route('partners') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-handshake text-brand-blue w-5"></i> Partners</a>
+                        </div>
+                    </div>
+
+                    <!-- Resources Dropdown -->
+                    <div class="relative" @mouseenter="activeDropdown = 'resources'" @mouseleave="activeDropdown = null">
+                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                            Resources <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                        </button>
+                        <div x-show="activeDropdown === 'resources'" x-transition x-cloak class="absolute left-0 mt-0 w-48 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
+                            <a href="{{ route('about') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-circle-info text-brand-blue w-5"></i> About Us</a>
+                            <a href="{{ route('faq') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-circle-question text-brand-blue w-5"></i> FAQ</a>
+                            <a href="{{ route('help') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-life-ring text-brand-blue w-5"></i> Help Center</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Desktop CTAs -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="{{ route('track') }}" class="text-sm font-semibold text-white hover:text-brand-yellow transition">
+                        <i class="fa-solid fa-location-arrow mr-1"></i> Track
+                    </a>
+                    <a href="{{ route('login') }}" class="text-sm font-semibold text-white hover:text-gray-300 transition ml-2">Login</a>
+                    <a href="{{ route('register') }}" class="px-5 py-2 rounded text-sm font-bold bg-brand-yellow text-brand-navy hover:bg-brand-yellowHover transition shadow-sm">Get Started</a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="lg:hidden flex items-center">
+                    <button @click="mobileMenu = !mobileMenu" class="text-white hover:text-brand-yellow focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl" x-show="!mobileMenu"></i>
+                        <i class="fa-solid fa-xmark text-2xl" x-show="mobileMenu" x-cloak></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div x-show="mobileMenu" x-transition x-cloak class="lg:hidden bg-brand-blue border-t border-gray-700 h-screen overflow-y-auto">
+            <div class="px-4 pt-4 pb-32 space-y-1">
+                <!-- Solutions -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">
+                        Solutions <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </button>
+                    <div x-show="open" class="pl-6 space-y-2 mt-1">
+                        <a href="{{ route('solutions.b2c') }}" class="block py-2 text-sm text-gray-300">B2C Shipping</a>
+                        <a href="{{ route('solutions.b2b') }}" class="block py-2 text-sm text-gray-300">B2B & Cargo</a>
+                        <a href="{{ route('solutions.international') }}" class="block py-2 text-sm text-gray-300">International Shipping</a>
+                        <a href="{{ route('solutions.quick') }}" class="block py-2 text-sm text-gray-300">Quick Delivery</a>
+                        <a href="{{ route('solutions.aggregation') }}" class="block py-2 text-sm text-gray-300">Courier Aggregation</a>
+                        <a href="{{ route('solutions.ecommerce') }}" class="block py-2 text-sm text-gray-300">E-commerce Integration</a>
+                    </div>
+                </div>
+                
+                <!-- Platform -->
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="w-full flex justify-between items-center px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">
+                        Platform <i class="fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </button>
+                    <div x-show="open" class="pl-6 space-y-2 mt-1">
+                        <a href="{{ route('platform.tracking') }}" class="block py-2 text-sm text-gray-300">Shipment Tracking</a>
+                        <a href="{{ route('platform.evidence') }}" class="block py-2 text-sm text-gray-300">Video Evidence</a>
+                        <a href="{{ route('platform.ndr') }}" class="block py-2 text-sm text-gray-300">NDR Management</a>
+                        <a href="{{ route('platform.rto') }}" class="block py-2 text-sm text-gray-300">RTO Management</a>
+                        <a href="{{ route('platform.cod') }}" class="block py-2 text-sm text-gray-300">COD & Settlement</a>
+                    </div>
+                </div>
+
+                <a href="{{ route('developers') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Developers</a>
+                <a href="{{ route('pricing') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Pricing</a>
+                
+                <div class="border-t border-gray-600 my-4"></div>
+                <a href="{{ route('track') }}" class="block px-3 py-3 text-base font-bold text-brand-yellow">Track Shipment</a>
+                <a href="{{ route('login') }}" class="block px-3 py-3 text-base font-semibold text-white">Login</a>
+                <a href="{{ route('register') }}" class="block px-3 py-3 text-base font-bold text-white bg-brand-yellow text-brand-navy rounded mt-2 text-center">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full overflow-hidden">
+        @yield('content')
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+                <!-- Column 1 -->
+                <div class="lg:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 rounded bg-brand-yellow text-brand-navy flex items-center justify-center font-bold text-lg">O</div>
+                        <span class="font-bold text-xl text-white tracking-tight">OneStall Cargo</span>
+                    </div>
+                    <p class="text-sm leading-relaxed mb-6">Complete logistics infrastructure for businesses. Ship B2B, B2C, and internationally on one platform.</p>
+                </div>
+
+                <!-- Column 2 -->
+                <div>
+                    <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Solutions</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="{{ route('solutions.b2c') }}" class="hover:text-white transition">B2C Shipping</a></li>
+                        <li><a href="{{ route('solutions.b2b') }}" class="hover:text-white transition">B2B & Cargo</a></li>
+                        <li><a href="{{ route('solutions.international') }}" class="hover:text-white transition">International Shipping</a></li>
+                        <li><a href="{{ route('solutions.quick') }}" class="hover:text-white transition">Quick Delivery</a></li>
+                        <li><a href="{{ route('solutions.aggregation') }}" class="hover:text-white transition">Courier Aggregation</a></li>
+                        <li><a href="{{ route('solutions.ecommerce') }}" class="hover:text-white transition">E-commerce Integration</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3 -->
+                <div>
+                    <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Platform</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="{{ route('platform.tracking') }}" class="hover:text-white transition">Shipment Tracking</a></li>
+                        <li><a href="{{ route('platform.evidence') }}" class="hover:text-white transition">Video Evidence</a></li>
+                        <li><a href="{{ route('platform.ndr') }}" class="hover:text-white transition">NDR Management</a></li>
+                        <li><a href="{{ route('platform.rto') }}" class="hover:text-white transition">RTO Management</a></li>
+                        <li><a href="{{ route('platform.cod') }}" class="hover:text-white transition">COD & Settlement</a></li>
+                        <li><a href="{{ route('platform.awb') }}" class="hover:text-white transition">AWB & Labels</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 -->
+                <div>
+                    <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Developers</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="{{ route('developers') }}" class="hover:text-white transition">API Overview</a></li>
+                        <li><a href="{{ route('docs') }}" class="hover:text-white transition">API Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition">Webhooks</a></li>
+                        <li><a href="#" class="hover:text-white transition">Sandbox</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 5 -->
+                <div>
+                    <h3 class="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Company</h3>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="{{ route('about') }}" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="{{ route('franchise') }}" class="hover:text-white transition">Franchise</a></li>
+                        <li><a href="{{ route('partners') }}" class="hover:text-white transition">Partners</a></li>
+                        <li><a href="{{ route('faq') }}" class="hover:text-white transition">FAQ</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
+                <p>&copy; 2026 OneStall Cargo. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
