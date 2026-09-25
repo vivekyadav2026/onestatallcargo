@@ -1,3 +1,7 @@
+<?php
+$file = 'resources/views/seller/shipments.blade.php';
+
+$code = <<<'EOD'
 @extends('layouts.seller')
 @section('title', 'Orders - OneStall Cargo')
 
@@ -196,7 +200,7 @@
                             </td>
 
                             <!-- STICKY ACTION COLUMN CELL -->
-                            <td class="px-3 py-4 align-top text-right sticky right-0 bg-white group-hover:bg-gray-50 shadow-[-3px_0_6px_rgba(0,0,0,0.04)]" :class="openMenu ? 'z-[999]' : 'z-10'" x-data="{ openMenu: false }">
+                            <td class="px-3 py-4 align-top text-right sticky right-0 bg-white group-hover:bg-gray-50 z-10 shadow-[-3px_0_6px_rgba(0,0,0,0.04)]" x-data="{ openMenu: false }">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($isKycApproved)
                                         <a href="{{ route('seller.label', $shipment->awb_number) }}" target="_blank" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition">
@@ -213,7 +217,7 @@
                                     </button>
 
                                     <!-- Dropdown Menu Opens Downwards smoothly -->
-                                    <div x-show="openMenu" @click.away="openMenu = false" class="absolute right-2 top-10 w-52 min-w-[210px] bg-white border border-gray-200 rounded-xl shadow-2xl py-2 z-[9999] text-left" style="display: none;">
+                                    <div x-show="openMenu" @click.away="openMenu = false" class="absolute right-0 top-9 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl py-2 z-50 text-left" style="display: none;">
                                         @if($isKycApproved)
                                             <a href="{{ route('seller.book') }}?edit={{ $shipment->id }}" class="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">Edit Order</a>
                                         @else
@@ -374,3 +378,8 @@
     });
 </script>
 @endsection
+EOD;
+
+file_put_contents($file, $code);
+echo "Shipments view updated successfully";
+?>

@@ -509,26 +509,26 @@ function settingsManager() {
         
         // Profile Data
         profile: {
-            name: '{{ Auth::user()->name }}',
-            email: '{{ Auth::user()->email }}',
-            phone: '{{ Auth::user()->phone ?? '' }}',
-            company_name: '{{ Auth::user()->company_name ?? '' }}',
-            brand_name: '{{ Auth::user()->brand_name ?? '' }}',
-            gstin: '{{ Auth::user()->gstin ?? '' }}',
-            pan_number: '{{ Auth::user()->pan_number ?? '' }}',
-            business_type: '{{ Auth::user()->business_type ?? '' }}',
-            company_address: '{{ Auth::user()->company_address ?? '' }}',
-            company_city: '{{ Auth::user()->company_city ?? '' }}',
-            company_state: '{{ Auth::user()->company_state ?? '' }}',
-            company_pincode: '{{ Auth::user()->company_pincode ?? '' }}',
+            name: {!! json_encode(Auth::user()->name) !!},
+            email: {!! json_encode(Auth::user()->email) !!},
+            phone: {!! json_encode(Auth::user()->phone ?? '') !!},
+            company_name: {!! json_encode(Auth::user()->company_name ?? '') !!},
+            brand_name: {!! json_encode(Auth::user()->brand_name ?? '') !!},
+            gstin: {!! json_encode(Auth::user()->gstin ?? '') !!},
+            pan_number: {!! json_encode(Auth::user()->pan_number ?? '') !!},
+            business_type: {!! json_encode(Auth::user()->business_type ?? '') !!},
+            company_address: {!! json_encode(Auth::user()->company_address ?? '') !!},
+            company_city: {!! json_encode(Auth::user()->company_city ?? '') !!},
+            company_state: {!! json_encode(Auth::user()->company_state ?? '') !!},
+            company_pincode: {!! json_encode(Auth::user()->company_pincode ?? '') !!},
         },
 
         // Bank Account Data
         bank: {
-            bank_name: '{{ Auth::user()->bank_name ?? '' }}',
-            account_number: '{{ Auth::user()->account_number ?? '' }}',
-            ifsc_code: '{{ Auth::user()->ifsc_code ?? '' }}',
-            account_holder_name: '{{ Auth::user()->account_holder_name ?? '' }}',
+            bank_name: {!! json_encode(Auth::user()->bank_name ?? '') !!},
+            account_number: {!! json_encode(Auth::user()->account_number ?? '') !!},
+            ifsc_code: {!! json_encode(Auth::user()->ifsc_code ?? '') !!},
+            account_holder_name: {!! json_encode(Auth::user()->account_holder_name ?? '') !!},
         },
 
         // Password Data

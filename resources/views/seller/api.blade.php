@@ -42,7 +42,8 @@
             <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/v1/rates</code></div>
         </div>
         
-        <a href="/api-docs" class="inline-block mt-4 text-[#FFD700] text-sm font-bold hover:underline">View Full Documentation &rarr;</a>
+        <a href="/api-docs" class="inline-block mt-4 text-[#E8027D] text-sm font-bold hover:underline">View Full Documentation &rarr;</a>
     </div>
 </div>
 @endsection
+

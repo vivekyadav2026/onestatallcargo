@@ -15,7 +15,7 @@
             
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Select CSV File</label>
-                <input type="file" name="bulk_file" accept=".csv" required class="block w-full max-w-sm mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[var(--gold)] file:text-gray-900 hover:file:bg-[var(--gold-deep)] transition">
+                <input type="file" name="bulk_file" accept=".csv" required class="block w-full max-w-sm mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#E8027D] file:text-white hover:file:bg-[#d60070] transition">
             </div>
 
             <div class="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm font-bold max-w-md mx-auto text-left">
@@ -34,3 +34,5 @@
     </div>
 </div>
 @endsection
+
+

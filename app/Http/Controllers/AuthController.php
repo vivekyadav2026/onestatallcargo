@@ -80,21 +80,21 @@ class AuthController extends Controller
             case 'super_admin':
             case 'admin':
             case 'operations':
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->route('admin.dashboard');
             
             case 'seller':
             case 'aggregator':
             case 'b2b_customer':
             case 'corporate':
-                return redirect()->intended(route('seller.dashboard'));
+                return redirect()->route('seller.dashboard');
             
             case 'franchise':
-                return redirect()->intended(route('hub.dashboard'));
+                return redirect()->route('hub.dashboard');
             
             case 'pickup_rider':
             case 'delivery_rider':
             case 'rider':
-                return redirect()->intended(route('rider.dashboard'));
+                return redirect()->route('rider.dashboard');
                 
             case 'b2c_customer':
                 return redirect('/track');

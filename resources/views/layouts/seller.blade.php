@@ -59,9 +59,9 @@
                 <i class="fa-solid fa-border-all text-lg w-5 text-center"></i>
                 <span class="sidebar-text whitespace-nowrap">Dashboard</span>
             </a>
-            <a href="{{ route('seller.shipments.index') }}" class="sidebar-item {{ request()->routeIs('seller.shipments.*') ? 'active' : '' }}" title="Shipments">
+            <a href="{{ route('seller.shipments.index') }}" class="sidebar-item {{ request()->routeIs('seller.shipments.*') ? 'active' : '' }}" title="Orders">
                 <i class="fa-solid fa-box text-lg w-5 text-center"></i>
-                <span class="sidebar-text whitespace-nowrap">Shipments</span>
+                <span class="sidebar-text whitespace-nowrap">Orders</span>
             </a>
             <a href="{{ route('seller.book') }}" class="sidebar-item {{ request()->routeIs('seller.book') ? 'active' : '' }}" title="Book Shipment">
                 <i class="fa-solid fa-plus text-lg w-5 text-center"></i>

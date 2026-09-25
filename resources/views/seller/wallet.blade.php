@@ -21,7 +21,7 @@
             <div class="bg-gradient-to-br from-[#0f172a] to-[#1e1b4b] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
                 <!-- Abstract BG shapes -->
                 <div class="absolute right-0 top-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
-                <div class="absolute left-0 bottom-0 w-24 h-24 bg-[#4338ca] opacity-40 rounded-full blur-xl -ml-10 -mb-10"></div>
+                <div class="absolute left-0 bottom-0 w-24 h-24 bg-[#E8027D] opacity-40 rounded-full blur-xl -ml-10 -mb-10"></div>
                 
                 <div class="relative z-10">
                     <p class="text-sm text-gray-300 font-semibold mb-1 flex items-center"><i class="fa-solid fa-wallet mr-2"></i> Available Balance</p>
@@ -39,7 +39,7 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Enter Amount</label>
                     <div class="relative mb-4">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">&#8377;</span>
-                        <input type="number" x-model="amount" min="100" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] font-bold text-gray-900 text-lg transition" required>
+                        <input type="number" x-model="amount" min="100" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#E8027D] focus:ring-1 focus:ring-[#E8027D] font-bold text-gray-900 text-lg transition" required>
                     </div>
 
                     <!-- Quick Chips -->
@@ -49,7 +49,7 @@
                         <button type="button" @click="amount = 10000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;10,000</button>
                     </div>
 
-                    <button type="submit" class="w-full py-3 bg-[#4338ca] hover:bg-[#3730a3] text-white font-bold rounded-lg text-sm transition shadow-sm flex justify-center items-center gap-2" :disabled="loading">
+                    <button type="submit" class="w-full py-3 bg-[#E8027D] hover:bg-[#d60070] text-white font-bold rounded-lg text-sm transition shadow-sm flex justify-center items-center gap-2" :disabled="loading">
                         <span x-show="!loading">Proceed to Pay</span>
                         <span x-show="loading"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
                     </button>
@@ -71,8 +71,8 @@
                 
                 <!-- Internal Tabs -->
                 <div class="flex border-b border-gray-100 px-4 pt-2 bg-gray-50">
-                    <button @click="view = 'transactions'" :class="view === 'transactions' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-4 py-3 text-sm transition-colors">Transaction Ledger</button>
-                    <button @click="view = 'invoices'" :class="view === 'invoices' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-4 py-3 text-sm transition-colors">Tax Invoices</button>
+                    <button @click="view = 'transactions'" :class="view === 'transactions' ? 'text-[#E8027D] border-b-2 border-[#E8027D] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-4 py-3 text-sm transition-colors">Transaction Ledger</button>
+                    <button @click="view = 'invoices'" :class="view === 'invoices' ? 'text-[#E8027D] border-b-2 border-[#E8027D] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-4 py-3 text-sm transition-colors">Tax Invoices</button>
                 </div>
 
                 <!-- Transactions Ledger -->
@@ -241,3 +241,4 @@ function walletManager() {
 }
 </script>
 @endsection
+

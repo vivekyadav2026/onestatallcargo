@@ -129,6 +129,8 @@ Route::middleware(['auth'])->group(function () {
         
         // Bookings
         Route::get('/shipments', [\App\Http\Controllers\SellerShipmentController::class, 'index'])->name('seller.shipments.index');
+        Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\SellerShipmentController::class, 'bulkCancel'])->name('seller.shipments.bulk-cancel');
+        Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\SellerShipmentController::class, 'cancel'])->name('seller.shipments.cancel');
         Route::get('/book', [\App\Http\Controllers\SellerShipmentController::class, 'create'])->name('seller.book');
         Route::post('/book', [\App\Http\Controllers\SellerShipmentController::class, 'store'])->name('seller.book.post');
         Route::get('/bulk-book', [\App\Http\Controllers\SellerShipmentController::class, 'bulkCreate'])->name('seller.bulk');
