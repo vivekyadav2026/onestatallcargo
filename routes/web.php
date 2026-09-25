@@ -135,3 +135,16 @@ Route::middleware(['auth'])->group(function () {
 
     // HUB PORTAL (Requires Franchise Role)
     Route::middleware(['role:franchise'])->prefix('hub')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\HubDashboardController::class, 'index'])->name('hub.dashboard');
+        Route::post('/scan', [\App\Http\Controllers\HubDashboardController::class, 'scan'])->name('hub.scan');
+        Route::get('/bagging', [\App\Http\Controllers\HubDashboardController::class, 'bagging'])->name('hub.bagging');
+        Route::post('/bagging/create', [\App\Http\Controllers\HubDashboardController::class, 'createBag'])->name('hub.bagging.create');
+        Route::post('/bagging/scan', [\App\Http\Controllers\HubDashboardController::class, 'scanToBag'])->name('hub.bagging.scan');
+    });
+
+    // RIDER PORTAL (Requires Rider Role)
+    Route::middleware(['role:rider,pickup_rider,delivery_rider'])->prefix('rider')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\RiderAppController::class, 'index'])->name('rider.dashboard');
+        Route::post('/evidence', [\App\Http\Controllers\RiderAppController::class, 'uploadEvidence'])->name('rider.evidence.upload');
+    });
+});
