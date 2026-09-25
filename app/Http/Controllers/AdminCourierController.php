@@ -16,16 +16,20 @@ class AdminCourierController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'api_code' => 'required|string|unique:couriers,api_code|max:50'
+            'mode' => 'required|in:sandbox,production',
+            'credentials' => 'required|array',
+            'credentials.api_url' => 'required|url',
+            'credentials.api_key' => 'required|string',
         ]);
 
         Courier::create([
             'name' => $validated['name'],
-            'api_code' => strtoupper($validated['api_code']),
+            'mode' => $validated['mode'],
+            'api_credentials' => $validated['credentials'], // This will be auto-encrypted due to model casting
             'is_active' => true
         ]);
 
-        return back()->with('success', 'Courier partner added successfully.');
+        return back()->with('success', 'Courier partner added securely.');
     }
 
     public function toggle($id)

@@ -22,90 +22,123 @@
     </div>
 </section>
 
-<!-- 2. Interactive Rate Estimator (Alpine.js) -->
-<section class="py-12 bg-white border-y border-gray-100" x-data="{
-    serviceType: 'b2c',
-    weightKg: 0.5,
-    zone: 'metro',
-    calculateRate() {
-        let base = 42;
-        if (this.serviceType === 'b2c') base = 42;
-        if (this.serviceType === 'b2b') base = 140; // 10kg base
-        if (this.serviceType === 'intl') base = 450;
-        if (this.serviceType === 'quick') base = 55;
-
-        let multiplier = 1.0;
-        if (this.zone === 'intracity') multiplier = 0.9;
-        if (this.zone === 'metro') multiplier = 1.0;
-        if (this.zone === 'regional') multiplier = 1.25;
-        if (this.zone === 'roi') multiplier = 1.4;
-
-        let total = (base * (this.serviceType === 'b2b' ? (this.weightKg / 10) : (this.weightKg / 0.5)) * multiplier).toFixed(2);
-        return total < base ? base.toFixed(2) : total;
-    }
-}">
+<!-- 2. Live Dynamic Rate Estimator (API Integration) -->
+<section class="py-12 bg-white border-y border-gray-100" x-data="liveRateCalculator()">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-gray-50/80 rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xl">
             <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-brand-navy">Instant Rate Estimator</h2>
-                <p class="text-xs text-gray-500 font-medium">Select your shipping options below for an instant estimated rate quote</p>
+                <h2 class="text-2xl font-bold text-brand-navy">Live API Rate Estimator</h2>
+                <p class="text-xs text-gray-500 font-medium">Enter real pincodes to fetch live rates from our backend aggregator engine.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Service Type -->
+                <!-- Pickup Pincode -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Service Type</label>
-                    <select x-model="serviceType" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy">
-                        <option value="b2c">B2C Express Courier</option>
-                        <option value="b2b">B2B Heavy Cargo (LTL)</option>
-                        <option value="intl">International Air</option>
-                        <option value="quick">Hyperlocal Quick Delivery</option>
-                    </select>
+                    <label class="block text-xs font-bold text-gray-700 mb-2">Pickup Pincode</label>
+                    <input type="text" x-model="pickup_pincode" maxlength="6" placeholder="e.g. 110001" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy" @input="fetchRate">
+                </div>
+
+                <!-- Delivery Pincode -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-2">Delivery Pincode</label>
+                    <input type="text" x-model="delivery_pincode" maxlength="6" placeholder="e.g. 400001" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy" @input="fetchRate">
                 </div>
 
                 <!-- Weight -->
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-2">Package Weight</label>
-                    <select x-model.number="weightKg" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy">
+                    <select x-model.number="weightKg" @change="fetchRate" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy">
                         <option value="0.5">0.5 kg (500 grams)</option>
                         <option value="1.0">1.0 kg</option>
                         <option value="2.0">2.0 kg</option>
                         <option value="5.0">5.0 kg</option>
                         <option value="10.0">10.0 kg</option>
-                        <option value="20.0">20.0 kg</option>
-                    </select>
-                </div>
-
-                <!-- Destination Zone -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Destination Zone</label>
-                    <select x-model="zone" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy">
-                        <option value="intracity">Intra-City (Same City)</option>
-                        <option value="metro">Metro to Metro</option>
-                        <option value="regional">Regional / State</option>
-                        <option value="roi">Rest of India (NE / J&K)</option>
                     </select>
                 </div>
             </div>
 
             <!-- Rate Display Box -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <div class="text-xs text-gray-500 font-medium">Estimated Shipping Starting From</div>
-                    <div class="text-3xl font-black text-brand-navy">
-                        &#8377; <span x-text="calculateRate()"></span>
-                        <span class="text-xs text-gray-500 font-normal">*T&C Apply</span>
+            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-md flex flex-col md:flex-row justify-between items-center gap-4 min-h-[100px]">
+                
+                <div x-show="loading" class="text-brand-navy font-bold flex items-center justify-center w-full">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating real-time rates...
+                </div>
+
+                <div x-show="!loading && error" class="text-red-500 font-bold text-sm text-center w-full" x-text="error"></div>
+
+                <div x-show="!loading && !error && bestRate !== null" class="flex flex-col md:flex-row justify-between w-full items-center">
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium">Cheapest Courier Available: <span x-text="courierName" class="font-bold text-brand-navy"></span></div>
+                        <div class="text-3xl font-black text-brand-navy mt-1">
+                            &#8377; <span x-text="bestRate"></span>
+                            <span class="text-xs text-gray-500 font-normal">*Inc. Platform Margin</span>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{{ route('register') }}" class="px-6 py-2.5 bg-brand-navy text-white text-xs font-bold rounded-full shadow hover:bg-black transition">
+                            Create Account to Book
+                        </a>
                     </div>
                 </div>
-                <div>
-                    <a href="{{ route('register') }}" class="px-6 py-3 rounded-full bg-brand-red text-white font-bold text-sm hover:bg-brand-redHover transition shadow-md">
-                        Book Shipment Now &rarr;
-                    </a>
+                
+                <div x-show="!loading && !error && bestRate === null" class="text-gray-400 font-bold text-sm text-center w-full">
+                    Enter valid 6-digit pincodes to see rates.
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+function liveRateCalculator() {
+    return {
+        pickup_pincode: '',
+        delivery_pincode: '',
+        weightKg: 0.5,
+        loading: false,
+        error: null,
+        bestRate: null,
+        courierName: null,
+
+        async fetchRate() {
+            if (this.pickup_pincode.length === 6 && this.delivery_pincode.length === 6) {
+                this.loading = true;
+                this.error = null;
+                this.bestRate = null;
+                
+                try {
+                    let response = await fetch('/api/v1/public/rates', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            pickup_pincode: this.pickup_pincode,
+                            delivery_pincode: this.delivery_pincode,
+                            weight: this.weightKg
+                        })
+                    });
+                    
+                    let result = await response.json();
+                    
+                    if (response.ok && result.success && result.data.length > 0) {
+                        this.bestRate = result.data[0].rate;
+                        this.courierName = result.data[0].courier_name;
+                    } else {
+                        this.error = result.message || 'No service available for this route.';
+                    }
+                } catch (err) {
+                    this.error = 'Failed to fetch rates from server.';
+                } finally {
+                    this.loading = false;
+                }
+            }
+        }
+    }
+}
+</script>
+
 
 <!-- 3. Tiered Plans Grid -->
 <section class="py-12 md:py-16 bg-white">

@@ -10,7 +10,7 @@ Route::get('/contact', function () { return view('contact'); })->name('contact')
 Route::get('/services', function () { return view('services'); })->name('services');
 Route::get('/track', [\App\Http\Controllers\TrackController::class, 'index'])->name('track');
 Route::post('/track', [\App\Http\Controllers\TrackController::class, 'track'])->name('track.post');
-Route::get('/api-docs', function () { return view('api-docs'); })->name('api-docs');
+Route::get('/api-docs', function () { return view('public.developers.docs'); })->name('api-docs');
 Route::get('/pricing', function () { return view('pricing'); })->name('pricing');
 Route::get('/franchise', function () { return view('franchise'); })->name('franchise');
 

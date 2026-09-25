@@ -59,9 +59,9 @@
         'rate_calculator': {
             title: 'Calculate Shipping Rates',
             method: 'POST',
-            path: '/v1/rates/calculate',
+            path: '/v1/rates',
             desc: 'Fetch real-time freight rate quotes across all active courier partners for a given pickup and delivery pin code.',
-            curl: `curl -X POST https://api.onestallcargo.com/v1/rates/calculate \\
+            curl: `curl -X POST https://api.onestallcargo.com/v1/rates \\
   -H 'Authorization: Bearer YOUR_API_KEY' \\
   -H 'Content-Type: application/json' \\
   -d '{
