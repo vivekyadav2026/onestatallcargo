@@ -1,18 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', 'Log In - OneStall Cargo')
 
 @section('content')
-<div class="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6">
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 bg-gray-50/50">
     <div class="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-xl p-8 sm:p-10 space-y-6">
         
         <!-- Header -->
         <div class="text-center space-y-2">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-2xl mx-auto shadow-sm bg-[var(--gold)] text-gray-900">
-                O
-            </div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" style="color: #0f172a !important;">Welcome Back</h1>
-            <p class="text-xs text-gray-500">Sign in to continue your logistics dashboard on OneStall Cargo</p>
+            <a href="/" class="inline-block mb-2">
+                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-12 w-auto mx-auto">
+            </a>
+            <h1 class="text-2xl font-extrabold text-brand-navy tracking-tight">Welcome Back</h1>
+            <p class="text-xs text-gray-500 font-medium">Sign in to manage your shipping dashboard and track orders</p>
         </div>
 
         <!-- Google Auth Button -->
@@ -40,38 +40,35 @@
 
             <div class="space-y-1">
                 <label class="block text-xs font-bold text-gray-700">Email Address</label>
-                <input type="email" name="email" value="{{ old('email') }}" required placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
+                <input type="email" name="email" value="{{ old('email') }}" required placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
                 @error('email')
-                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                    <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="space-y-1">
                 <div class="flex justify-between items-center">
                     <label class="block text-xs font-bold text-gray-700">Password</label>
-                    <a href="{{ route('password.request') }}" class="text-[11px] font-bold text-[var(--gold-deep)] hover:underline">Forgot?</a>
+                    <a href="{{ route('password.request') }}" class="text-[11px] font-bold text-brand-red hover:underline">Forgot?</a>
                 </div>
-                <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
+                <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
             </div>
 
             <div class="flex items-center justify-between text-xs pt-1">
                 <label class="flex items-center gap-2 cursor-pointer text-gray-600 font-medium">
-                    <input type="checkbox" name="remember" class="rounded border-gray-300 text-[var(--gold)] focus:ring-[var(--gold)]">
+                    <input type="checkbox" name="remember" class="rounded border-gray-300 text-brand-navy focus:ring-brand-navy">
                     <span>Remember me</span>
                 </label>
             </div>
 
-            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-[var(--gold)] hover:bg-yellow-500 text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
+            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red hover:bg-brand-redHover text-white font-extrabold text-sm shadow-md shadow-red-500/20 transition-all duration-200 mt-2">
                 Sign In to Dashboard &rarr;
             </button>
         </form>
 
-        <p class="text-xs text-center text-gray-500 pt-2">
-            Don't have an account? <a href="{{ route('register') }}" class="font-bold text-gray-900 hover:underline">Create an account</a>
+        <p class="text-xs text-center text-gray-500 pt-2 font-medium">
+            Don't have an account? <a href="{{ route('register') }}" class="font-bold text-brand-navy hover:underline">Create a free account</a>
         </p>
     </div>
 </div>
 @endsection
-
-
-

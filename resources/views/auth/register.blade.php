@@ -1,18 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
-@section('title', 'Register - OneStall Cargo')
+@section('title', 'Register Free - OneStall Cargo')
 
 @section('content')
-<div class="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6">
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 bg-gray-50/50">
     <div class="w-full max-w-lg bg-white rounded-3xl border border-gray-100 shadow-xl p-8 sm:p-10 space-y-6">
         
         <!-- Header -->
         <div class="text-center space-y-2">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-2xl mx-auto shadow-sm bg-[var(--gold)] text-gray-900">
-                O
-            </div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" style="color: #0f172a !important;">Create Account</h1>
-            <p class="text-xs text-gray-500">Join OneStall Cargo to start shipping B2B, B2C and International parcels today.</p>
+            <a href="/" class="inline-block mb-2">
+                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-12 w-auto mx-auto">
+            </a>
+            <h1 class="text-2xl font-extrabold text-brand-navy tracking-tight">Create Free Account</h1>
+            <p class="text-xs text-gray-500 font-medium">Join OneStall Cargo to start shipping B2B, B2C and International parcels today</p>
         </div>
 
         <!-- Google Auth Button -->
@@ -41,46 +41,44 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-gray-700">Full Name</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required placeholder="Rahul Sharma" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
-                    @error('name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    <input type="text" name="name" value="{{ old('name') }}" required placeholder="Rahul Sharma" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                    @error('name') <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-gray-700">Phone Number</label>
-                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="9876543210" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
-                    @error('phone') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="9876543210" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                    @error('phone') <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="space-y-1">
                 <label class="block text-xs font-bold text-gray-700">Email Address</label>
-                <input type="email" name="email" value="{{ old('email') }}" required placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
-                @error('email') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                <input type="email" name="email" value="{{ old('email') }}" required placeholder="you@example.com" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                @error('email') <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p> @enderror
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-gray-700">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
-                    @error('password') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                    @error('password') <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-xs font-bold text-gray-700">Confirm Password</label>
-                    <input type="password" name="password_confirmation" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-yellow-400/20 transition-all">
+                    <input type="password" name="password_confirmation" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-[var(--gold)] hover:bg-yellow-500 text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
+            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red hover:bg-brand-redHover text-white font-extrabold text-sm shadow-md shadow-red-500/20 transition-all duration-200 mt-2">
                 Create Account & Start Shipping &rarr;
             </button>
         </form>
 
-        <p class="text-xs text-center text-gray-500 pt-2">
-            Already registered? <a href="{{ route('login') }}" class="font-bold text-gray-900 hover:underline">Log in here</a>
+        <p class="text-xs text-center text-gray-500 pt-2 font-medium">
+            Already registered? <a href="{{ route('login') }}" class="font-bold text-brand-navy hover:underline">Log in here</a>
         </p>
     </div>
 </div>
 @endsection
-
-
