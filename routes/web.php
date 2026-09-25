@@ -96,8 +96,23 @@ Route::middleware(['auth'])->group(function () {
 
     // SELLER PORTAL (Requires Seller Role)
     Route::middleware(['role:seller,aggregator,b2b_customer,corporate'])->prefix('seller')->group(function () {
-                Route::get('/dashboard', [\App\Http\Controllers\SellerDashboardController::class, 'index'])->name('seller.dashboard');
-        Route::post('/wallet/recharge', [\App\Http\Controllers\SellerDashboardController::class, 'recharge'])->name('seller.wallet.recharge');
+        Route::get('/dashboard', [\App\Http\Controllers\SellerDashboardController::class, 'index'])->name('seller.dashboard');
+        
+        // Premium Views
+        Route::view('/tools', 'seller.tools')->name('seller.tools');
+        Route::view('/settings', 'seller.settings')->name('seller.settings');
+        
+        // Settings API
+        Route::post('/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('seller.settings.profile');
+        Route::post('/settings/warehouses', [\App\Http\Controllers\SettingsController::class, 'createWarehouse'])->name('seller.settings.warehouses');
+        Route::post('/settings/api-keys', [\App\Http\Controllers\SettingsController::class, 'generateApiKey'])->name('seller.settings.api-keys');
+        Route::delete('/settings/api-keys/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteApiKey'])->name('seller.settings.api-keys.delete');
+        
+        Route::view('/wallet', 'seller.wallet')->name('seller.wallet');
+        
+        // Cashfree Wallet Recharge
+        Route::post('/wallet/recharge', [\App\Http\Controllers\CashfreeController::class, 'initiateRecharge'])->name('seller.wallet.recharge');
+        Route::post('/wallet/verify', [\App\Http\Controllers\CashfreeController::class, 'verifyRecharge'])->name('seller.wallet.verify');
         
         // Bookings
         Route::get('/shipments', [\App\Http\Controllers\SellerShipmentController::class, 'index'])->name('seller.shipments.index');
@@ -120,41 +135,3 @@ Route::middleware(['auth'])->group(function () {
 
     // HUB PORTAL (Requires Franchise Role)
     Route::middleware(['role:franchise'])->prefix('hub')->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\HubDashboardController::class, 'index'])->name('hub.dashboard');
-        Route::post('/scan', [\App\Http\Controllers\HubDashboardController::class, 'scan'])->name('hub.scan');
-        Route::get('/bagging', [\App\Http\Controllers\HubDashboardController::class, 'bagging'])->name('hub.bagging');
-        Route::post('/bagging/create', [\App\Http\Controllers\HubDashboardController::class, 'createBag'])->name('hub.bagging.create');
-        Route::post('/bagging/scan', [\App\Http\Controllers\HubDashboardController::class, 'scanToBag'])->name('hub.bagging.scan');
-    });
-
-    // RIDER PORTAL (Requires Rider Role)
-    Route::middleware(['role:rider,pickup_rider,delivery_rider'])->prefix('rider')->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\RiderAppController::class, 'index'])->name('rider.dashboard');
-        Route::post('/evidence', [\App\Http\Controllers\RiderAppController::class, 'uploadEvidence'])->name('rider.evidence.upload');
-    });
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,89 +1,204 @@
 @extends('layouts.public')
-@section('title', "Transparent Shipping Rates & Pricing | OneStall Cargo")
+@section('title', "Calculate Shipping Rates | OneStall Cargo")
 
 @section('content')
 <!-- 1. Hero Section -->
-<section class="bg-gradient-to-r from-blue-50/40 via-white to-blue-50/40 py-12 md:py-16 relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center max-w-3xl mx-auto">
-        <div class="inline-block px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-brand-navy text-xs font-bold mb-4 uppercase tracking-wide">
-            Transparent Pricing Structure
-        </div>
-        <h1 class="text-3xl md:text-5xl font-extrabold text-brand-navy leading-tight mb-4">
-            Shipping Rates Built for <span class="text-brand-red">Scaling Businesses</span>
-        </h1>
-        <p class="text-base md:text-lg text-gray-700 mb-8 font-medium leading-relaxed">
-            No monthly subscription fees, no hidden fuel surcharges. Pay only for what you ship with discounted rates across 15+ top courier partners.
-        </p>
-        <div class="flex justify-center gap-4">
-            <a href="{{ route('register') }}" class="px-8 py-3.5 rounded-full bg-brand-red text-white font-bold text-base hover:bg-brand-redHover transition shadow-md shadow-red-500/20">
-                Start Shipping at ₹42/500g
+<section class="bg-gray-50 pt-10 pb-6 md:pt-12 md:pb-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-12">
+        <div class="flex-1 text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0a1930] leading-[1.1] mb-4 tracking-tight">
+                <span class="text-[#d80032]">Calculate</span> Shipping<br>Rates in Seconds
+            </h1>
+            <p class="text-base md:text-lg text-gray-600 mb-6 font-medium max-w-lg mx-auto md:mx-0 leading-relaxed">
+                Stop guessing your delivery cost. Instantly compare courier prices and choose what works best for your business.
+            </p>
+            <a href="#calculator" class="inline-block px-8 py-3.5 rounded-full bg-[#d80032] text-white font-bold text-sm hover:bg-[#b00028] transition shadow-md">
+                Calculate Now
             </a>
+        </div>
+        <div class="flex-1 hidden md:flex justify-end">
+            <!-- Clean, professional image presentation -->
+            <img src="/images/pricing_hero.jpg" alt="Shipping Options" class="rounded-2xl shadow-xl w-full max-w-md object-cover h-[350px]">
         </div>
     </div>
 </section>
 
-<!-- 2. Live Dynamic Rate Estimator (API Integration) -->
-<section class="py-12 bg-white border-y border-gray-100" x-data="liveRateCalculator()">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-gray-50/80 rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xl">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-brand-navy">Live API Rate Estimator</h2>
-                <p class="text-xs text-gray-500 font-medium">Enter real pincodes to fetch live rates from our backend aggregator engine.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Pickup Pincode -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Pickup Pincode</label>
-                    <input type="text" x-model="pickup_pincode" maxlength="6" placeholder="e.g. 110001" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy" @input="fetchRate">
-                </div>
-
-                <!-- Delivery Pincode -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Delivery Pincode</label>
-                    <input type="text" x-model="delivery_pincode" maxlength="6" placeholder="e.g. 400001" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy" @input="fetchRate">
-                </div>
-
-                <!-- Weight -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-2">Package Weight</label>
-                    <select x-model.number="weightKg" @change="fetchRate" class="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-navy">
-                        <option value="0.5">0.5 kg (500 grams)</option>
-                        <option value="1.0">1.0 kg</option>
-                        <option value="2.0">2.0 kg</option>
-                        <option value="5.0">5.0 kg</option>
-                        <option value="10.0">10.0 kg</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Rate Display Box -->
-            <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-md flex flex-col md:flex-row justify-between items-center gap-4 min-h-[100px]">
+<!-- 2. Integrated Calculator Section -->
+<section id="calculator" class="pb-16 pt-6 bg-gray-50" x-data="liveRateCalculator()">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Main Burgundy Card -->
+        <div class="bg-[#8a0b38] rounded-3xl p-6 md:p-10 shadow-2xl">
+            
+            <div class="flex flex-col lg:flex-row gap-10">
                 
-                <div x-show="loading" class="text-brand-navy font-bold flex items-center justify-center w-full">
-                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating real-time rates...
-                </div>
-
-                <div x-show="!loading && error" class="text-red-500 font-bold text-sm text-center w-full" x-text="error"></div>
-
-                <div x-show="!loading && !error && bestRate !== null" class="flex flex-col md:flex-row justify-between w-full items-center">
-                    <div>
-                        <div class="text-xs text-gray-500 font-medium">Cheapest Courier Available: <span x-text="courierName" class="font-bold text-brand-navy"></span></div>
-                        <div class="text-3xl font-black text-brand-navy mt-1">
-                            &#8377; <span x-text="bestRate"></span>
-                            <span class="text-xs text-gray-500 font-normal">*Inc. Platform Margin</span>
+                <!-- Left Side: Image -->
+                <div class="hidden lg:block w-[40%]">
+                    <div class="h-full w-full rounded-2xl overflow-hidden relative">
+                        <img src="/images/pricing_calculator.jpg" alt="Logistics" class="object-cover w-full h-full">
+                        <!-- Floating Badges mimicking the reference -->
+                        <div class="absolute top-1/4 right-4 bg-white p-2 rounded-lg shadow-lg">
+                            <div class="bg-yellow-400 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">&#8377;</div>
+                        </div>
+                        <div class="absolute bottom-1/4 left-4 bg-white p-2 rounded-lg shadow-lg">
+                            <i class="fa-solid fa-calculator text-gray-700 text-xl"></i>
                         </div>
                     </div>
-                    <div>
-                        <a href="{{ route('register') }}" class="px-6 py-2.5 bg-brand-navy text-white text-xs font-bold rounded-full shadow hover:bg-black transition">
-                            Create Account to Book
-                        </a>
-                    </div>
                 </div>
+
+                <!-- Right Side: The Form -->
+                <div class="flex-1">
+                    <form @submit.prevent="fetchRate" class="space-y-6">
+                        
+                        <!-- Row 1 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-1">Pickup Area Pin Code*</label>
+                                <input type="text" x-model="pickup_pincode" maxlength="6" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="e.g. 110001">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-1">Delivery Area Pin Code*</label>
+                                <input type="text" x-model="delivery_pincode" maxlength="6" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="e.g. 400001">
+                            </div>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-1">Weight*</label>
+                                <div class="flex relative">
+                                    <input type="number" step="0.1" x-model.number="weightKg" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="0.5">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 text-xs">kg</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-1">Package Dimensions</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" placeholder="L" x-model="dim_l" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
+                                    <span class="text-white/70 text-xs">X</span>
+                                    <input type="number" placeholder="W" x-model="dim_w" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
+                                    <span class="text-white/70 text-xs">X</span>
+                                    <input type="number" placeholder="H" x-model="dim_h" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
+                                    <span class="text-white/70 text-xs">CM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-2">Payment Mode*</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer text-white text-sm">
+                                        <input type="radio" x-model="payment_mode" value="prepaid" class="w-4 h-4 text-[#d80032] bg-transparent border-white/30 focus:ring-[#d80032]">
+                                        <span>Prepaid</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer text-white text-sm">
+                                        <input type="radio" x-model="payment_mode" value="cod" class="w-4 h-4 text-[#d80032] bg-white border-white focus:ring-[#d80032]">
+                                        <span>Cash on Delivery</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-white mb-1">Shipment Value*</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm">&#8377;</span>
+                                    <input type="number" x-model="shipment_value" required class="w-full bg-transparent border border-white/30 rounded-md pl-8 pr-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="1000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex gap-4 pt-4 border-t border-white/10 mt-6">
+                            <button type="submit" class="px-8 py-3 rounded-full bg-[#d80032] text-white font-bold text-sm hover:bg-[#b00028] transition min-w-[160px]">
+                                <span x-show="!loading">Calculate Now</span>
+                                <span x-show="loading"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                            </button>
+                            <button type="button" @click="resetForm()" class="px-8 py-3 rounded-full border border-white/50 text-white font-bold text-sm hover:bg-white/10 transition">
+                                Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RESULTS SECTION -->
+            <div x-show="showResults" style="display: none;" class="mt-12 bg-[#3b172a] rounded-2xl p-6 shadow-inner">
                 
-                <div x-show="!loading && !error && bestRate === null" class="text-gray-400 font-bold text-sm text-center w-full">
-                    Enter valid 6-digit pincodes to see rates.
+                <!-- Filters -->
+                <div class="flex gap-3 mb-6">
+                    <button class="px-6 py-1.5 rounded-full bg-white text-black text-xs font-bold">All</button>
+                    <button class="px-6 py-1.5 rounded-full border border-white/30 text-white text-xs font-medium hover:border-white transition">Air</button>
+                    <button class="px-6 py-1.5 rounded-full border border-white/30 text-white text-xs font-medium hover:border-white transition">Surface</button>
                 </div>
+
+                <!-- Error Message -->
+                <div x-show="error" class="text-red-300 text-sm font-medium py-4 text-center">
+                    <span x-text="error"></span>
+                </div>
+
+                <!-- Table -->
+                <div x-show="!error && rates.length > 0" class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-white border-collapse">
+                        <thead class="border-b border-white/20 text-xs text-white font-medium">
+                            <tr>
+                                <th class="pb-3 px-2 font-medium">Courier Name</th>
+                                <th class="pb-3 px-2 font-medium">Type</th>
+                                <th class="pb-3 px-2 font-medium">Courier Charges</th>
+                                <th class="pb-3 px-2 font-medium">AWB / Delivery</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/10 text-sm">
+                            <template x-for="rate in rates" :key="rate.courier_name">
+                                <tr class="hover:bg-white/5 transition">
+                                    <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Surface'"></td>
+                                    <td class="py-4 px-2 text-white/80">Surface</td>
+                                    <td class="py-4 px-2 font-medium">&#8377; <span x-text="rate.rate.toFixed(2)"></span></td>
+                                    <td class="py-4 px-2 text-white/80"><span x-text="rate.estimated_delivery_days"></span> Days</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div x-show="!error && rates.length > 0" class="text-center mt-8">
+                    <a href="{{ route('register') }}" class="inline-block px-10 py-3 rounded-full bg-[#d80032] text-white font-bold text-sm hover:bg-[#b00028] transition">
+                        Ship Now
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. Features Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-[#0a1930] mb-2">Built for Sellers Who Want</h2>
+        <h3 class="text-3xl md:text-4xl font-extrabold text-[#d80032]">Smarter Shipping</h3>
+    </div>
+
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
+        <div class="flex-1 w-full max-w-md mx-auto">
+            <img src="/images/warehouse.jpg" alt="Smart Shipping" class="rounded-2xl shadow-lg w-full h-[400px] object-cover">
+        </div>
+        <div class="flex-1 space-y-8">
+            <div>
+                <h4 class="text-lg font-bold text-[#0a1930] mb-1">See real-time rates across couriers</h4>
+                <p class="text-sm text-gray-600">Instantly compare prices from top couriers directly on a single dashboard.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-[#0a1930] mb-1">Avoid RTOs with smarter decisions</h4>
+                <p class="text-sm text-gray-600">Match the shipping mode based on your customers' expectations and delivery urgency.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-[#0a1930] mb-1">No more manual estimates</h4>
+                <p class="text-sm text-gray-600">Calculate the accurate rate depending on your parcel's volumetric weight seamlessly.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold text-[#0a1930] mb-1">Choose the best courier option</h4>
+                <p class="text-sm text-gray-600">Know which courier is the most economical and fastest before booking an order.</p>
             </div>
         </div>
     </div>
@@ -94,17 +209,36 @@ function liveRateCalculator() {
     return {
         pickup_pincode: '',
         delivery_pincode: '',
-        weightKg: 0.5,
+        weightKg: '',
+        dim_l: '',
+        dim_w: '',
+        dim_h: '',
+        payment_mode: 'prepaid',
+        shipment_value: '',
+        
         loading: false,
+        showResults: false,
         error: null,
-        bestRate: null,
-        courierName: null,
+        rates: [],
+
+        resetForm() {
+            this.pickup_pincode = '';
+            this.delivery_pincode = '';
+            this.weightKg = '';
+            this.dim_l = '';
+            this.dim_w = '';
+            this.dim_h = '';
+            this.payment_mode = 'prepaid';
+            this.shipment_value = '';
+            this.showResults = false;
+        },
 
         async fetchRate() {
-            if (this.pickup_pincode.length === 6 && this.delivery_pincode.length === 6) {
+            if (this.pickup_pincode.length === 6 && this.delivery_pincode.length === 6 && this.weightKg > 0) {
                 this.loading = true;
+                this.showResults = true;
                 this.error = null;
-                this.bestRate = null;
+                this.rates = [];
                 
                 try {
                     let response = await fetch('/api/v1/public/rates', {
@@ -116,15 +250,17 @@ function liveRateCalculator() {
                         body: JSON.stringify({
                             pickup_pincode: this.pickup_pincode,
                             delivery_pincode: this.delivery_pincode,
-                            weight: this.weightKg
+                            weight: this.weightKg,
+                            payment_mode: this.payment_mode,
+                            shipment_value: this.shipment_value,
+                            dimensions: { l: this.dim_l, w: this.dim_w, h: this.dim_h }
                         })
                     });
                     
                     let result = await response.json();
                     
                     if (response.ok && result.success && result.data.length > 0) {
-                        this.bestRate = result.data[0].rate;
-                        this.courierName = result.data[0].courier_name;
+                        this.rates = result.data;
                     } else {
                         this.error = result.message || 'No service available for this route.';
                     }
@@ -133,133 +269,11 @@ function liveRateCalculator() {
                 } finally {
                     this.loading = false;
                 }
+            } else {
+                alert("Please fill Pincodes and Weight correctly.");
             }
         }
     }
 }
 </script>
-
-
-<!-- 3. Tiered Plans Grid -->
-<section class="py-12 md:py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <h2 class="text-2xl md:text-4xl font-extrabold text-brand-navy mb-3">
-                Simple Plans for Businesses of All Sizes
-            </h2>
-            <p class="text-base text-gray-600">
-                Zero fixed monthly costs. Recharge your wallet and ship at your own pace.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Starter Plan -->
-            <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                <div>
-                    <div class="text-xs font-bold text-brand-navy uppercase tracking-wider mb-2">Starter Plan</div>
-                    <div class="text-4xl font-black text-gray-900 mb-2">&#8377; 0 <span class="text-xs text-gray-500 font-normal">/ month</span></div>
-                    <p class="text-xs text-gray-600 mb-6">Ideal for social sellers, boutique stores, and new startups.</p>
-
-                    <ul class="space-y-3 text-xs text-gray-700 mb-8">
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> B2C Express at &#8377;42/500g</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Access to 15+ Courier Partners</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Standard Tracking URL</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> 1-2 Days COD Remittance</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Email & Chat Support</li>
-                    </ul>
-                </div>
-                <a href="{{ route('register') }}" class="w-full py-3 rounded-full border-2 border-brand-navy text-brand-navy text-center font-bold text-sm hover:bg-brand-navy hover:text-white transition">
-                    Get Started Free
-                </a>
-            </div>
-
-            <!-- Growth Plan (Most Popular) -->
-            <div class="bg-white rounded-3xl p-8 border-2 border-brand-red shadow-xl relative flex flex-col justify-between">
-                <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand-red text-white text-[10px] font-extrabold uppercase px-4 py-1 rounded-full shadow">
-                    Most Popular
-                </div>
-                <div>
-                    <div class="text-xs font-bold text-brand-red uppercase tracking-wider mb-2">Growth Plan</div>
-                    <div class="text-4xl font-black text-gray-900 mb-2">&#8377; 0 <span class="text-xs text-gray-500 font-normal">/ month</span></div>
-                    <p class="text-xs text-gray-600 mb-6">Designed for growing D2C brands shipping 500+ orders monthly.</p>
-
-                    <ul class="space-y-3 text-xs text-gray-700 mb-8">
-                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-red mr-2 font-bold"></i> Discounted B2C at &#8377;36/500g</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-red mr-2 font-bold"></i> Branded Tracking Page Domain</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-red mr-2 font-bold"></i> Automated WhatsApp NDR Bot</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-red mr-2 font-bold"></i> Early Next-Day COD Payout</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-brand-red mr-2 font-bold"></i> Video Evidence Dispute Tools</li>
-                    </ul>
-                </div>
-                <a href="{{ route('register') }}" class="w-full py-3 rounded-full bg-brand-red text-white text-center font-bold text-sm hover:bg-brand-redHover transition shadow-md">
-                    Start Growth Plan
-                </a>
-            </div>
-
-            <!-- Enterprise Plan -->
-            <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                <div>
-                    <div class="text-xs font-bold text-brand-navy uppercase tracking-wider mb-2">Enterprise Cargo</div>
-                    <div class="text-3xl font-black text-gray-900 mb-2">Custom <span class="text-xs text-gray-500 font-normal">Slab Rates</span></div>
-                    <p class="text-xs text-gray-600 mb-6">For high-volume shippers, manufacturers, and B2B wholesalers.</p>
-
-                    <ul class="space-y-3 text-xs text-gray-700 mb-8">
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Custom Negotiated Slab Rates</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Dedicated LTL & FTL Trucks</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Dedicated Key Account Manager</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> Custom ERP & API Pipeline</li>
-                        <li class="flex items-center"><i class="fa-solid fa-check text-green-500 mr-2"></i> 15-30 Days Credit Billing</li>
-                    </ul>
-                </div>
-                <a href="{{ route('contact') }}" class="w-full py-3 rounded-full border-2 border-brand-navy text-brand-navy text-center font-bold text-sm hover:bg-brand-navy hover:text-white transition">
-                    Contact Sales
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 4. Fee Transparency Table -->
-<section class="py-12 bg-gray-50/50 border-t border-gray-100">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
-            <h3 class="text-2xl font-bold text-brand-navy">100% Fee Transparency</h3>
-            <p class="text-xs text-gray-500">Zero hidden surcharges. All applicable fees outlined clearly.</p>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-brand-navy text-white uppercase text-[10px] font-bold">
-                    <tr>
-                        <th class="py-3 px-4">Component</th>
-                        <th class="py-3 px-4">Charge / Rate</th>
-                        <th class="py-3 px-4">Details</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 text-gray-700 font-medium">
-                    <tr>
-                        <td class="py-3 px-4 font-bold text-gray-900">Platform Subscription</td>
-                        <td class="py-3 px-4 text-green-600 font-bold">FREE (&#8377;0)</td>
-                        <td class="py-3 px-4">No monthly or annual maintenance fees.</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 font-bold text-gray-900">COD Collection Fee</td>
-                        <td class="py-3 px-4 font-bold text-brand-navy">1.5% or &#8377;30</td>
-                        <td class="py-3 px-4">Whichever is higher per delivered COD parcel.</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 font-bold text-gray-900">Fuel Surcharge</td>
-                        <td class="py-3 px-4 text-green-600 font-bold">Included</td>
-                        <td class="py-3 px-4">Already factored into rate quote calculations.</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 font-bold text-gray-900">Store Integration & APIs</td>
-                        <td class="py-3 px-4 text-green-600 font-bold">FREE (&#8377;0)</td>
-                        <td class="py-3 px-4">Shopify, WooCommerce plugins and REST APIs included.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
 @endsection

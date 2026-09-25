@@ -44,16 +44,23 @@
         <!-- Payment Gateway (4.19) -->
         <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
             <div class="p-4 bg-gray-50 border-b border-gray-200">
-                <h2 class="font-extrabold text-gray-800"><i class="fa-solid fa-credit-card text-blue-500 mr-2"></i> Payment Gateway (Wallet Recharge)</h2>
+                <h2 class="font-extrabold text-gray-800"><i class="fa-solid fa-wallet text-purple-500 mr-2"></i> Cashfree Payment Gateway (Wallet Recharge)</h2>
             </div>
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Razorpay Key ID</label>
-                    <input type="text" value="rzp_live_xxxxxxxxxx" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cashfree App ID</label>
+                    <input type="text" name="cashfree_app_id" placeholder="Enter App ID" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Razorpay Key Secret</label>
-                    <input type="password" value="rzp_secret_xxxxxxxxxx" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cashfree Secret Key</label>
+                    <input type="password" name="cashfree_secret_key" placeholder="Enter Secret Key" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Environment</label>
+                    <select name="cashfree_environment" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
+                        <option value="sandbox">Sandbox (Testing)</option>
+                        <option value="production">Production (Live)</option>
+                    </select>
                 </div>
             </div>
         </div>
