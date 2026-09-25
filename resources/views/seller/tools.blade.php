@@ -215,30 +215,76 @@
             </div>
         </div>
 
-        <!-- TAB 3: Serviceable Pincodes -->
-        <div x-show="activeTab === 'serviceability'" class="p-8 bg-[#fbfcfd] min-h-[500px]" style="display: none;">
-            <div class="max-w-xl mx-auto text-center">
-                <div class="w-16 h-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mb-4">
-                    <i class="fa-solid fa-map-location-dot text-2xl"></i>
-                </div>
-                <h2 class="text-xl font-bold text-gray-900 mb-2">Check Pincode Serviceability</h2>
-                <p class="text-sm text-gray-500 mb-6">Enter any Indian pincode to see which couriers can deliver there.</p>
+        <!-- TAB 3: Serviceable Pincodes (Matches Screenshot 1) -->
+        <div x-show="activeTab === 'serviceability'" class="p-6 bg-[#f8fafc] min-h-[500px]" style="display: none;">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto">
                 
-                <form @submit.prevent="checkPincode" class="flex items-center">
-                    <input type="text" x-model="pincodeCheck" maxlength="6" placeholder="Enter 6-digit Pincode" class="flex-1 border border-gray-300 rounded-l-lg px-4 py-3 text-sm focus:outline-none focus:border-[#4338ca] font-medium">
-                    <button type="submit" class="px-6 py-3 bg-[#4338ca] text-white font-bold text-sm rounded-r-lg hover:bg-[#3730a3] transition">
-                        <span x-show="!pincodeLoading">Check</span>
-                        <span x-show="pincodeLoading"><i class="fa-solid fa-spinner fa-spin"></i></span>
-                    </button>
-                </form>
+                <!-- Left Box: Download Serviceable Pincodes List -->
+                <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-base mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-[#4338ca]"></i> Download Serviceable Pincodes List
+                        </h3>
 
-                <div x-show="pincodeResult" class="mt-8 text-left bg-white p-6 rounded-xl border border-gray-200 shadow-sm" style="display: none;">
-                    <h3 class="font-bold text-gray-900 mb-4">Serviceable Couriers for <span x-text="pincodeCheck" class="text-[#4338ca]"></span></h3>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-md text-xs font-bold"><i class="fa-solid fa-check mr-1"></i> Delhivery</span>
-                        <span class="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-md text-xs font-bold"><i class="fa-solid fa-check mr-1"></i> XpressBees</span>
+                        <form @submit.prevent="checkPincode" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1.5">Pickup Pincode <span class="text-gray-400 font-normal">(For Zone Mapping)</span></label>
+                                <input type="text" x-model="pincodeCheck" maxlength="6" placeholder="e.g. 110001" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#4338ca] font-medium">
+                            </div>
+
+                            <button type="submit" class="w-full py-2.5 bg-[#818cf8] hover:bg-[#6366f1] text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i> Download
+                            </button>
+                        </form>
+                    </div>
+
+                    <p class="text-[11px] text-gray-400 mt-6 leading-relaxed">
+                        Exports run in the background. You can queue more pincodes while others are processing — track them under Download History.
+                    </p>
+                </div>
+
+                <!-- Right Box: Download History -->
+                <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm">
+                    <h3 class="font-bold text-gray-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-gray-400"></i> Download History
+                    </h3>
+
+                    <!-- Search Filter Row -->
+                    <div class="flex flex-wrap items-center gap-2 mb-6">
+                        <input type="text" placeholder="Pincode" class="border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none w-32">
+                        
+                        <select class="border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                            <option>All Status</option>
+                            <option>Completed</option>
+                            <option>Processing</option>
+                        </select>
+
+                        <div class="border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 flex items-center gap-2">
+                            <span>26/08/2026 ~ 25/09/2026</span>
+                            <i class="fa-solid fa-xmark text-gray-400 cursor-pointer"></i>
+                        </div>
+                    </div>
+
+                    <!-- History Items Container -->
+                    <div class="space-y-3">
+                        <div class="p-4 bg-gray-50/60 rounded-2xl border border-gray-100 flex items-center justify-between">
+                            <div>
+                                <div class="font-mono text-xs font-bold text-gray-800">6ab633038c86ccc5f3fa0cac</div>
+                                <div class="text-xs text-gray-500 font-semibold mt-0.5">Pincode: <span class="text-gray-900 font-bold">110059</span></div>
+                                <div class="text-[10px] text-gray-400 mt-1">25 Sept 2026, 14:08</div>
+                                <div class="text-[10px] text-gray-400">29,576 rows &middot; 57 couriers</div>
+                            </div>
+
+                            <div class="flex flex-col items-end gap-3">
+                                <span class="px-2.5 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-extrabold border border-green-100">Completed</span>
+                                <button class="px-3 py-1 bg-white border border-gray-200 text-gray-700 font-bold text-xs rounded-lg hover:bg-gray-50 shadow-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-download text-gray-400"></i> Download
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
 

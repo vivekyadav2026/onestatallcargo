@@ -92,11 +92,19 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/roles/{id}', [\App\Http\Controllers\AdminRoleController::class, 'update'])->name('admin.roles.update');
         Route::get('/reports', [\App\Http\Controllers\AdminReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\AdminReportController::class, 'exportCsv'])->name('admin.reports.export');
+        
+        // Admin KYC Verification
+        Route::get('/kyc', [\App\Http\Controllers\KycController::class, 'adminIndex'])->name('admin.kyc.index');
+        Route::post('/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'adminApprove'])->name('admin.kyc.approve');
+        Route::post('/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'adminReject'])->name('admin.kyc.reject');
     });
 
     // SELLER PORTAL (Requires Seller Role)
     Route::middleware(['role:seller,aggregator,b2b_customer,corporate'])->prefix('seller')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\SellerDashboardController::class, 'index'])->name('seller.dashboard');
+        
+        // KYC Submission
+        Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('seller.kyc.submit');
         
         // Premium Views
         Route::view('/tools', 'seller.tools')->name('seller.tools');
@@ -104,7 +112,12 @@ Route::middleware(['auth'])->group(function () {
         
         // Settings API
         Route::post('/settings/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('seller.settings.profile');
+        Route::post('/settings/bank', [\App\Http\Controllers\SettingsController::class, 'updateBankDetails'])->name('seller.settings.bank');
+        Route::post('/settings/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('seller.settings.password');
         Route::post('/settings/warehouses', [\App\Http\Controllers\SettingsController::class, 'createWarehouse'])->name('seller.settings.warehouses');
+        Route::put('/settings/warehouses/{id}', [\App\Http\Controllers\SettingsController::class, 'updateWarehouse'])->name('seller.settings.warehouses.update');
+        Route::delete('/settings/warehouses/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteWarehouse'])->name('seller.settings.warehouses.delete');
+        Route::post('/settings/warehouses/{id}/default', [\App\Http\Controllers\SettingsController::class, 'setDefaultWarehouse'])->name('seller.settings.warehouses.default');
         Route::post('/settings/api-keys', [\App\Http\Controllers\SettingsController::class, 'generateApiKey'])->name('seller.settings.api-keys');
         Route::delete('/settings/api-keys/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteApiKey'])->name('seller.settings.api-keys.delete');
         

@@ -57,12 +57,21 @@ class AdminSellerController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'company_name' => 'nullable|string|max:255',
+            'brand_name' => 'nullable|string|max:255',
+            'gstin' => 'nullable|string|max:15',
+            'pan_number' => 'nullable|string|max:10',
+            'business_type' => 'nullable|string|max:255',
+            'company_address' => 'nullable|string|max:1000',
+            'company_city' => 'nullable|string|max:255',
+            'company_state' => 'nullable|string|max:255',
+            'company_pincode' => 'nullable|string|max:6',
             'wallet_adjustment' => 'nullable|numeric'
         ]);
 
-        $seller->name = $validated['name'];
-        $seller->phone = $validated['phone'];
-        $seller->company_name = $validated['company_name'];
+        $seller->fill($request->only([
+            'name', 'phone', 'company_name', 'brand_name', 'gstin', 'pan_number',
+            'business_type', 'company_address', 'company_city', 'company_state', 'company_pincode'
+        ]));
         
         if (!empty($validated['wallet_adjustment']) && $validated['wallet_adjustment'] != 0) {
             $seller->wallet_balance += $validated['wallet_adjustment'];
@@ -70,6 +79,6 @@ class AdminSellerController extends Controller
 
         $seller->save();
 
-        return back()->with('success', 'Seller details updated successfully.');
+        return back()->with('success', 'Seller details and company profile updated successfully.');
     }
 }

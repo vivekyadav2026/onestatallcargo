@@ -18,6 +18,20 @@ class User extends Authenticatable
         'role',
         'phone',
         'company_name',
+        'brand_name',
+        'gstin',
+        'pan_number',
+        'business_type',
+        'company_address',
+        'company_city',
+        'company_state',
+        'company_pincode',
+        'website',
+        'support_phone',
+        'bank_name',
+        'account_number',
+        'ifsc_code',
+        'account_holder_name',
         'wallet_balance',
         'latitude',
         'longitude',
@@ -52,9 +66,14 @@ class User extends Authenticatable
         return $this->role === 'franchise';
     }
 
-    public function isRider(): bool
+    public function kyc()
     {
-        return $this->role === 'rider';
+        return $this->hasOne(Kyc::class);
+    }
+
+    public function isKycApproved(): bool
+    {
+        return $this->kyc && $this->kyc->status === 'approved';
     }
 }
 
