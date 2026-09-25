@@ -25,10 +25,10 @@
                     },
                     colors: {
                         brand: {
-                            navy: '#0B1B3D',
-                            blue: '#1A365D',
-                            yellow: '#FFB800',
-                            yellowHover: '#E5A600',
+                            navy: '#091024',
+                            blue: '#111D3D',
+                            red: '#E7004C',
+                            redHover: '#C70041',
                         }
                     }
                 }
@@ -39,20 +39,19 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
-        .hero-gradient { background: linear-gradient(135deg, #0B1B3D 0%, #1A365D 100%); }
+        .hero-gradient { background: linear-gradient(135deg, #001960 0%, #021A62 100%); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
     <!-- Global Navigation -->
-    <header class="bg-brand-navy text-white sticky top-0 z-50 shadow-md" x-data="{ mobileMenu: false, activeDropdown: null }">
+    <header class="bg-white text-brand-navy sticky top-0 z-50 shadow-sm border-b border-gray-100" x-data="{ mobileMenu: false, activeDropdown: null }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="/" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 rounded bg-brand-yellow text-brand-navy flex items-center justify-center font-bold text-xl transition-transform group-hover:scale-105">O</div>
-                        <span class="font-bold text-2xl tracking-tight text-white">OneStall Cargo</span>
+                    <a href="/" class="flex items-center group  transition-transform group-hover:scale-105">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-16 md:h-20 w-auto object-contain py-1">
                     </a>
                 </div>
 
@@ -61,7 +60,7 @@
                     
                     <!-- Solutions Dropdown -->
                     <div class="relative" @mouseenter="activeDropdown = 'solutions'" @mouseleave="activeDropdown = null">
-                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                        <button class="text-sm font-semibold text-gray-700 hover:text-brand-red flex items-center py-8">
                             Solutions <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                         </button>
                         <div x-show="activeDropdown === 'solutions'" x-transition x-cloak class="absolute left-0 mt-0 w-64 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
@@ -76,7 +75,7 @@
 
                     <!-- Platform Dropdown -->
                     <div class="relative" @mouseenter="activeDropdown = 'platform'" @mouseleave="activeDropdown = null">
-                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                        <button class="text-sm font-semibold text-gray-700 hover:text-brand-red flex items-center py-8">
                             Platform <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                         </button>
                         <div x-show="activeDropdown === 'platform'" x-transition x-cloak class="absolute left-0 mt-0 w-64 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
@@ -91,7 +90,7 @@
 
                     <!-- Developers Dropdown -->
                     <div class="relative" @mouseenter="activeDropdown = 'developers'" @mouseleave="activeDropdown = null">
-                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                        <button class="text-sm font-semibold text-gray-700 hover:text-brand-red flex items-center py-8">
                             Developers <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                         </button>
                         <div x-show="activeDropdown === 'developers'" x-transition x-cloak class="absolute left-0 mt-0 w-56 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
@@ -102,7 +101,7 @@
 
                     <!-- Business Dropdown -->
                     <div class="relative" @mouseenter="activeDropdown = 'business'" @mouseleave="activeDropdown = null">
-                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                        <button class="text-sm font-semibold text-gray-700 hover:text-brand-red flex items-center py-8">
                             Business <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                         </button>
                         <div x-show="activeDropdown === 'business'" x-transition x-cloak class="absolute left-0 mt-0 w-48 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
@@ -115,7 +114,7 @@
 
                     <!-- Resources Dropdown -->
                     <div class="relative" @mouseenter="activeDropdown = 'resources'" @mouseleave="activeDropdown = null">
-                        <button class="text-sm font-semibold text-gray-200 hover:text-white flex items-center py-8">
+                        <button class="text-sm font-semibold text-gray-700 hover:text-brand-red flex items-center py-8">
                             Resources <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
                         </button>
                         <div x-show="activeDropdown === 'resources'" x-transition x-cloak class="absolute left-0 mt-0 w-48 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
@@ -128,16 +127,16 @@
 
                 <!-- Desktop CTAs -->
                 <div class="hidden lg:flex items-center space-x-4">
-                    <a href="{{ route('track') }}" class="text-sm font-semibold text-white hover:text-brand-yellow transition">
-                        <i class="fa-solid fa-location-arrow mr-1"></i> Track
+                    <a href="{{ route('track') }}" class="text-sm font-semibold text-gray-700 hover:text-brand-red transition">
+                        Track Order
                     </a>
-                    <a href="{{ route('login') }}" class="text-sm font-semibold text-white hover:text-gray-300 transition ml-2">Login</a>
-                    <a href="{{ route('register') }}" class="px-5 py-2 rounded text-sm font-bold bg-brand-yellow text-brand-navy hover:bg-brand-yellowHover transition shadow-sm">Get Started</a>
+                    <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-full px-6 py-2 hover:bg-gray-50 transition ml-4">Login</a>
+                    <a href="{{ route('register') }}" class="px-6 py-2 rounded-full text-sm font-bold bg-brand-red text-white hover:bg-brand-redHover transition shadow-sm ml-2">Sign Up</a>
                 </div>
 
                 <!-- Mobile menu button -->
                 <div class="lg:hidden flex items-center">
-                    <button @click="mobileMenu = !mobileMenu" class="text-white hover:text-brand-yellow focus:outline-none">
+                    <button @click="mobileMenu = !mobileMenu" class="text-gray-700 hover:text-brand-red focus:outline-none">
                         <i class="fa-solid fa-bars text-2xl" x-show="!mobileMenu"></i>
                         <i class="fa-solid fa-xmark text-2xl" x-show="mobileMenu" x-cloak></i>
                     </button>
@@ -181,9 +180,9 @@
                 <a href="{{ route('pricing') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Pricing</a>
                 
                 <div class="border-t border-gray-600 my-4"></div>
-                <a href="{{ route('track') }}" class="block px-3 py-3 text-base font-bold text-brand-yellow">Track Shipment</a>
+                <a href="{{ route('track') }}" class="block px-3 py-3 text-base font-bold text-brand-red">Track Shipment</a>
                 <a href="{{ route('login') }}" class="block px-3 py-3 text-base font-semibold text-white">Login</a>
-                <a href="{{ route('register') }}" class="block px-3 py-3 text-base font-bold text-white bg-brand-yellow text-brand-navy rounded mt-2 text-center">Get Started</a>
+                <a href="{{ route('register') }}" class="block px-3 py-3 text-base font-bold text-white bg-brand-red text-brand-navy rounded mt-2 text-center">Get Started</a>
             </div>
         </div>
     </header>
@@ -199,9 +198,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
                 <!-- Column 1 -->
                 <div class="lg:col-span-1">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 rounded bg-brand-yellow text-brand-navy flex items-center justify-center font-bold text-lg">O</div>
-                        <span class="font-bold text-xl text-white tracking-tight">OneStall Cargo</span>
+                    <div class="mb-6 bg-white inline-block p-1.5 rounded-lg">
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-12 w-auto">
                     </div>
                     <p class="text-sm leading-relaxed mb-6">Complete logistics infrastructure for businesses. Ship B2B, B2C, and internationally on one platform.</p>
                 </div>
@@ -268,3 +266,8 @@
     </footer>
 </body>
 </html>
+
+
+
+
+

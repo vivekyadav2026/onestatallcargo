@@ -1,419 +1,369 @@
 @extends('layouts.public')
-@section('title', 'OneStall Cargo | Ship Smarter. Deliver With Confidence.')
+
+@section('title', 'OneStall Cargo | Shipping Solutions Designed To Help You Grow')
 
 @section('content')
-<!-- 1. Hero & Tracking -->
-<section class="relative bg-brand-navy overflow-hidden">
-    <!-- Hero Image Background -->
-    <div class="absolute inset-0 z-0">
-        <img src="{{ asset('images/logistics_hero_banner.jpg') }}" alt="OneStall Cargo Logistics Hub" class="w-full h-full object-cover object-center opacity-40">
-        <div class="absolute inset-0 bg-gradient-to-r from-brand-navy via-brand-navy/90 to-transparent"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-16 pb-20 lg:pt-24 lg:pb-24 flex flex-col lg:flex-row items-center">
-        <!-- Hero Text -->
-        <div class="w-full lg:w-3/5 lg:pr-12 text-center lg:text-left">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-                One Platform. <br>
-                <span class="text-brand-yellow drop-shadow-md">Every Shipment.</span>
+<!-- 1. Hero Section -->
+<section class="bg-gradient-to-r from-blue-50/40 via-white to-blue-50/40 relative pt-6 pb-8 overflow-hidden">
+    <!-- Subtle background glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-100/50 rounded-full blur-3xl opacity-60 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center">
+        <!-- Left Side -->
+        <div class="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left lg:pr-8">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-navy leading-tight tracking-tight mb-1">
+                eCommerce Shipping
             </h1>
-            <p class="mt-6 text-lg text-gray-200 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed drop-shadow">
-                B2C shipping, B2B cargo, international logistics, and technology-powered delivery through a single unified infrastructure.
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-red leading-tight tracking-tight mb-4">
+                Built for the Bold
+            </h1>
+            <p class="text-base md:text-lg text-gray-700 mb-6 font-medium max-w-md mx-auto lg:mx-0 leading-relaxed">
+                Fuel your ambition with next-gen eCommerce logistics - engineered for speed, scale, and simplicity.
             </p>
+
+            <!-- CTA -->
+            <div>
+                <a href="{{ route('register') }}" class="inline-block bg-brand-red text-white font-bold text-base px-7 py-3 rounded-full hover:bg-brand-redHover transition-colors shadow-md shadow-red-500/20">
+                    Get Started
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Side (Images & Floating Elements) -->
+        <div class="w-full lg:w-1/2 relative h-[320px] lg:h-[380px] flex justify-center items-center mt-8 lg:mt-0">
             
-            <div class="mt-8 flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-                <a href="{{ route('register') }}" class="px-8 py-3 rounded-lg bg-brand-yellow text-brand-navy font-bold text-lg hover:bg-brand-yellowHover transition shadow-lg text-center">
-                    Start Shipping
-                </a>
-                <a href="{{ route('docs') }}" class="px-8 py-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/50 text-white font-bold text-lg hover:bg-white/20 transition text-center">
-                    View API Docs
-                </a>
+            <!-- Main Character Image (Clean Minimal Card) -->
+            <div class="relative z-10 w-3/4 h-full rounded-2xl shadow-md border-2 border-white overflow-hidden bg-white">
+                <img src="{{ asset('images/ecommerce_boy.jpg') }}" alt="eCommerce Logistics" class="w-full h-full object-cover object-center">
             </div>
 
-            <!-- Quick Track -->
-            <div class="mt-10 bg-white/10 p-2 rounded-xl backdrop-blur-md max-w-md mx-auto lg:mx-0 border border-white/30 shadow-2xl">
-                <form action="{{ route('track.post') }}" method="POST" class="flex items-center">
-                    @csrf
-                    <div class="pl-4 pr-2 text-brand-yellow"><i class="fa-solid fa-cube"></i></div>
-                    <input type="text" name="awb" placeholder="Enter AWB / Shipment ID" class="w-full bg-transparent border-none text-white placeholder-gray-300 focus:outline-none focus:ring-0 py-2 font-medium" required>
-                    <button type="submit" class="bg-brand-blue text-white font-bold px-6 py-2 rounded-lg hover:bg-blue-800 transition shadow">Track</button>
-                </form>
+            <!-- Floating UI Elements -->
+            
+            <!-- 1. Revenue Chart -->
+            <div class="absolute top-2 left-2 lg:left-4 w-36 bg-white rounded-xl shadow-lg p-2.5 border border-gray-100 z-30">
+                <h4 class="text-[10px] font-bold text-brand-navy text-center mb-1">REVENUE</h4>
+                <div class="relative h-12 w-full border-l border-b border-gray-200 flex items-end">
+                    <svg viewBox="0 0 100 50" class="absolute bottom-0 w-full h-full overflow-visible">
+                        <path d="M0,50 L0,45 C20,40 30,20 50,25 C70,30 80,5 100,0 L100,50 Z" fill="#bbf7d0" opacity="0.6" />
+                        <path d="M0,45 C20,40 30,20 50,25 C70,30 80,5 100,0" fill="none" stroke="#22c55e" stroke-width="2.5" />
+                        <circle cx="50" cy="25" r="3" fill="#1e3a8a" />
+                        <circle cx="100" cy="0" r="3" fill="#1e3a8a" />
+                    </svg>
+                </div>
             </div>
+
+            <!-- 2. Store Mockup -->
+            <div class="absolute bottom-2 right-2 lg:right-4 w-44 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 z-30">
+                <div class="h-4 bg-brand-navy flex justify-center items-center text-[5px] text-white font-bold tracking-widest">
+                    <span>STORE</span>
+                </div>
+                <div class="p-2 flex gap-2">
+                    <div class="w-1/2">
+                        <div class="w-full h-12 bg-gray-100 rounded flex items-center justify-center text-gray-400">
+                            <i class="fa-solid fa-headphones text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="w-1/2">
+                        <div class="text-[7px] font-bold text-brand-navy mb-0.5">Headphone</div>
+                        <div class="text-[7px] font-bold text-brand-red">&#8377; 2,999</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Floating Pill - Order Increase -->
+            <div class="absolute bottom-16 left-0 bg-white rounded-lg shadow-md py-1 px-2.5 flex items-center gap-1.5 border border-gray-100 z-30">
+                <div class="w-4 h-4 rounded bg-brand-navy flex items-center justify-center text-brand-red text-[9px]">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                </div>
+                <span class="text-[9px] font-bold text-gray-800">5X Orders</span>
+            </div>
+
+            <!-- 4. Floating Pill - Live Tracking -->
+            <div class="absolute top-8 right-2 bg-white rounded-lg shadow-md py-1 px-2.5 flex items-center gap-1.5 border border-gray-100 z-30">
+                <div class="w-4 h-4 rounded border border-brand-red flex items-center justify-center text-brand-red text-[9px] bg-red-50">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <span class="text-[9px] font-bold text-gray-800">Live Tracking</span>
+            </div>
+
+            <!-- 5. Floating Pill - Support -->
+            <div class="absolute top-24 right-0 bg-white rounded-lg shadow-md py-1 px-2.5 flex items-center gap-1.5 border border-gray-100 z-30">
+                <div class="w-4 h-4 rounded border border-brand-navy flex items-center justify-center text-brand-navy text-[9px]">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <span class="text-[9px] font-bold text-gray-800">24/7 Support</span>
+            </div>
+
         </div>
+    </div>
+</section>
 
-        <!-- Right Side UI Overlay (Compact) -->
-        <div class="w-full lg:w-2/5 mt-12 lg:mt-0 relative hidden md:block">
-            <!-- Simulated UI -->
-            <div class="bg-white/95 backdrop-blur rounded-xl shadow-2xl overflow-hidden border border-gray-200/50 transform lg:rotate-2 hover:rotate-0 transition duration-500 scale-95 origin-right">
-                <div class="bg-gray-100/80 px-4 py-2 border-b border-gray-200 flex items-center gap-2">
-                    <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                    <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                    <div class="ml-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Live Status</div>
-                </div>
-                <div class="p-5">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">AWB Number</p>
-                            <h3 class="text-lg font-extrabold text-brand-navy">OSC92847163</h3>
-                        </div>
-                        <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded">In Transit</span>
-                    </div>
-
-                    <!-- Timeline Visual -->
-                    <div class="relative pl-5 border-l-2 border-gray-200 space-y-4">
-                        <div class="relative">
-                            <div class="absolute -left-[27px] w-3 h-3 bg-brand-navy rounded-full border-2 border-white"></div>
-                            <p class="text-[10px] font-bold text-gray-400">09:42 AM</p>
-                            <p class="text-xs font-bold text-gray-800">Picked Up</p>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute -left-[27px] w-3 h-3 bg-brand-navy rounded-full border-2 border-white"></div>
-                            <p class="text-[10px] font-bold text-gray-400">02:15 PM</p>
-                            <p class="text-xs font-bold text-gray-800">Origin Hub Scan</p>
-                        </div>
-                        <div class="relative">
-                            <div class="absolute -left-[27px] w-3 h-3 bg-brand-yellow rounded-full border-2 border-white animate-pulse"></div>
-                            <p class="text-[10px] font-bold text-brand-yellow">Now</p>
-                            <p class="text-xs font-bold text-gray-800">In Transit</p>
-                        </div>
-                    </div>
-                </div>
+<!-- 2. Dark Blue Status Bar -->
+<section class="bg-brand-navy py-3 border-y border-brand-dark">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap justify-between items-center text-center gap-3">
+            <div class="flex-1 min-w-[120px]">
+                <div class="text-white font-medium text-xs md:text-sm">29,000+ Pin Codes</div>
+            </div>
+            <div class="hidden md:block w-px h-4 bg-gray-600"></div>
+            <div class="flex-1 min-w-[120px]">
+                <div class="text-white font-medium text-xs md:text-sm">15+ Courier Partners</div>
+            </div>
+            <div class="hidden md:block w-px h-4 bg-gray-600"></div>
+            <div class="flex-1 min-w-[120px]">
+                <div class="text-white font-medium text-xs md:text-sm">Automated NDR</div>
+            </div>
+            <div class="hidden md:block w-px h-4 bg-gray-600"></div>
+            <div class="flex-1 min-w-[120px]">
+                <div class="text-white font-medium text-xs md:text-sm">Fast COD Remittance</div>
+            </div>
+            <div class="hidden md:block w-px h-4 bg-gray-600"></div>
+            <div class="flex-1 min-w-[120px]">
+                <div class="text-white font-medium text-xs md:text-sm">Zero Setup Fee</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 2. Capability Strip -->
-<div class="bg-gray-100 border-b border-gray-200 py-6">
+<!-- 3. Alternating Feature Blocks -->
+<section class="py-12 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap justify-center md:justify-between items-center gap-6 text-sm font-bold text-gray-500 uppercase tracking-widest">
-            <span>B2C Shipping</span>
-            <span class="hidden md:inline text-gray-300">•</span>
-            <span>B2B & Cargo</span>
-            <span class="hidden md:inline text-gray-300">•</span>
-            <span>International</span>
-            <span class="hidden md:inline text-gray-300">•</span>
-            <span>Quick Delivery</span>
-            <span class="hidden md:inline text-gray-300">•</span>
-            <span>Courier Aggregation</span>
-            <span class="hidden md:inline text-gray-300">•</span>
-            <span>API Infrastructure</span>
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-brand-navy">Scale With OneStall Cargo</h2>
+            <p class="text-brand-red font-semibold mt-1 text-sm md:text-base">India's Most Trusted Shipping Platform</p>
         </div>
-    </div>
-</div>
 
-<!-- 3. One Platform -->
-<section class="py-12 bg-white overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
-        <h2 class="text-3xl md:text-5xl font-extrabold text-brand-navy tracking-tight">One Platform for Every Shipment</h2>
-        <p class="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">Whether you are shipping a 500g parcel to a customer or a 500kg pallet to a warehouse, our infrastructure handles it.</p>
-    </div>
-
-    <div class="space-y-12">
-        <!-- B2C Shipping -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-6">
+        <!-- Block 1 -->
+        <div class="flex flex-col md:flex-row items-center gap-8 mb-12">
             <div class="w-full md:w-1/2">
-                <h3 class="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-2">01 — Solutions</h3>
-                <h4 class="text-3xl font-bold text-gray-900 mb-4">B2C Shipping for Sellers</h4>
-                <p class="text-gray-600 mb-6 text-lg">Manage your D2C brand with prepaid and Cash on Delivery (COD) capabilities. Instantly generate AWBs, print labels, and schedule pickups across multiple courier partners.</p>
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Smart courier allocation</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Automated NDR & RTO workflows</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Fast COD settlements</li>
-                </ul>
-                <a href="{{ route('solutions.b2c') }}" class="inline-flex items-center text-brand-blue font-bold hover:text-brand-navy transition group">
-                    Explore B2C Shipping <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition"></i>
-                </a>
+                <div class="bg-gray-50 rounded-xl h-80 md:h-96 relative overflow-hidden border border-gray-100 p-2 shadow-sm">
+                    <img src="{{ asset('images/dashboard.jpg') }}" alt="Logistics Dashboard" class="w-full h-full object-cover rounded-lg">
+                </div>
             </div>
             <div class="w-full md:w-1/2">
-                <!-- Seller Dashboard Mockup -->
-                <div class="bg-gray-50 rounded-2xl border border-gray-200 shadow-lg p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="font-bold text-gray-800">Orders Overview</span>
-                        <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">Today</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pickup Pending</p>
-                            <p class="text-2xl font-black text-brand-navy">124</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">In Transit</p>
-                            <p class="text-2xl font-black text-brand-navy">892</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Delivered</p>
-                            <p class="text-2xl font-black text-green-600">4,021</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                            <p class="text-xs text-gray-500 font-bold uppercase mb-1">Pending COD</p>
-                            <p class="text-2xl font-black text-brand-yellow">₹45.2K</p>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-brand-navy mb-3">Fastest COD Remittance</h3>
+                <p class="text-gray-600 mb-4 text-sm md:text-base">Maintain unstoppable cash flow for your business. Get your COD payments credited to your account faster than ever before.</p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">1-2 days remittance cycle</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Clear COD reconciliations</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Growth without cash blocks</span></li>
+                </ul>
             </div>
         </div>
 
-        <!-- B2B Cargo (Reversed) -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row-reverse items-center gap-6">
+        <!-- Block 2 -->
+        <div class="flex flex-col md:flex-row-reverse items-center gap-8 mb-12">
             <div class="w-full md:w-1/2">
-                <h3 class="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-2">02 — Solutions</h3>
-                <h4 class="text-3xl font-bold text-gray-900 mb-4">B2B & Heavy Cargo</h4>
-                <p class="text-gray-600 mb-6 text-lg">Built for enterprise supply chains. Ship multiple boxes, calculate freight based on volume/weight, and manage PTL/FTL requirements seamlessly.</p>
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Digital LR / Consignment Notes</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Hub-to-Hub transfers</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Proof of Delivery (POD) management</li>
-                </ul>
-                <a href="{{ route('solutions.b2b') }}" class="inline-flex items-center text-brand-blue font-bold hover:text-brand-navy transition group">
-                    Explore B2B & Cargo <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition"></i>
-                </a>
+                <div class="bg-gray-50 rounded-xl h-80 md:h-96 relative overflow-hidden border border-gray-100 p-2 shadow-sm">
+                    <img src="{{ asset('images/warehouse.jpg') }}" alt="Warehouse Logistics" class="w-full h-full object-cover rounded-lg">
+                </div>
             </div>
             <div class="w-full md:w-1/2">
-                <!-- Cargo Visual -->
-                <div class="bg-brand-navy rounded-2xl border border-gray-800 shadow-2xl p-6 relative overflow-hidden">
-                    <div class="absolute right-0 top-0 opacity-10">
-                        <i class="fa-solid fa-truck-moving text-[200px] text-white"></i>
-                    </div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                            <span class="font-bold text-white text-lg">Consignment #LR-88219</span>
-                            <span class="px-2 py-1 bg-gray-800 text-gray-300 text-xs rounded border border-gray-600">PTL Freight</span>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400">Total Weight:</span>
-                                <span class="text-white font-bold">1,450 kg</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400">Packages:</span>
-                                <span class="text-white font-bold">42 Pallets</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-400">Vehicle Type:</span>
-                                <span class="text-white font-bold">32 FT Multi-Axle</span>
-                            </div>
-                        </div>
-                        <button class="mt-6 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded text-sm transition">
-                            Download LR Copy
-                        </button>
-                    </div>
-                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-brand-navy mb-3">Automated Courier Allocation</h3>
+                <p class="text-gray-600 mb-4 text-sm md:text-base">Our system automatically allocates orders to the best courier partner based on historical performance, cost, and pin code serviceability.</p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Reduce shipping costs</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Increase delivery percentage</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Rule-based allocation</span></li>
+                </ul>
             </div>
         </div>
-
-        <!-- International Shipping -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-6">
+        
+        <!-- Block 3 -->
+        <div class="flex flex-col md:flex-row items-center gap-8">
             <div class="w-full md:w-1/2">
-                <h3 class="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-2">03 — Solutions</h3>
-                <h4 class="text-3xl font-bold text-gray-900 mb-4">International Shipping</h4>
-                <p class="text-gray-600 mb-6 text-lg">Take your business global. Automate commercial invoices, manage customs documentation, and get transparent cross-border rates.</p>
-                <ul class="space-y-3 mb-8">
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Pre-calculated Duties & Taxes</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Commercial Invoice Generation</li>
-                    <li class="flex items-center text-gray-700 font-medium"><i class="fa-solid fa-check text-green-500 mr-3"></i> Global Tracking Network</li>
-                </ul>
-                <a href="{{ route('solutions.international') }}" class="inline-flex items-center text-brand-blue font-bold hover:text-brand-navy transition group">
-                    Explore International Shipping <i class="fa-solid fa-arrow-right ml-2 transform group-hover:translate-x-1 transition"></i>
-                </a>
+                <div class="bg-gray-50 rounded-xl h-80 md:h-96 relative overflow-hidden border border-gray-100 p-2 shadow-sm">
+                    <img src="{{ asset('images/dashboard.jpg') }}" alt="Data Analytics" class="w-full h-full object-cover rounded-lg">
+                </div>
             </div>
             <div class="w-full md:w-1/2">
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden aspect-video relative flex items-center justify-center">
-                    <!-- Stylized Map Visual -->
-                    <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjx0ZXh0IHk9IjUwJSIgeD0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMWEzNjVkIiBmb250LXNpemU9IjUwMCIgZm9udC1mYW1pbHk9ImZvbnRhd2Vzb21lIj7ufDBhYzwvdGV4dD48L3N2Zz4=')] bg-center bg-no-repeat bg-contain"></div>
-                    <div class="relative z-10 flex flex-col items-center">
-                        <div class="flex items-center gap-6">
-                            <div class="text-center">
-                                <div class="w-16 h-16 bg-brand-navy rounded-full flex items-center justify-center text-white text-xl shadow-lg border-4 border-white mb-2"><i class="fa-solid fa-location-dot"></i></div>
-                                <p class="font-bold text-gray-800">India</p>
-                            </div>
-                            <div class="w-24 border-t-2 border-dashed border-gray-400 relative">
-                                <i class="fa-solid fa-plane absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-brand-yellow text-xl"></i>
-                            </div>
-                            <div class="text-center">
-                                <div class="w-16 h-16 bg-brand-blue rounded-full flex items-center justify-center text-white text-xl shadow-lg border-4 border-white mb-2"><i class="fa-solid fa-earth-americas"></i></div>
-                                <p class="font-bold text-gray-800">Global</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-brand-navy mb-3">Minimize RTO Losses</h3>
+                <p class="text-gray-600 mb-4 text-sm md:text-base">Reduce your Return To Origin (RTO) costs significantly with our automated Non-Delivery Report (NDR) management system.</p>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Automated buyer communication (SMS/IVR)</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Real-time action on undelivered orders</span></li>
+                    <li class="flex items-center"><i class="fa-solid fa-circle-check text-brand-red mr-2"></i> <span class="text-gray-700 font-medium">Fake remark detection</span></li>
+                </ul>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 4. Shipment Journey -->
-<section class="py-12 bg-gray-50 border-t border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl md:text-5xl font-extrabold text-brand-navy tracking-tight">From Booking to Doorstep</h2>
-            <p class="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">Complete visibility across the entire lifecycle of your shipment.</p>
+<!-- 4. Gradient API Section -->
+<section class="py-12 bg-gradient-to-br from-[#E7004C] via-[#590C45] to-brand-navy text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col lg:flex-row items-center gap-8">
+        <div class="w-full lg:w-1/2 text-center lg:text-left">
+            <h2 class="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">Seamless Integrations with Your Favorite Platforms</h2>
+            <p class="text-sm md:text-base text-white/80 mb-6 font-medium">Sync orders directly from your store. Integrate in minutes with Shopify, WooCommerce, Magento, or use our developer-friendly APIs for custom setups.</p>
+            <a href="{{ route('docs') }}" class="inline-block px-6 py-2.5 rounded-full bg-white text-brand-navy font-bold text-sm hover:bg-gray-100 transition shadow">
+                View API Docs
+            </a>
         </div>
-
-        <div class="overflow-x-auto pb-8 scrollbar-hide">
-            <div class="flex items-center min-w-[1000px] justify-between relative px-4">
-                <!-- Connecting Line -->
-                <div class="absolute top-6 left-12 right-12 h-1 bg-gray-300 z-0"></div>
+        
+        <div class="w-full lg:w-1/2 flex justify-center">
+            <div class="relative w-64 h-64 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border border-white/20 animate-[spin_20s_linear_infinite]"></div>
+                <div class="absolute inset-4 rounded-full border border-white/30 animate-[spin_15s_linear_infinite_reverse]"></div>
                 
-                <!-- Steps -->
-                @php
-                    $steps = [
-                        ['icon' => 'fa-laptop-code', 'title' => 'Booking & API'],
-                        ['icon' => 'fa-barcode', 'title' => 'AWB & Label'],
-                        ['icon' => 'fa-boxes-packing', 'title' => 'Pickup & Proof'],
-                        ['icon' => 'fa-warehouse', 'title' => 'Origin Hub'],
-                        ['icon' => 'fa-truck-fast', 'title' => 'Transit'],
-                        ['icon' => 'fa-motorcycle', 'title' => 'Out for Delivery'],
-                        ['icon' => 'fa-handshake', 'title' => 'POD / COD']
-                    ];
-                @endphp
-
-                @foreach($steps as $index => $step)
-                    <div class="relative z-10 flex flex-col items-center w-32">
-                        <div class="w-12 h-12 rounded-full {{ $index == 2 || $index == 6 ? 'bg-brand-yellow text-brand-navy border-4 border-white shadow-md' : 'bg-white text-gray-500 border-2 border-gray-300 hover:border-brand-blue hover:text-brand-blue' }} flex items-center justify-center text-xl transition duration-300 cursor-default">
-                            <i class="fa-solid {{ $step['icon'] }}"></i>
-                        </div>
-                        <p class="mt-4 text-sm font-bold text-gray-700 text-center leading-tight">{{ $step['title'] }}</p>
-                    </div>
-                @endforeach
+                <!-- Center Logo -->
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg z-10">
+                    <span class="text-xl font-black text-brand-navy">API</span>
+                </div>
+                
+                <!-- Satellite Icons -->
+                <div class="absolute top-0 w-10 h-10 bg-[#95BF47] rounded-full flex items-center justify-center text-white shadow"><i class="fa-brands fa-shopify"></i></div>
+                <div class="absolute bottom-0 w-10 h-10 bg-[#96588A] rounded-full flex items-center justify-center text-white shadow"><i class="fa-brands fa-wordpress"></i></div>
+                <div class="absolute left-0 w-10 h-10 bg-[#F26522] rounded-full flex items-center justify-center text-white shadow"><i class="fa-brands fa-magento"></i></div>
+                <div class="absolute right-0 w-10 h-10 bg-[#0073B1] rounded-full flex items-center justify-center text-white shadow"><i class="fa-solid fa-code"></i></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 5. Courier Aggregation -->
-<section class="py-12 bg-white">
+<!-- 5. Courier Integration Logos -->
+<section class="py-8 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl md:text-5xl font-extrabold text-brand-navy tracking-tight mb-6">One Integration. Multiple Networks.</h2>
-        <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-8">Connect once to the OneStall API and instantly route your shipments across leading delivery networks based on price, speed, and serviceability.</p>
+        <p class="text-brand-navy font-bold text-xs uppercase tracking-widest mb-4">Integrated With India's Top Carriers</p>
+        <div class="flex flex-wrap justify-center items-center gap-6 md:gap-10 opacity-70">
+            <span class="text-lg md:text-xl font-black text-gray-500">Delhivery</span>
+            <span class="text-lg md:text-xl font-black text-gray-500">BlueDart</span>
+            <span class="text-lg md:text-xl font-black text-gray-500">XpressBees</span>
+            <span class="text-lg md:text-xl font-black text-gray-500">EcomExpress</span>
+            <span class="text-lg md:text-xl font-black text-gray-500">Shadowfax</span>
+            <span class="text-lg md:text-xl font-black text-gray-500">DTDC</span>
+        </div>
+    </div>
+</section>
+
+<!-- 6. Explore Platform Grid -->
+<section class="py-12 bg-gray-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-brand-navy">Explore The OneStall Platform</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Large Card 1 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow transition">
+                <div class="inline-block px-2.5 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[10px] font-bold mb-3 uppercase tracking-wide">
+                    B2C Shipping
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Powering E-commerce Deliveries</h3>
+                <p class="text-gray-600 text-sm mb-4">Ship to 29,000+ pin codes seamlessly. Give your customers a premium post-purchase tracking experience.</p>
+                <div class="h-64 rounded-lg overflow-hidden border border-gray-100">
+                    <img src="{{ asset('images/dashboard.jpg') }}" alt="B2C Shipping" class="w-full h-full object-cover">
+                </div>
+            </div>
+            
+            <!-- Large Card 2 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow transition">
+                <div class="inline-block px-2.5 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[10px] font-bold mb-3 uppercase tracking-wide">
+                    B2B & Cargo
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Heavy Shipments Made Easy</h3>
+                <p class="text-gray-600 text-sm mb-4">Move bulk inventory across warehouses or to offline distributors with our dedicated B2B cargo services at discounted rates.</p>
+                <div class="h-64 rounded-lg overflow-hidden border border-gray-100">
+                    <img src="{{ asset('images/warehouse.jpg') }}" alt="B2B Cargo" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
         
-        <div class="flex flex-col md:flex-row items-center justify-center gap-8">
-            <div class="w-full md:w-1/3 bg-gray-50 p-8 rounded-2xl border border-gray-200">
-                <i class="fa-solid fa-server text-4xl text-brand-navy mb-4"></i>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">OneStall Platform</h4>
-                <p class="text-gray-500 text-sm">Centralized Rate Engine, Booking & Tracking</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Small Card 1 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow transition flex flex-col h-full">
+                <div class="inline-block px-2 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[9px] font-bold mb-2 uppercase self-start">Global Reach</div>
+                <h4 class="text-base font-bold text-gray-900 mb-1">Cross Border</h4>
+                <p class="text-xs text-gray-600 mb-4 flex-grow">Ship internationally with ease. Export your products worldwide.</p>
+                <div class="h-20 bg-gray-50 rounded-lg flex items-center justify-center text-2xl text-gray-400 border border-gray-100">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+            </div>
+
+            <!-- Small Card 2 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow transition flex flex-col h-full">
+                <div class="inline-block px-2 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[9px] font-bold mb-2 uppercase self-start">Tech Logistics</div>
+                <h4 class="text-base font-bold text-gray-900 mb-1">Video Evidence</h4>
+                <p class="text-xs text-gray-600 mb-4 flex-grow">Record pickups and hub scans to eliminate fake damage claims.</p>
+                <div class="h-20 bg-gray-50 rounded-lg flex items-center justify-center text-2xl text-gray-400 border border-gray-100">
+                    <i class="fa-solid fa-video"></i>
+                </div>
+            </div>
+
+            <!-- Small Card 3 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow transition flex flex-col h-full">
+                <div class="inline-block px-2 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[9px] font-bold mb-2 uppercase self-start">Smart Warehousing</div>
+                <h4 class="text-base font-bold text-gray-900 mb-1">Fulfillment</h4>
+                <p class="text-xs text-gray-600 mb-4 flex-grow">Store products closer to customers. Same-day & Next-day delivery.</p>
+                <div class="h-20 bg-gray-50 rounded-lg flex items-center justify-center text-2xl text-gray-400 border border-gray-100">
+                    <i class="fa-solid fa-warehouse"></i>
+                </div>
             </div>
             
-            <div class="text-gray-300 hidden md:block">
-                <i class="fa-solid fa-arrow-right-arrow-left text-3xl"></i>
-            </div>
-            
-            <div class="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <!-- Mock Courier Blocks -->
-                <div class="bg-white p-4 border border-gray-200 rounded-xl shadow-sm text-center font-bold text-gray-600">Carrier A</div>
-                <div class="bg-white p-4 border border-gray-200 rounded-xl shadow-sm text-center font-bold text-gray-600">Carrier B</div>
-                <div class="bg-white p-4 border border-gray-200 rounded-xl shadow-sm text-center font-bold text-gray-600">Carrier C</div>
-                <div class="bg-white p-4 border border-gray-200 rounded-xl shadow-sm text-center font-bold text-gray-600">Local Express</div>
-                <div class="bg-white p-4 border border-gray-200 rounded-xl shadow-sm text-center font-bold text-gray-600">B2B Freight</div>
-                <div class="bg-white p-4 border border-brand-yellow bg-yellow-50 rounded-xl shadow-sm text-center font-bold text-brand-navy">OneStall Direct</div>
+            <!-- Small Card 4 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow transition flex flex-col h-full">
+                <div class="inline-block px-2 py-0.5 rounded border border-blue-200 bg-blue-50 text-brand-navy text-[9px] font-bold mb-2 uppercase self-start">Custom Tech</div>
+                <h4 class="text-base font-bold text-gray-900 mb-1">White Label</h4>
+                <p class="text-xs text-gray-600 mb-4 flex-grow">Branded tracking pages and custom logistics infrastructure.</p>
+                <div class="h-20 bg-gray-50 rounded-lg flex items-center justify-center text-2xl text-gray-400 border border-gray-100">
+                    <i class="fa-solid fa-code-branch"></i>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 6. Developer & API Section -->
-<section class="py-12 bg-gray-900 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center gap-8">
-        <div class="w-full lg:w-1/2">
-            <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-6">Shipping Infrastructure, <br><span class="text-brand-yellow">Built for Developers</span></h2>
-            <p class="text-lg text-gray-400 mb-8">Modern REST APIs for booking, rating, tracking, and webhooks. Integrate logistics directly into your tech stack in hours, not weeks.</p>
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="flex items-center text-gray-300"><i class="fa-solid fa-check text-green-400 mr-2"></i> Pincode Serviceability</div>
-                <div class="flex items-center text-gray-300"><i class="fa-solid fa-check text-green-400 mr-2"></i> Rate Calculation</div>
-                <div class="flex items-center text-gray-300"><i class="fa-solid fa-check text-green-400 mr-2"></i> AWB & Labels</div>
-                <div class="flex items-center text-gray-300"><i class="fa-solid fa-check text-green-400 mr-2"></i> Real-time Webhooks</div>
-            </div>
-            
-            <div class="flex gap-4">
-                <a href="{{ route('docs') }}" class="px-6 py-3 rounded bg-white text-gray-900 font-bold hover:bg-gray-100 transition">Read Documentation</a>
-            </div>
-        </div>
-        
-        <div class="w-full lg:w-1/2">
-            <div class="bg-[#1e1e1e] rounded-xl shadow-2xl border border-gray-700 overflow-hidden text-sm font-mono">
-                <div class="bg-[#2d2d2d] px-4 py-2 border-b border-gray-700 flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span class="ml-2 text-gray-400 text-xs">POST /v1/shipments/book</span>
-                </div>
-                <div class="p-6 text-gray-300">
-<pre><span class="text-pink-400">curl</span> -X POST https://api.onestallcargo.com/v1/shipments/book \
-  -H <span class="text-green-300">"Authorization: Bearer osc_live_xxxx"</span> \
-  -H <span class="text-green-300">"Content-Type: application/json"</span> \
-  -d '{
-    <span class="text-blue-300">"shipment_type"</span>: <span class="text-yellow-300">"B2C"</span>,
-    <span class="text-blue-300">"pickup_pincode"</span>: <span class="text-yellow-300">"400001"</span>,
-    <span class="text-blue-300">"delivery_pincode"</span>: <span class="text-yellow-300">"110001"</span>,
-    <span class="text-blue-300">"weight_kg"</span>: <span class="text-orange-300">1.5</span>,
-    <span class="text-blue-300">"is_cod"</span>: <span class="text-orange-300">true</span>,
-    <span class="text-blue-300">"invoice_value"</span>: <span class="text-orange-300">1499.00</span>
-  }'</pre>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 7. Video Evidence (Differentiator) -->
+<!-- 7. Mobile App Section (Google Play Store Only) -->
 <section class="py-12 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
-        <h2 class="text-3xl md:text-5xl font-extrabold text-brand-navy tracking-tight mb-4">Every Shipment. <span class="text-brand-yellow">Documented.</span></h2>
-        <p class="text-xl text-gray-500 max-w-3xl mx-auto">Protect your business from fake claims and disputes with our immutable Video Recording & Evidence System at every critical node.</p>
-    </div>
-
-    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-            <div class="h-40 bg-gray-200 rounded-xl mb-6 relative overflow-hidden flex items-center justify-center">
-                <i class="fa-solid fa-play text-4xl text-gray-400"></i>
-                <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">09:42 AM - REC</div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-50 rounded-2xl p-6 md:p-10 border border-gray-200 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="w-full md:w-1/2">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-brand-navy mb-3">Track Orders On The Go</h2>
+                <p class="text-sm md:text-base text-gray-600 mb-6">Download our Android app to manage shipments, track NDRs, and monitor your business metrics from anywhere.</p>
+                
+                <!-- Google Play Store Only Button -->
+                <div class="flex items-center gap-4">
+                    <a href="#" class="h-12 px-5 bg-black rounded-lg flex items-center justify-center text-white hover:bg-gray-800 transition shadow-md">
+                        <i class="fa-brands fa-google-play text-2xl mr-3 text-green-400"></i>
+                        <div class="text-left leading-tight">
+                            <div class="text-[9px] uppercase tracking-wider text-gray-300">Get it on</div>
+                            <div class="font-bold text-sm">Google Play</div>
+                        </div>
+                    </a>
+                </div>
             </div>
-            <h4 class="text-lg font-bold text-gray-900 mb-2">1. Pickup Recording</h4>
-            <p class="text-sm text-gray-600">Riders record parcel condition and sealing upon pickup from your facility.</p>
-        </div>
-        
-        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-            <div class="h-40 bg-gray-200 rounded-xl mb-6 relative overflow-hidden flex items-center justify-center">
-                <i class="fa-solid fa-play text-4xl text-gray-400"></i>
-                <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">01:15 PM - REC</div>
+            
+            <div class="w-full md:w-1/2 flex justify-center">
+                <div class="w-64 h-[420px] rounded-[1.8rem] shadow-xl relative overflow-hidden border-4 border-gray-800">
+                    <img src="{{ asset('images/mobile_app.jpg') }}" alt="Mobile Tracking App" class="w-full h-full object-cover">
+                </div>
             </div>
-            <h4 class="text-lg font-bold text-gray-900 mb-2">2. Hub Scanning</h4>
-            <p class="text-sm text-gray-600">Automated video capture during hub sorting, weighing, and bagging processes.</p>
         </div>
-
-        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-            <div class="h-40 bg-gray-200 rounded-xl mb-6 relative overflow-hidden flex items-center justify-center">
-                <i class="fa-solid fa-play text-4xl text-gray-400"></i>
-                <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">05:32 PM - REC</div>
-            </div>
-            <h4 class="text-lg font-bold text-gray-900 mb-2">3. Delivery Proof</h4>
-            <p class="text-sm text-gray-600">Visual proof of handover, OTP confirmation, and GPS location stamping.</p>
-        </div>
-    </div>
-    <div class="text-center mt-12">
-        <a href="{{ route('platform.evidence') }}" class="font-bold text-brand-blue hover:underline">Explore Video Evidence & Protection &rarr;</a>
     </div>
 </section>
 
-<!-- 8. Final CTA -->
-<section class="bg-brand-blue py-10 relative overflow-hidden">
-    <!-- Abstract graphic -->
-    <div class="absolute right-0 top-0 h-full w-1/2 bg-brand-navy opacity-50 transform skew-x-12 translate-x-32"></div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-6">Ready to move your shipping forward?</h2>
-        <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-10">Bring shipping, tracking, operations and delivery visibility into one platform.</p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="{{ route('register') }}" class="px-8 py-4 rounded bg-brand-yellow text-brand-navy font-bold text-lg hover:bg-brand-yellowHover transition shadow-lg">
-                Start Shipping Today
-            </a>
-            <a href="{{ route('contact') }}" class="px-8 py-4 rounded bg-white text-gray-900 font-bold text-lg hover:bg-gray-100 transition shadow-lg">
-                Talk to Sales
-            </a>
+<!-- 8. Final B2B Cargo Banner -->
+<section class="py-12 bg-gradient-to-r from-brand-navy to-brand-blue text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row items-center gap-8">
+            <div class="w-full lg:w-1/2">
+                <div class="w-full h-72 lg:h-80 rounded-xl overflow-hidden shadow-xl relative">
+                    <img src="{{ asset('images/warehouse.jpg') }}" alt="B2B Express Freight" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-brand-navy/50 flex items-center justify-center">
+                        <div class="text-lg font-bold tracking-widest text-white backdrop-blur-sm px-5 py-2 rounded border border-white/30">B2B EXPRESS FREIGHT</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-full lg:w-1/2 text-center lg:text-left">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-3">Heavy Shipments? No Problem.</h2>
+                <p class="text-sm md:text-base text-white/80 mb-6">Transport heavy and bulk shipments across India with our B2B cargo network. Get discounted freight rates and real-time tracking for LTL and FTL shipments.</p>
+                <a href="{{ route('solutions.b2b') }}" class="inline-block px-7 py-3 rounded-full bg-brand-red text-white font-bold text-sm hover:bg-brand-redHover transition shadow-md">
+                    Explore B2B Cargo
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
 @endsection
+
