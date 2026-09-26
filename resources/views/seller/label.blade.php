@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -57,7 +57,8 @@
         </div>
         
         <div class="details">
-            <table>
+            <div class="overflow-x-auto w-full">
+<table>
                 <tr>
                     <th>Date:</th><td>{{ $shipment->created_at->format('d/m/Y') }}</td>
                     <th>Weight:</th><td>{{ $shipment->weight_kg }} KG</td>
@@ -78,11 +79,12 @@
                 </tr>
                 @endif
             </table>
+</div>
         </div>
         
         @if($shipment->is_cod)
         <div class="cod-box">
-            COD TO COLLECT: ₹{{ number_format($shipment->total_amount, 2) }}
+            COD TO COLLECT: Rs {{  number_format($shipment->total_amount, 2) }}
         </div>
         @else
         <div class="cod-box" style="border-color: #4CAF50; color: #4CAF50;">

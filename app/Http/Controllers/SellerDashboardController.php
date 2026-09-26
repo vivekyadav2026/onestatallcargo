@@ -30,6 +30,7 @@ class SellerDashboardController extends Controller
             ->get();
 
         $kyc = $user->kyc;
+        $banner = \App\Models\Banner::where('is_active', true)->first();
 
         return view('seller.dashboard', compact(
             'user', 
@@ -40,7 +41,8 @@ class SellerDashboardController extends Controller
             'weightDiscrepancies', 
             'codPending', 
             'recentShipments', 
-            'kyc'
+            'kyc',
+            'banner'
         ));
     }
 }

@@ -78,9 +78,9 @@
                 <!-- Transactions Ledger -->
                 <div x-show="view === 'transactions'">
                     @php
-                        $transactions = \App\Models\WalletTransaction::where('user_id', Auth::id())->latest()->limit(50)->get();
+                        $transactions = \App\Models\WalletTransaction::where('user_id', Auth::id())->latest()->paginate(15);
                     @endphp
-                    <div class="overflow-y-auto max-h-[500px]">
+                    <div class="overflow-x-auto overflow-y-auto max-h-[500px]">
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-white sticky top-0 border-b border-gray-200 text-[11px] text-gray-500 font-bold uppercase tracking-wider z-10">
                                 <tr>
@@ -134,6 +134,11 @@
                             </tbody>
                         </table>
                     </div>
+                    @if($transactions->hasPages())
+                        <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                            {{ $transactions->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Tax Invoices -->

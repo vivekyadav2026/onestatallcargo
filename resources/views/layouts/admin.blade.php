@@ -39,8 +39,8 @@
 
                 <div class="h-0 flex-1 overflow-y-auto pt-5 pb-4">
                     <div class="flex items-center px-4 mb-6 text-white gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center"><div class="w-full h-full bg-[var(--gold)] rounded-md flex items-center justify-center text-gray-900 font-bold">O</div></div>
-                        <div class="flex flex-col"><span class="font-extrabold text-base">OneStall Cargo</span><span class="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider">Admin Console</span></div>
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-10 object-contain rounded bg-white p-1" style="max-width: 150px;">
+                        <div class="flex flex-col"><span class="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider">Admin</span></div>
                     </div>
 
                     <nav class="mt-5 space-y-1 px-2">
@@ -51,9 +51,17 @@
                         <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                         <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                         <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
+                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
+                        <a href="\{\{ route('admin.weight.freeze') \}\}" class="sidebar-item \{\{ request()->routeIs('admin.weight.freeze') ? 'active' : '' \}\}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                         <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
-                        <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
+                        
+
+
+                        <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
+                        <a href="{{ route('admin.settings.index') }}" class="sidebar-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><i class="fa-solid fa-gear w-4 text-center"></i> <span>Settings</span></a>
+
+<div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                         <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
                         <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 
@@ -80,8 +88,8 @@
     <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-30 transition-all duration-300">
         <div class="flex flex-col flex-1 overflow-y-auto" style="background-color: var(--theme-bg);">
             <div class="flex items-center px-4 mb-6 mt-5 text-white gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center"><div class="w-full h-full bg-[var(--gold)] rounded-md flex items-center justify-center text-gray-900 font-bold">O</div></div>
-                <div class="flex flex-col"><span class="font-extrabold text-base">OneStall Cargo</span><span class="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider">Admin Console</span></div>
+                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-10 object-contain rounded bg-white p-1" style="max-width: 150px;">
+                <div class="flex flex-col"><span class="text-[10px] text-[var(--gold)] font-bold uppercase tracking-wider">Admin</span></div>
             </div>
 
             <nav class="flex-1 space-y-1 px-2 pb-4">
@@ -93,9 +101,21 @@
                 <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                 <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                 <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
+                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
+                        <a href="\{\{ route('admin.weight.freeze') \}\}" class="sidebar-item \{\{ request()->routeIs('admin.weight.freeze') ? 'active' : '' \}\}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                 <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
-                <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
+                
+                        <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Content Management</div></div>
+                        <a href="{{ route('admin.banners.index') }}" class="sidebar-item {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}"><i class="fa-solid fa-image w-4 text-center"></i> <span>Promo Banners</span></a>
+                        <a href="{{ route('admin.services.index') }}" class="sidebar-item {{ request()->routeIs('admin.services.*') ? 'active' : '' }}"><i class="fa-solid fa-list-check w-4 text-center"></i> <span>Services</span></a>
+                        <a href="{{ route('admin.faqs.index') }}" class="sidebar-item {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}"><i class="fa-solid fa-circle-question w-4 text-center"></i> <span>FAQs</span></a>
+                        <a href="{{ route('admin.testimonials.index') }}" class="sidebar-item {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}"><i class="fa-solid fa-star w-4 text-center"></i> <span>Testimonials</span></a>
+
+                        <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
+                        <a href="{{ route('admin.settings.index') }}" class="sidebar-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}"><i class="fa-solid fa-gear w-4 text-center"></i> <span>Settings</span></a>
+
+<div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                 <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
                 <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 

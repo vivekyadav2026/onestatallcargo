@@ -5,13 +5,25 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 
-Route::get('/', function () { return view('welcome'); });
+Route::get('/', function () { 
+    $services = \App\Models\Service::where('is_active', true)->get();
+    $testimonials = \App\Models\Testimonial::where('is_active', true)->get();
+    $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get();
+    return view('welcome', compact('services', 'testimonials', 'faqs')); 
+});
+Route::post('/contact', [\App\Http\Controllers\PublicContactController::class, 'store'])->name('contact.post');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
-Route::get('/services', function () { return view('services'); })->name('services');
+Route::get('/services', function () { 
+    $services = \App\Models\Service::where('is_active', true)->get();
+    return view('services', compact('services')); 
+})->name('services');
 Route::get('/track', [\App\Http\Controllers\TrackController::class, 'index'])->name('track');
 Route::post('/track', [\App\Http\Controllers\TrackController::class, 'track'])->name('track.post');
 Route::get('/api-docs', function () { return view('public.developers.docs'); })->name('api-docs');
 Route::get('/pricing', function () { return view('pricing'); })->name('pricing');
+Route::get('/privacy', function () { return view('legal', ['title' => 'Privacy Policy']); })->name('privacy');
+Route::get('/terms', function () { return view('legal', ['title' => 'Terms of Service']); })->name('terms');
+Route::get('/cookies', function () { return view('legal', ['title' => 'Cookie Policy']); })->name('cookies');
 Route::get('/franchise', function () { return view('franchise'); })->name('franchise');
 
 
@@ -36,7 +48,10 @@ Route::get('/docs', function () { return view('public.developers.docs'); })->nam
 Route::get('/corporate', function () { return view('public.corporate'); })->name('corporate');
 Route::get('/partners', function () { return view('public.partners'); })->name('partners');
 Route::get('/about', function () { return view('public.about'); })->name('about');
-Route::get('/faq', function () { return view('public.faq'); })->name('faq');
+Route::get('/faq', function () { 
+    $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get();
+    return view('public.faq', compact('faqs')); 
+})->name('faq');
 Route::get('/help', function () { return view('public.help'); })->name('help');
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -56,6 +71,8 @@ Route::middleware(['auth'])->group(function () {
     // ADMIN PORTAL (Requires Admin Role, but handled by Admin role itself)
     Route::middleware(['role:admin,operations'])->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/contacts', [\App\Http\Controllers\AdminContactController::class, 'index'])->name('admin.contacts.index');
+        Route::post('/contacts/{id}', [\App\Http\Controllers\AdminContactController::class, 'action'])->name('admin.contacts.action');
         Route::get('/live-map', [\App\Http\Controllers\AdminController::class, 'liveMap'])->name('admin.map');
         
         Route::get('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'index'])->name('admin.shipments.index');
@@ -87,13 +104,26 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
         
-                Route::get('/roles', [\App\Http\Controllers\AdminRoleController::class, 'index'])->name('admin.roles.index');
+                        Route::get('/roles', [\App\Http\Controllers\AdminRoleController::class, 'index'])->name('admin.roles.index');
+        Route::get('/roles/create', [\App\Http\Controllers\AdminRoleController::class, 'create'])->name('admin.roles.create');
+        Route::post('/roles', [\App\Http\Controllers\AdminRoleController::class, 'store'])->name('admin.roles.store');
         Route::get('/roles/{id}/edit', [\App\Http\Controllers\AdminRoleController::class, 'edit'])->name('admin.roles.edit');
         Route::put('/roles/{id}', [\App\Http\Controllers\AdminRoleController::class, 'update'])->name('admin.roles.update');
         Route::get('/reports', [\App\Http\Controllers\AdminReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\AdminReportController::class, 'exportCsv'])->name('admin.reports.export');
-        
+        Route::get('/weight-discrepancies', [\App\Http\Controllers\AdminWeightController::class, 'index'])->name('admin.weight');
+        Route::post('/weight-discrepancies/{id}/action', [\App\Http\Controllers\AdminWeightController::class, 'action'])->name('admin.weight.action');
+        Route::get('/weight-freeze', [\App\Http\Controllers\AdminWeightFreezeController::class, 'index'])->name('admin.weight.freeze');
+        Route::post('/weight-freeze/{id}/action', [\App\Http\Controllers\AdminWeightFreezeController::class, 'action'])->name('admin.weight.freeze.action');
         // Admin KYC Verification
+        Route::get('/banners', [\App\Http\Controllers\AdminBannerController::class, 'index'])->name('admin.banners.index');
+        Route::post('/banners', [\App\Http\Controllers\AdminBannerController::class, 'store'])->name('admin.banners.store');
+
+        // CMS / Frontend CRUDs
+        Route::resource('faqs', \App\Http\Controllers\AdminFaqController::class)->names('admin.faqs');
+        Route::resource('services', \App\Http\Controllers\AdminServiceController::class)->names('admin.services');
+        Route::resource('testimonials', \App\Http\Controllers\AdminTestimonialController::class)->names('admin.testimonials');
+        Route::resource('settings', \App\Http\Controllers\AdminSettingController::class)->names('admin.settings');
         Route::get('/kyc', [\App\Http\Controllers\KycController::class, 'adminIndex'])->name('admin.kyc.index');
         Route::post('/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'adminApprove'])->name('admin.kyc.approve');
         Route::post('/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'adminReject'])->name('admin.kyc.reject');
@@ -137,7 +167,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/bulk-book', [\App\Http\Controllers\SellerShipmentController::class, 'bulkStore'])->name('seller.bulk.post');
         Route::get('/ndr', [\App\Http\Controllers\SellerNdrController::class, 'index'])->name('seller.ndr');
         Route::post('/ndr/{awb}', [\App\Http\Controllers\SellerNdrController::class, 'action'])->name('seller.ndr.post');
-        
+        Route::get('/weight-discrepancies', [\App\Http\Controllers\SellerWeightController::class, 'index'])->name('seller.weight');
+        Route::post('/weight-discrepancies/{id}/action', [\App\Http\Controllers\SellerWeightController::class, 'action'])->name('seller.weight.action');
+        Route::get('/weight-freeze', [\App\Http\Controllers\SellerWeightFreezeController::class, 'index'])->name('seller.weight.freeze');
+        Route::post('/weight-freeze', [\App\Http\Controllers\SellerWeightFreezeController::class, 'store'])->name('seller.weight.freeze.store');
+        Route::get('/weight-freeze/export', [\App\Http\Controllers\SellerWeightFreezeController::class, 'export'])->name('seller.weight.freeze.export');
+        Route::post('/weight-freeze/import', [\App\Http\Controllers\SellerWeightFreezeController::class, 'import'])->name('seller.weight.freeze.import');
         // Print Label
         Route::get('/shipment/{awb}/label', [\App\Http\Controllers\SellerShipmentController::class, 'printLabel'])->name('seller.label');
         Route::get('/shipment/{awb}/lr', [\App\Http\Controllers\SellerShipmentController::class, 'printLR'])->name('seller.lr');
@@ -163,3 +198,5 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/evidence', [\App\Http\Controllers\RiderAppController::class, 'uploadEvidence'])->name('rider.evidence.upload');
     });
 });
+
+

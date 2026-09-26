@@ -55,8 +55,8 @@
         </div>
 
         <!-- Cargo Details -->
-        <div class="border-2 border-gray-800 rounded-lg overflow-hidden mb-8">
-            <table class="w-full text-left text-sm">
+        <div class="border-2 border-gray-800 rounded-lg overflow-x-auto mb-8">
+                        <table class="w-full text-left text-sm">
                 <thead>
                     <tr class="bg-gray-800 text-white uppercase tracking-wider text-xs">
                         <th class="px-4 py-3">Packages</th>

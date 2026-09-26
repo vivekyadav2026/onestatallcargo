@@ -2,7 +2,7 @@
 @section('title', 'NDR Management - OneStall Cargo')
 
 @section('content')
-<div class="space-y-6" x-data="{ activeTab: 'action_required' }">
+<div class="space-y-6" x-data="{ activeTab: '{{ $tab ?? 'action_required' }}' }">
     
     <!-- Top Header -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -16,11 +16,11 @@
         
         <!-- Status Tabs (Matches Screenshot 2) -->
         <div class="flex border-b border-gray-100 px-4 pt-2 overflow-x-auto whitespace-nowrap bg-white">
-            <button @click="activeTab = 'action_required'" :class="activeTab === 'action_required' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Action Required <span class="ml-1 text-red-500 font-extrabold">{{ $ndrShipments ? $ndrShipments->count() : 0 }}</span></button>
-            <button @click="activeTab = 'action_taken'" :class="activeTab === 'action_taken' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Action Taken <span class="ml-1 text-gray-400 font-bold">0</span></button>
-            <button @click="activeTab = 'delivered'" :class="activeTab === 'delivered' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Delivered <span class="ml-1 text-gray-400 font-bold">0</span></button>
-            <button @click="activeTab = 'rto'" :class="activeTab === 'rto' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">RTO <span class="ml-1 text-gray-400 font-bold">0</span></button>
-            <button @click="activeTab = 'all'" :class="activeTab === 'all' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">All <span class="ml-1 text-gray-400 font-bold">0</span></button>
+            <button @click="window.location.href='?tab=action_required'" :class="activeTab === 'action_required' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Action Required <span class="ml-1 font-extrabold" :class="activeTab === 'action_required' ? 'text-red-500' : 'text-gray-400'">{{ $tab === 'action_required' ? $ndrShipments->total() : '' }}</span></button>
+            <button @click="window.location.href='?tab=action_taken'" :class="activeTab === 'action_taken' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Action Taken <span class="ml-1 font-extrabold" :class="activeTab === 'action_taken' ? 'text-[#4338ca]' : 'text-gray-400'">{{ $tab === 'action_taken' ? $ndrShipments->total() : '' }}</span></button>
+            <button @click="window.location.href='?tab=delivered'" :class="activeTab === 'delivered' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">Delivered <span class="ml-1 font-extrabold" :class="activeTab === 'delivered' ? 'text-[#4338ca]' : 'text-gray-400'">{{ $tab === 'delivered' ? $ndrShipments->total() : '' }}</span></button>
+            <button @click="window.location.href='?tab=rto'" :class="activeTab === 'rto' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">RTO <span class="ml-1 font-extrabold" :class="activeTab === 'rto' ? 'text-[#4338ca]' : 'text-gray-400'">{{ $tab === 'rto' ? $ndrShipments->total() : '' }}</span></button>
+            <button @click="window.location.href='?tab=all'" :class="activeTab === 'all' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700'" class="px-5 py-3 text-xs transition">All <span class="ml-1 font-extrabold" :class="activeTab === 'all' ? 'text-[#4338ca]' : 'text-gray-400'">{{ $tab === 'all' ? $ndrShipments->total() : '' }}</span></button>
         </div>
 
         <!-- Filters Row (Matches Screenshot 2) -->
@@ -104,9 +104,16 @@
                                 <span class="text-red-600 font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Customer Unavailable</span>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-50 text-amber-700 border border-amber-200">Action Required</span>
+                                @if(is_null($shipment->ndr_action) && $shipment->status === 'NDR')
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-50 text-amber-700 border border-amber-200">Action Required</span>
+                                @elseif(!is_null($shipment->ndr_action) && $shipment->status === 'NDR')
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-blue-50 text-blue-700 border border-blue-200">Action Taken</span>
+                                @else
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-gray-50 text-gray-700 border border-gray-200">{{ $shipment->status }}</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-right">
+                                @if(is_null($shipment->ndr_action) && $shipment->status === 'NDR')
                                 <form action="{{ route('seller.ndr.post', $shipment->awb_number) }}" method="POST" class="flex items-center justify-end gap-1.5">
                                     @csrf
                                     <select name="ndr_action" required class="border border-gray-300 rounded-lg text-xs px-2 py-1 outline-none focus:border-[#4338ca]">
@@ -116,6 +123,9 @@
                                     </select>
                                     <button type="submit" class="bg-[#4338ca] text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-[#3730a3]">Submit</button>
                                 </form>
+                                @else
+                                <span class="text-xs font-bold text-gray-500">Requested: {{ $shipment->ndr_action ?? 'N/A' }}</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -128,6 +138,11 @@
                 </tbody>
             </table>
         </div>
+        @if($ndrShipments->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 bg-[#f8fafc]">
+                {{ $ndrShipments->links() }}
+            </div>
+        @endif
     </div>
 
 </div>

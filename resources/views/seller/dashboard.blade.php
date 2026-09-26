@@ -12,41 +12,30 @@
         $setupScore = ($kycDone ? 1 : 0) + ($walletDone ? 1 : 0) + ($orderDone ? 1 : 0);
     @endphp
 
-    <!-- Dynamic Circle 1: Top Promo Banner -->
-    @if(!$walletDone)
-        <div class="bg-gradient-to-r from-[#1d4ed8] via-[#2563eb] to-[#3b82f6] rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+    <!-- Dynamic Top Promo Banner (Managed by Admin) -->
+    @if(isset($banner) && $banner->is_active)
+        <div class="bg-gradient-to-r {{ $banner->bg_gradient ?? 'from-[#1d4ed8] via-[#2563eb] to-[#3b82f6]' }} rounded-2xl p-6 text-white shadow-md relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-6">
-                <div class="w-16 h-16 bg-blue-600/40 border border-white/20 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                <div class="w-16 h-16 bg-white/20 border border-white/30 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
                     <i class="fa-solid fa-gift text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl md:text-2xl font-black tracking-tight text-white mb-1">&#8377;500 FREE Shipping Credits</h2>
-                    <p class="text-xs text-blue-100 font-medium">are sitting in your wallet. Make first recharge of &#8377;1,000 to unlock.</p>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight text-white mb-1">{{ $banner->title }}</h2>
+                    <p class="text-xs text-blue-100 font-medium">{{ $banner->subtitle }}</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3 shrink-0">
+                @if($banner->coupon_code)
                 <div class="bg-white text-gray-900 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 border border-blue-100">
                     <span class="text-gray-400 font-normal">Use code</span>
-                    <span class="font-mono text-blue-700 tracking-wider">FIRST1000</span>
+                    <span class="font-mono text-blue-700 tracking-wider">{{ $banner->coupon_code }}</span>
                 </div>
-                <a href="{{ route('seller.wallet') }}" class="px-5 py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
-                    Get My Free Credits <i class="fa-solid fa-bolt text-yellow-400"></i>
+                @endif
+                <a href="{{ $banner->button_link ?? route('seller.wallet') }}" class="px-5 py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+                    {{ $banner->button_text }} <i class="fa-solid fa-bolt text-yellow-400"></i>
                 </a>
             </div>
-        </div>
-    @else
-        <div class="bg-gradient-to-r from-[#0f172a] to-[#1e1b4b] rounded-2xl p-6 text-white shadow-md flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-green-500/20 border border-green-400/30 flex items-center justify-center text-green-400 text-xl">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white">Active Balance: &#8377; {{ number_format(Auth::user()->wallet_balance, 2) }}</h3>
-                    <p class="text-xs text-gray-300">Your wallet is funded and ready for instant AWB generation.</p>
-                </div>
-            </div>
-            <a href="{{ route('seller.wallet') }}" class="px-4 py-2 bg-[#4338ca] text-white font-bold text-xs rounded-xl hover:bg-[#3730a3] transition">Recharge Wallet</a>
         </div>
     @endif
 

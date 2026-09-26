@@ -56,7 +56,7 @@
             <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
                 <h2 class="font-extrabold text-gray-800"><i class="fa-solid fa-list-check mr-2"></i> Recent Scans</h2>
             </div>
-            <div class="p-0">
+            <div class="p-0 overflow-x-auto w-full">
                 <table class="w-full text-left text-sm whitespace-nowrap">
                     <thead>
                         <tr class="bg-gray-50 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">

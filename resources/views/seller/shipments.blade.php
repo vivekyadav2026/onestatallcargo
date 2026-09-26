@@ -1,4 +1,4 @@
-@extends('layouts.seller')
+ï»¿@extends('layouts.seller')
 @section('title', 'Orders - OneStall Cargo')
 
 @section('content')
@@ -40,6 +40,7 @@
                 'transit' => \App\Models\Shipment::where('user_id', Auth::id())->whereIn('status', ['in_transit', 'In Transit', 'transit'])->count(),
                 'delivered' => \App\Models\Shipment::where('user_id', Auth::id())->whereIn('status', ['delivered', 'Delivered'])->count(),
                 'rto' => \App\Models\Shipment::where('user_id', Auth::id())->whereIn('status', ['rto', 'RTO'])->count(),
+                'cancelled' => \App\Models\Shipment::where('user_id', Auth::id())->whereIn('status', ['cancelled', 'Cancelled'])->count(),
                 'all' => \App\Models\Shipment::where('user_id', Auth::id())->count(),
             ];
 
@@ -69,6 +70,9 @@
             </a>
             <a href="{{ getTabUrl('rto') }}" class="{{ $currentStatus === 'rto' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700' }} px-5 py-3 text-xs transition flex items-center gap-1.5">
                 RTO <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full font-extrabold text-[10px]">{{ $counts['rto'] }}</span>
+            </a>
+            <a href="{{ getTabUrl('cancelled') }}" class="{{ $currentStatus === 'cancelled' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700' }} px-5 py-3 text-xs transition flex items-center gap-1.5">
+                Cancelled <span class="px-1.5 py-0.5 bg-rose-50 text-rose-700 rounded-full font-extrabold text-[10px]">{{ $counts['cancelled'] }}</span>
             </a>
             <a href="{{ getTabUrl('all') }}" class="{{ $currentStatus === 'all' ? 'text-[#4338ca] border-b-2 border-[#4338ca] font-bold' : 'text-gray-500 font-medium hover:text-gray-700' }} px-5 py-3 text-xs transition flex items-center gap-1.5">
                 All
@@ -126,16 +130,18 @@
                 </div>
             </div>
 
-            <table class="w-full text-left text-xs whitespace-nowrap">
+            <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-xs whitespace-nowrap">
                 <thead>
                     <tr class="bg-[#f8fafc] text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                         <th class="px-3 py-3 w-8"><input type="checkbox" @change="toggleAll($event)" :checked="isAllSelected()" class="rounded border-gray-300 accent-[#4338ca] cursor-pointer"></th>
-                        <th class="px-3 py-3">ORDER DETAILS</th>
+                        <th class="px-3 py-3">ORDER / AWB DETAILS</th>
+                        <th class="px-3 py-3">STATUS</th>
                         <th class="px-3 py-3">SHIPPING ADDRESS</th>
                         <th class="px-3 py-3">PRODUCT DETAILS</th>
                         <th class="px-3 py-3">PACKAGE DETAILS</th>
-                        <th class="px-3 py-3">ORDER VALUE</th>
-                        <th class="px-3 py-3">PICKUP ADDRESS</th>
+                        <th class="px-3 py-3">ORDER VALUE & MODE</th>
+                        <th class="px-3 py-3">PICKUP LOCATION</th>
                         <!-- STICKY ACTION COLUMN HEADER -->
                         <th class="px-3 py-3 text-right sticky right-0 bg-[#f8fafc] z-20 shadow-[-3px_0_6px_rgba(0,0,0,0.04)]">ACTION</th>
                     </tr>
@@ -146,15 +152,56 @@
                             <td class="px-3 py-4 align-top">
                                 <input type="checkbox" value="{{ $shipment->id }}" x-model="selectedIds" class="rounded border-gray-300 accent-[#4338ca] cursor-pointer">
                             </td>
-                            
+
                             <!-- ORDER DETAILS -->
                             <td class="px-3 py-4 align-top">
-                                <a href="#" class="font-bold text-[#4338ca] text-xs hover:underline block">{{ $shipment->awb_number }}</a>
-                                <div class="text-[10px] text-gray-500 mt-1">Synced On · {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
-                                <div class="text-[10px] text-gray-500">Created On · {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
+                                <a href="#" @click.prevent="openOrderDetails({ 
+    awb_number: '{{ $shipment->awb_number }}', 
+    status: '{{ $shipment->status }}', 
+    receiver_name: '{{ addslashes($shipment->receiver_name) }}', 
+    receiver_phone: '{{ $shipment->receiver_phone }}', 
+    delivery_address: '{{ addslashes($shipment->delivery_address) }}', 
+    delivery_city: '{{ addslashes($shipment->delivery_city) }}', 
+    delivery_pincode: '{{ $shipment->delivery_pincode }}', 
+    invoice_value: {{ $shipment->invoice_value ?? 0 }}, 
+    total_amount: {{ $shipment->total_amount ?? 0 }}, 
+    weight_kg: {{ $shipment->weight_kg ?? 0.5 }}, 
+    is_cod: {{ $shipment->is_cod ? 1 : 0 }}, 
+    courier_partner: '{{ $shipment->courier_partner }}', 
+    shipment_type: '{{ $shipment->shipment_type }}',
+    product_name: '{{ addslashes($shipment->product_name ?: "Package Item") }}',
+    product_sku: '{{ addslashes($shipment->product_sku ?: "N/A") }}',
+    product_qty: {{ $shipment->product_qty ?? 1 }}
+})" class="font-bold text-[#4338ca] text-xs hover:underline block flex items-center gap-1.5">
+    {{ $shipment->awb_number }} <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-gray-400"></i>
+</a>
+                                <div class="text-[10px] text-gray-500 mt-1">Synced On ï¿½ {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
+                                <div class="text-[10px] text-gray-500">Created On ï¿½ {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
                                 <div class="text-[10px] text-gray-400 font-semibold flex items-center gap-1 mt-1.5">
                                     <i class="fa-solid fa-desktop text-[9px]"></i> Manual
                                 </div>
+                            </td>
+
+                            <!-- STATUS -->
+                            <td class="px-3 py-4 align-top">
+                                @php
+                                    $st = strtolower($shipment->status);
+                                @endphp
+                                @if(in_array($st, ['new', 'manifested', 'booked']))
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200">Manifested</span>
+                                @elseif(in_array($st, ['pickup_scheduled', 'pickups']))
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-200">Pickup Scheduled</span>
+                                @elseif(in_array($st, ['in_transit', 'transit']))
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200">In Transit</span>
+                                @elseif($st === 'delivered')
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">Delivered</span>
+                                @elseif($st === 'rto')
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-orange-50 text-orange-700 border border-orange-200">RTO</span>
+                                @elseif($st === 'cancelled')
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-rose-50 text-rose-700 border border-rose-200">Cancelled</span>
+                                @else
+                                    <span class="px-2 py-1 rounded-md text-[10px] font-extrabold bg-gray-50 text-gray-700 border border-gray-200">{{ ucfirst($shipment->status) }}</span>
+                                @endif
                             </td>
 
                             <!-- SHIPPING ADDRESS -->
@@ -167,8 +214,8 @@
 
                             <!-- PRODUCT DETAILS -->
                             <td class="px-3 py-4 align-top max-w-[180px]">
-                                <div class="font-semibold text-gray-800 text-xs truncate">Package Item</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">QTY: 1 · SKU: N/A</div>
+                                <div class="font-semibold text-gray-800 text-xs truncate">{{ $shipment->product_name ?: "Package Item" }}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">QTY: {{ $shipment->product_qty ?? 1 }} ï¿½ SKU: {{ $shipment->product_sku ?: "N/A" }}</div>
                             </td>
 
                             <!-- PACKAGE DETAILS -->
@@ -214,6 +261,7 @@
 
                                     <!-- Dropdown Menu Opens Downwards smoothly -->
                                     <div x-show="openMenu" @click.away="openMenu = false" class="absolute right-2 top-10 w-52 min-w-[210px] bg-white border border-gray-200 rounded-xl shadow-2xl py-2 z-[9999] text-left" style="display: none;">
+                                        <a href="{{ route('seller.label', $shipment->awb_number) }}" target="_blank" class="block px-4 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50"><i class="fa-solid fa-print text-blue-500 mr-1.5"></i> Print Shipping Label</a>
                                         @if($isKycApproved)
                                             <a href="{{ route('seller.book') }}?edit={{ $shipment->id }}" class="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">Edit Order</a>
                                         @else
@@ -236,7 +284,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-20 text-center">
+                            <td colspan="9" class="px-6 py-20 text-center">
                                 <div class="text-gray-300 mb-2">
                                     <i class="fa-solid fa-box-archive text-4xl"></i>
                                 </div>
@@ -246,6 +294,7 @@
                     @endforelse
                 </tbody>
             </table>
+</div>
         </div>
 
         <!-- Pagination Bar -->
@@ -254,6 +303,105 @@
             {{ $shipments->links() }}
         </div>
         @endif
+    </div>
+
+        <!-- Order Details Modal -->
+    <div x-show="showOrderModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div x-show="showOrderModal" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" @click="showOrderModal = false"></div>
+            
+            <div x-show="showOrderModal" x-transition class="relative inline-block w-full max-w-2xl p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl">
+                
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-xl font-black text-gray-900 tracking-tight" x-text="activeOrder.awb_number || 'Order Details'"></h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase"
+                                  :class="{
+                                      'bg-blue-50 text-blue-700 border border-blue-200': ['new','manifested','booked'].includes((activeOrder.status||'').toLowerCase()),
+                                      'bg-amber-50 text-amber-700 border border-amber-200': ['pickup_scheduled','pickups'].includes((activeOrder.status||'').toLowerCase()),
+                                      'bg-purple-50 text-purple-700 border border-purple-200': ['in_transit','transit'].includes((activeOrder.status||'').toLowerCase()),
+                                      'bg-emerald-50 text-emerald-700 border border-emerald-200': (activeOrder.status||'').toLowerCase() === 'delivered',
+                                      'bg-rose-50 text-rose-700 border border-rose-200': (activeOrder.status||'').toLowerCase() === 'cancelled'
+                                  }"
+                                  x-text="activeOrder.status || 'Manifested'">
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Courier Partner: <span class="font-bold text-gray-800" x-text="activeOrder.courier_partner || 'Delhivery'"></span></p>
+                    </div>
+                    <button @click="showOrderModal = false" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body Grid (3 Sections) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                    
+                    <!-- Customer Details -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-[#f8fafc]">
+                        <div class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user text-[#4338ca]"></i> Recipient Details
+                        </div>
+                        <div class="font-bold text-gray-900 text-sm mb-1" x-text="activeOrder.receiver_name || 'N/A'"></div>
+                        <div class="text-gray-600 leading-relaxed" x-text="activeOrder.delivery_address || 'N/A'"></div>
+                        <div class="text-gray-600 font-semibold mt-1" x-text="(activeOrder.delivery_city || '') + ', ' + (activeOrder.delivery_pincode || '')"></div>
+                        <div class="text-gray-500 mt-2 font-mono"><i class="fa-solid fa-phone text-gray-400 mr-1"></i> <span x-text="activeOrder.receiver_phone || 'N/A'"></span></div>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-[#f8fafc]">
+                        <div class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-box-open text-[#4338ca]"></i> Product Details
+                        </div>
+                        <div class="font-bold text-gray-900 text-sm mb-1" x-text="activeOrder.product_name || 'Package Item'"></div>
+                        <div class="space-y-1 mt-2 text-gray-600">
+                            <div class="flex justify-between"><span>Quantity:</span> <span class="font-bold text-gray-800" x-text="activeOrder.product_qty || 1"></span></div>
+                            <div class="flex justify-between"><span>SKU:</span> <span class="font-bold text-gray-800" x-text="activeOrder.product_sku || 'N/A'"></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Financial & Shipment Info -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-[#f8fafc]">
+                        <div class="font-bold text-gray-400 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-indian-rupee-sign text-[#4338ca]"></i> Payment & Weight
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center border-b border-gray-200/60 pb-1.5">
+                                <span class="text-gray-500">Invoice Value</span>
+                                <span class="font-bold text-gray-900" x-text="'?' + (activeOrder.invoice_value || activeOrder.total_amount || 0)"></span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-gray-200/60 pb-1.5">
+                                <span class="text-gray-500">Payment Mode</span>
+                                <span class="font-bold px-2 py-0.5 rounded text-[10px]" :class="activeOrder.is_cod ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'" x-text="activeOrder.is_cod ? 'COD' : 'Prepaid'"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">Total Weight</span>
+                                <span class="font-bold text-gray-900" x-text="(activeOrder.weight_kg || 0.5) + ' kg'"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="flex justify-end items-center gap-2 mt-6 pt-4 border-t border-gray-100">
+                    <button @click="showOrderModal = false" class="px-4 py-2 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition">Close</button>
+
+                    <template x-if="(activeOrder.status || '').toLowerCase() === 'cancelled'">
+                        <span class="px-4 py-2 text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-ban text-rose-500"></i> Order Cancelled
+                        </span>
+                    </template>
+                    <template x-if="(activeOrder.status || '').toLowerCase() !== 'cancelled'">
+                        <a :href="'{{ url('seller/shipment') }}/' + activeOrder.awb_number + '/label" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-print"></i> Print Label
+                        </a>
+                    </template>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <!-- Update E-Way Bill Modal -->
@@ -334,7 +482,7 @@
         Alpine.data('shipmentTable', () => ({
             selectedIds: [],
             allRowIds: [{{ $shipments->pluck('id')->implode(',') }}],
-            showEwayModal: false,
+            showOrderModal: false, activeOrder: {}, openOrderDetails(order) { this.activeOrder = order; this.showOrderModal = true; }, showEwayModal: false,
             showCommModal: false,
             currentAwb: '',
             ewayNumber: '',

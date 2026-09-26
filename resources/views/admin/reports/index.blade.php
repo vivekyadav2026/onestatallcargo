@@ -13,19 +13,21 @@
         <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition">
             <i class="fa-solid fa-calendar-day text-3xl text-blue-500 mb-4"></i>
             <h3 class="font-bold text-gray-900 text-lg">Daily Bookings</h3>
-            <p class="text-sm text-gray-500 mt-1">Volume generated in the last 24 hours.</p>
+            <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($dailyBookings ?? 0) }}</p>
+            <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider">Shipments generated today</p>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition">
             <i class="fa-solid fa-users text-3xl text-green-500 mb-4"></i>
-            <h3 class="font-bold text-gray-900 text-lg">Seller-Wise Volume</h3>
-            <p class="text-sm text-gray-500 mt-1">Detailed breakdown of top clients.</p>
+            <h3 class="font-bold text-gray-900 text-lg">Top Seller Volume</h3>
+            <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($topSeller->total ?? 0) }}</p>
+            <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider">By {{ $topSeller->name ?? 'N/A' }}</p>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition">
-            <i class="fa-solid fa-money-check-dollar text-3xl text-yellow-500 mb-4"></i>
-            <h3 class="font-bold text-gray-900 text-lg">COD Settlements</h3>
-            <p class="text-sm text-gray-500 mt-1">Reconciliation data for delivered COD shipments.</p>
+            <i class="fa-solid fa-money-check-dollar text-3xl text-[var(--gold-deep)] mb-4"></i>
+            <h3 class="font-bold text-gray-900 text-lg">Pending COD Remittances</h3>
+            <p class="text-3xl font-black text-gray-900 mt-2">₹{{ number_format($pendingCod ?? 0, 2) }}</p>
+            <p class="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-wider">Unsettled Delivered COD</p>
         </div>
     </div>
-</div>
 @endsection
 

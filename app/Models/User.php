@@ -33,6 +33,7 @@ class User extends Authenticatable
         'ifsc_code',
         'account_holder_name',
         'wallet_balance',
+        'permissions',
         'latitude',
         'longitude',
         'last_location_at',
@@ -48,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'permissions' => 'array',
         ];
     }
 

@@ -15,10 +15,9 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded bg-[#FFD700] text-gray-900 flex items-center justify-center font-bold">O</div>
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-10 object-contain rounded bg-white p-1" style="max-width: 150px;">
                         <div>
-                            <div class="font-bold text-lg leading-tight">OneStall Hub Center</div>
-                            <div class="text-[10px] text-gray-400 uppercase tracking-widest">{{ Auth::user()->name ?? 'Hub Manager' }}</div>
+                            <div class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">{{ Auth::user()->name ?? 'Hub Manager' }}</div>
                         </div>
                     </div>
                     <form action="{{ route('logout') }}" method="POST">

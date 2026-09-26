@@ -12,10 +12,10 @@
         <!-- Left Side -->
         <div class="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left lg:pr-8">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-navy leading-tight tracking-tight mb-1">
-                eCommerce Shipping
+                {{ setting('hero_title1', 'eCommerce Shipping') }}
             </h1>
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-brand-red leading-tight tracking-tight mb-4">
-                Built for the Bold
+                {{ setting('hero_title2', 'Built for the Bold') }}
             </h1>
             <p class="text-base md:text-lg text-gray-700 mb-6 font-medium max-w-md mx-auto lg:mx-0 leading-relaxed">
                 Fuel your ambition with next-gen eCommerce logistics - engineered for speed, scale, and simplicity.

@@ -15,9 +15,8 @@
     <!-- Mobile Header -->
     <header class="bg-[#1e293b] text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#FFD700] rounded-full text-black font-bold flex items-center justify-center">R</div>
-            <div class="font-bold leading-tight">
-                <div>OneStall Rider App</div>
+            <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-8 object-contain rounded bg-white p-1">
+            <div class="font-bold leading-tight ml-2">
                 <div class="text-[10px] text-green-400"><i class="fa-solid fa-circle text-[8px]"></i> Online</div>
             </div>
         </div>

@@ -7,14 +7,30 @@ use Illuminate\Support\Facades\Auth;
 
 class SellerNdrController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ndrShipments = Shipment::where('user_id', Auth::id())
-            ->where('status', 'NDR')
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        $tab = $request->query('tab', 'action_required');
+
+        $query = Shipment::where('user_id', Auth::id());
+
+        if ($tab === 'action_required') {
+            $query->where('status', 'NDR')->whereNull('ndr_action');
+        } elseif ($tab === 'action_taken') {
+            $query->where('status', 'NDR')->whereNotNull('ndr_action');
+        } elseif ($tab === 'delivered') {
+            $query->where('status', 'Delivered')->whereNotNull('ndr_action'); // Was NDR but now delivered
+        } elseif ($tab === 'rto') {
+            $query->whereIn('status', ['RTO Initiated', 'RTO Delivered']);
+        } elseif ($tab === 'all') {
+            $query->where(function ($q) {
+                $q->where('status', 'NDR')
+                  ->orWhereIn('status', ['RTO Initiated', 'RTO Delivered']);
+            });
+        }
+
+        $ndrShipments = $query->orderBy('updated_at', 'desc')->paginate(15)->appends($request->all());
             
-        return view('seller.ndr', compact('ndrShipments'));
+        return view('seller.ndr', compact('ndrShipments', 'tab'));
     }
 
     public function action(Request $request, $awb)
@@ -24,16 +40,11 @@ class SellerNdrController extends Controller
         ]);
 
         $shipment = Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        
+        // Only update the ndr_action, leave status as NDR so it moves to "Action Taken" tab
         $shipment->ndr_action = $validated['ndr_action'];
-        
-        if ($validated['ndr_action'] == 'Re-attempt') {
-            $shipment->status = 'Out for Delivery'; // Push back to rider
-        } elseif ($validated['ndr_action'] == 'RTO') {
-            $shipment->status = 'RTO Initiated';
-        }
-        
         $shipment->save();
 
-        return back()->with('success', 'NDR Action submitted for ' . $awb);
+        return back()->with('success', 'NDR Action (' . $validated['ndr_action'] . ') submitted for ' . $awb);
     }
 }

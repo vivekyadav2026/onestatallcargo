@@ -6,7 +6,8 @@
     <title>Reset Your Password - OneStall Cargo</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #17233f;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f9; padding: 30px 0;">
+    <div class="overflow-x-auto w-full">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f9; padding: 30px 0;">
         <tr>
             <td align="center">
                 <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
@@ -56,6 +57,7 @@
                     </tr>
 
                 </table>
+</div>
             </td>
         </tr>
     </table>

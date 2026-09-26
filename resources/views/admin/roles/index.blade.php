@@ -7,11 +7,12 @@
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Roles & Permissions</h1>
             <p class="text-sm text-gray-500 mt-1">Manage system access for Admins, Sellers, Hub Managers, and Riders.</p>
         </div>
-        <button class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)] transition-colors"><i class="fa-solid fa-user-plus"></i> Add User</button>
+        <a href="{{ route('admin.roles.create') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)] transition-colors"><i class="fa-solid fa-user-plus"></i> Add User</a>
     </div>
 
-    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left text-sm whitespace-nowrap">
+    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-x-auto">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
             <thead>
                 <tr class="bg-gray-50 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                     <th class="px-6 py-4">User</th>
@@ -35,6 +36,7 @@
                 @endforeach
             </tbody>
         </table>
+</div>
         @if($users->hasPages())
         <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">{{ $users->links() }}</div>
         @endif

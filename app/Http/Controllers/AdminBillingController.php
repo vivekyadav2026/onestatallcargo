@@ -17,7 +17,7 @@ class AdminBillingController extends Controller
             ->select('user_id', DB::raw('SUM(invoice_value) as total_cod'), DB::raw('COUNT(id) as total_shipments'))
             ->groupBy('user_id')
             ->with('user')
-            ->get();
+            ->paginate(15);
             
         return view('admin.billing.index', compact('ledgers'));
     }

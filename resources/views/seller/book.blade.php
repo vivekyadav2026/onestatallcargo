@@ -1,6 +1,58 @@
 @extends('layouts.seller')
 @section('title', ($mode ?? 'create') === 'edit' ? 'Edit Order - OneStall Cargo' : (($mode ?? 'create') === 'clone' ? 'Clone Order - OneStall Cargo' : 'Add Order - OneStall Cargo'))
 @section('content')
+@php
+    $oldNames = old('product_name');
+    $oldPrices = old('product_price');
+    $oldQtys = old('product_qty');
+    $oldSkus = old('product_sku');
+    
+    $initialProducts = [];
+    if (is_array($oldNames) && count($oldNames) > 0) {
+        foreach ($oldNames as $idx => $val) {
+            $initialProducts[] = [
+                'name' => (string) ($val ?? ''),
+                'price' => is_array($oldPrices) ? (float) ($oldPrices[$idx] ?? 0) : 0,
+                'qty' => is_array($oldQtys) ? (int) ($oldQtys[$idx] ?? 1) : 1,
+                'sku' => is_array($oldSkus) ? (string) ($oldSkus[$idx] ?? '') : '',
+                'hsn' => ''
+            ];
+        }
+    } elseif (isset($shipment) && !empty($shipment->product_details)) {
+        $decoded = json_decode($shipment->product_details, true);
+        if (is_array($decoded) && count($decoded) > 0) {
+            foreach ($decoded as $item) {
+                $initialProducts[] = [
+                    'name' => $item['name'] ?? '',
+                    'price' => (float) ($item['price'] ?? 0),
+                    'qty' => (int) ($item['qty'] ?? 1),
+                    'sku' => $item['sku'] ?? '',
+                    'hsn' => ''
+                ];
+            }
+        }
+    }
+    
+    if (empty($initialProducts)) {
+        $initialProducts[] = [
+            'name' => isset($shipment) ? ($shipment->product_name ?? '') : '',
+            'price' => isset($shipment) ? (float) ($shipment->invoice_value ?? 0) : 0,
+            'qty' => isset($shipment) ? (int) ($shipment->product_qty ?? 1) : 1,
+            'sku' => isset($shipment) ? ($shipment->product_sku ?? '') : '',
+            'hsn' => ''
+        ];
+    }
+
+    $rawType = old('shipment_type', $shipment->shipment_type ?? 'B2C');
+    $initialType = is_array($rawType) ? ($rawType[0] ?? 'B2C') : $rawType;
+
+    $rawCod = old('is_cod', ($shipment->is_cod ?? false) ? '1' : '0');
+    $initialCod = is_array($rawCod) ? ($rawCod[0] ?? '0') : (string)$rawCod;
+
+    $rawWeight = old('weight_kg', $shipment->weight_kg ?? 0.5);
+    $initialWeight = is_array($rawWeight) ? (float)($rawWeight[0] ?? 0.5) : (float)$rawWeight;
+@endphp
+
 <div class="max-w-[1000px] mx-auto pb-24" x-data="bookingForm()">
     
     <!-- Breadcrumb & Header -->
@@ -14,6 +66,25 @@
         </a>
         <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">{{ ($mode ?? "create") === "edit" ? "Edit Order #".($shipment->awb_number ?? "") : (($mode ?? "create") === "clone" ? "Clone Order (Copy of #".($shipment->awb_number ?? "").")" : "Add Order") }}</h1>
     </div>
+
+    @if(session('error'))
+        <div class="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-200 font-bold text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-exclamation text-lg"></i> {{ session('error') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-200 text-sm shadow-sm">
+            <div class="font-extrabold flex items-center gap-2 mb-2 text-red-800">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i> Validation Error - Please fix the following issues:
+            </div>
+            <ul class="list-disc pl-5 font-semibold space-y-1 text-red-700">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <form action="{{ route('seller.book.post') }}" method="POST" id="add-order-form">
                 @csrf
@@ -134,7 +205,7 @@
                             <label class="block text-[10px] font-semibold text-gray-700 mb-1">Product Name *</label>
                             <div class="relative">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-[10px]"></i>
-                                <input type="text" x-model="product.name" placeholder="Search product" :class="product.name.trim() === '' ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-[#4338ca]'" class="w-full pl-8 pr-3 py-2 border rounded-lg text-xs outline-none">
+                                <input type="text" name="product_name[]" x-model="product.name" placeholder="Search product" :class="product.name.trim() === '' ? 'border-red-300 focus:border-red-500' : 'border-gray-200 focus:border-[#4338ca]'" class="w-full pl-8 pr-3 py-2 border rounded-lg text-xs outline-none">
                             </div>
                             <span x-show="product.name.trim() === ''" class="text-[9px] text-red-500 mt-1 block">Product name is required.</span>
                         </div>
@@ -142,20 +213,20 @@
                             <label class="block text-[10px] font-semibold text-gray-700 mb-1">Unit Price</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-2 text-gray-400 text-xs">&#8377;</span>
-                                <input type="number" step="0.01" min="0" x-model.number="product.price" class="w-full pl-6 pr-3 py-2 border border-gray-200 rounded-lg text-xs outline-none focus:border-[#4338ca]">
+                                <input type="number" step="0.01" min="0" name="product_price[]" x-model.number="product.price" class="w-full pl-6 pr-3 py-2 border border-gray-200 rounded-lg text-xs outline-none focus:border-[#4338ca]">
                             </div>
                         </div>
                         <div class="w-full md:w-[15%]">
                             <label class="block text-[10px] font-semibold text-gray-700 mb-1">Quantity</label>
                             <div class="flex items-center border border-gray-200 rounded-lg px-2 py-1.5 h-[34px]">
                                 <button type="button" @click="if(product.qty > 1) product.qty--" class="text-gray-400 hover:text-gray-700 px-1 font-bold">-</button>
-                                <input type="number" min="1" x-model.number="product.qty" class="w-full text-center text-xs outline-none">
+                                <input type="number" min="1" name="product_qty[]" x-model.number="product.qty" class="w-full text-center text-xs outline-none">
                                 <button type="button" @click="product.qty++" class="text-gray-400 hover:text-gray-700 px-1 font-bold">+</button>
                             </div>
                         </div>
                         <div class="w-full md:w-[15%]">
                             <label class="block text-[10px] font-semibold text-gray-700 mb-1">SKU <span class="text-gray-400 font-normal">(Optional)</span></label>
-                            <input type="text" x-model="product.sku" placeholder="SKU" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs outline-none focus:border-[#4338ca]">
+                            <input type="text" name="product_sku[]" x-model="product.sku" placeholder="SKU" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs outline-none focus:border-[#4338ca]">
                         </div>
                         <div class="w-full md:w-[15%]">
                             <label class="block text-[10px] font-semibold text-gray-700 mb-1">HSN <span class="text-gray-400 font-normal">(Optional)</span></label>
@@ -350,8 +421,8 @@
 <script>
 function bookingForm() {
     return {
-        shipmentType: '{{ old('shipment_type', $shipment->shipment_type ?? 'B2C') }}',
-        isCod: '{{ old('is_cod', ($shipment->is_cod ?? false) ? '1' : '0') }}',
+        shipmentType: @json($initialType),
+        isCod: @json($initialCod),
         isDangerous: false,
         showOtherCharges: false,
         showGuidelines: false,
@@ -360,19 +431,11 @@ function bookingForm() {
         shippingCharge: 0,
         extraFee: 0,
         discountAmount: 0,
-        deadWeight: {{ old('weight_kg', $shipment->weight_kg ?? 0.5) }},
+        deadWeight: {{ $initialWeight }},
         lengthCm: 10,
         widthCm: 10,
         heightCm: 10,
-        products: [
-            { 
-                name: '{{ old('product_name', isset($shipment) ? 'Package Item for ' . $shipment->receiver_name : '') }}', 
-                price: {{ old('invoice_value', $shipment->invoice_value ?? 0) }}, 
-                qty: 1, 
-                sku: '{{ $shipment->awb_number ?? "" }}', 
-                hsn: '' 
-            }
-        ],
+        products: {!! json_encode($initialProducts) !!},
         addProduct() {
             this.products.push({ name: '', price: 0, qty: 1, sku: '', hsn: '' });
         },

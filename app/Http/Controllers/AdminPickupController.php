@@ -13,7 +13,7 @@ class AdminPickupController extends Controller
         $pendingPickups = Shipment::where('status', 'Manifested')
                             ->with(['user', 'assignedRider'])
                             ->orderBy('created_at', 'desc')
-                            ->get();
+                            ->paginate(15);
 
         // Get all pickup riders
         $riders = User::whereIn('role', ['rider', 'pickup_rider'])->get();

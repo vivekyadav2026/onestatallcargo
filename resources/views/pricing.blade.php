@@ -139,7 +139,8 @@
 
                 <!-- Table -->
                 <div x-show="!error && rates.length > 0" class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-white border-collapse">
+                    <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm text-white border-collapse">
                         <thead class="border-b border-white/20 text-xs text-white font-medium">
                             <tr>
                                 <th class="pb-3 px-2 font-medium">Courier Name</th>
@@ -159,6 +160,7 @@
                             </template>
                         </tbody>
                     </table>
+</div>
                 </div>
 
                 <div x-show="!error && rates.length > 0" class="text-center mt-8">

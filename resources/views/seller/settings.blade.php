@@ -40,12 +40,32 @@
                 <button @click="openView('kyc', 'KYC Verification', 'Upload identity & tax documents for compliance')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group relative">
                     @php $userKyc = Auth::user()->kyc; @endphp
                     @if($userKyc && $userKyc->status === 'approved')
-                        <span class="absolute top-4 right-4 bg-green-100 text-green-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full"><i class="fa-solid fa-check"></i> VERIFIED</span>
-                    @elseif($userKyc && $userKyc->status === 'pending')
-                        <span class="absolute top-4 right-4 bg-yellow-100 text-yellow-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full"><i class="fa-solid fa-clock"></i> PENDING</span>
-                    @else
-                        <span class="absolute top-4 right-4 bg-red-100 text-red-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full"><i class="fa-solid fa-triangle-exclamation"></i> ACTION REQUIRED</span>
-                    @endif
+              <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
+                  <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
+                          <i class="fa-solid fa-shield-check"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-sm font-bold text-gray-900">KYC Verified & Active</h2>
+                          <p class="text-[11px] text-gray-500 mt-1">Your identity documents are verified. Shipping and COD payouts are fully unlocked.</p>
+                      </div>
+                  </div>
+                  <span class="hidden sm:inline-block px-3 py-1 bg-green-100 text-green-700 border border-green-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-circle-check mr-1"></i> Verified</span>
+              </div>
+          @elseif($userKyc && $userKyc->status === 'pending')
+              <div class="bg-yellow-50/60 border border-yellow-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
+                  <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-yellow-200">
+                          <i class="fa-solid fa-clock-rotate-left"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-sm font-bold text-gray-900">Verification Under Review</h2>
+                          <p class="text-[11px] text-gray-500 mt-1">Our compliance team is verifying your uploaded documents.</p>
+                      </div>
+                  </div>
+                  <span class="hidden sm:inline-block px-3 py-1 bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-hourglass-half mr-1"></i> Under Review</span>
+              </div>
+          @endif
                     <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 text-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
                         <i class="fa-solid fa-id-card"></i>
                     </div>
@@ -103,186 +123,258 @@
 
     <!-- ================= SUB VIEWS (100% Functional Code) ================= -->
 
-    <!-- VIEW 1: Company Profile -->
-    <div x-show="view === 'company'" style="display: none;" class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm max-w-4xl">
-        <form @submit.prevent="updateProfile" class="space-y-8">
-            <div>
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-building text-[#4338ca]"></i> Basic & Brand Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Contact Person Name <span class="text-red-500">*</span></label>
-                        <input type="text" x-model="profile.name" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Email Address <span class="text-red-500">*</span></label>
-                        <input type="email" x-model="profile.email" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Registered Company Name</label>
-                        <input type="text" x-model="profile.company_name" placeholder="e.g. Acme Logistics Pvt Ltd" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Brand Name (Printed on Shipping Labels)</label>
-                        <input type="text" x-model="profile.brand_name" placeholder="e.g. Acme Store" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Business Structure</label>
-                        <select x-model="profile.business_type" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                            <option value="">Select Business Structure</option>
-                            <option value="Sole Proprietorship">Sole Proprietorship</option>
-                            <option value="Private Limited">Private Limited (Pvt Ltd)</option>
-                            <option value="Partnership / LLP">Partnership / LLP</option>
-                            <option value="Individual / Freelancer">Individual / Freelancer</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Primary Phone / Mobile</label>
-                        <input type="text" maxlength="10" x-model="profile.phone" placeholder="10-digit Mobile Number" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                </div>
-            </div>
+          <!-- VIEW 1: Company Profile -->
+      <div x-show="view === 'company'" style="display: none;" class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm max-w-4xl mt-4">
+          <div class="mb-8">
+              <div class="flex items-center gap-3 mb-2">
+                  <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <i class="fa-solid fa-building"></i>
+                  </div>
+                  <h3 class="font-extrabold text-gray-900 text-xl md:text-2xl">Company Profile</h3>
+              </div>
+              <p class="text-xs md:text-sm text-gray-500 max-w-xl pl-13">Manage your basic business information, registered address, and tax details.</p>
+          </div>
+          
+          <form @submit.prevent="updateProfile" class="space-y-6 md:space-y-8 pl-0 md:pl-13">
+              <!-- Section 1 -->
+              <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                  <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">1</span> Basic & Brand Information
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Contact Person Name <span class="text-red-500">*</span></label>
+                          <input type="text" x-model="profile.name" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Email Address <span class="text-red-500">*</span></label>
+                          <input type="email" x-model="profile.email" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Registered Company Name</label>
+                          <input type="text" x-model="profile.company_name" placeholder="e.g. Acme Logistics Pvt Ltd" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Brand Name (Printed on Labels)</label>
+                          <input type="text" x-model="profile.brand_name" placeholder="e.g. Acme Store" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Business Structure</label>
+                          <select x-model="profile.business_type" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                              <option value="">Select Business Structure</option>
+                              <option value="Sole Proprietorship">Sole Proprietorship</option>
+                              <option value="Private Limited">Private Limited (Pvt Ltd)</option>
+                              <option value="Partnership / LLP">Partnership / LLP</option>
+                              <option value="Individual / Freelancer">Individual / Freelancer</option>
+                          </select>
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Primary Phone / Mobile</label>
+                          <input type="text" maxlength="10" x-model="profile.phone" placeholder="10-digit Mobile Number" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                  </div>
+              </div>
+  
+              <!-- Section 2 -->
+              <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                  <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">2</span> Tax Details
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">GSTIN Number (Optional)</label>
+                          <input type="text" maxlength="15" x-model="profile.gstin" @input="profile.gstin = profile.gstin.toUpperCase()" placeholder="22AAAAA0000A1Z5" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono text-gray-900 uppercase focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">PAN Number</label>
+                          <input type="text" maxlength="10" x-model="profile.pan_number" @input="profile.pan_number = profile.pan_number.toUpperCase()" placeholder="ABCDE1234F" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono text-gray-900 uppercase focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                  </div>
+              </div>
+  
+              <!-- Section 3 -->
+              <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                  <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">3</span> Registered Address
+                  </h4>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Pincode</label>
+                          <input type="text" maxlength="6" x-model="profile.company_pincode" @input="fetchCityForCompany(profile.company_pincode)" placeholder="6-digit PIN" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">City</label>
+                          <input type="text" x-model="profile.company_city" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div>
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">State</label>
+                          <input type="text" x-model="profile.company_state" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                      </div>
+                      <div class="md:col-span-3">
+                          <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Complete Address</label>
+                          <textarea x-model="profile.company_address" rows="2" placeholder="Building, Street, Landmark details" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition"></textarea>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p x-show="successMessage" class="text-green-600 text-xs font-bold flex items-center gap-1 order-2 sm:order-1" x-text="successMessage"></p>
+                  <button type="submit" class="px-8 py-3 bg-[#0f172a] text-white text-xs font-bold hover:bg-black rounded-xl transition shadow-md w-full sm:w-auto order-1 sm:order-2" :disabled="loading">
+                      <span x-show="!loading">Update Company Details</span>
+                      <span x-show="loading"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...</span>
+                  </button>
+              </div>
+          </form>
+      </div>
 
-            <div class="pt-6 border-t border-gray-100">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-file-invoice text-[#4338ca]"></i> Tax Details</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">GSTIN Number (Optional)</label>
-                        <input type="text" maxlength="15" x-model="profile.gstin" @input="profile.gstin = profile.gstin.toUpperCase()" placeholder="22AAAAA0000A1Z5" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">PAN Number</label>
-                        <input type="text" maxlength="10" x-model="profile.pan_number" @input="profile.pan_number = profile.pan_number.toUpperCase()" placeholder="ABCDE1234F" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-6 border-t border-gray-100">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-location-dot text-[#4338ca]"></i> Registered Address</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Pincode</label>
-                        <input type="text" maxlength="6" x-model="profile.company_pincode" @input="fetchCityForCompany(profile.company_pincode)" placeholder="6-digit PIN" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">City</label>
-                        <input type="text" x-model="profile.company_city" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">State</label>
-                        <input type="text" x-model="profile.company_state" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]">
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Complete Address</label>
-                        <textarea x-model="profile.company_address" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
-                <button type="submit" class="px-8 py-3 bg-[#4338ca] text-white font-bold rounded-lg hover:bg-[#3730a3] transition shadow-md flex items-center gap-2" :disabled="loading">
-                    <span x-show="!loading"><i class="fa-solid fa-floppy-disk mr-1"></i> Update Company Details</span>
-                    <span x-show="loading"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...</span>
-                </button>
-                <p x-show="successMessage" class="text-green-600 text-sm font-bold flex items-center gap-1" x-text="successMessage"></p>
-            </div>
-        </form>
-    </div>
-
-    <!-- VIEW 2: KYC Verification -->
+      <!-- VIEW 2: KYC Verification -->
     <div x-show="view === 'kyc'" style="display: none;" class="max-w-4xl">
         @if($userKyc && $userKyc->status === 'approved')
-            <div class="bg-green-50 border border-green-200 rounded-2xl p-6 mb-8 flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl shrink-0">
-                        <i class="fa-solid fa-shield-check"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-green-900">KYC Verified & Active</h2>
-                        <p class="text-xs text-green-700 mt-1">Your identity documents are verified. Shipping and COD payouts are fully unlocked.</p>
-                    </div>
-                </div>
-                <span class="px-3 py-1 bg-green-200 text-green-900 rounded-full text-xs font-extrabold uppercase">Verified</span>
-            </div>
-        @elseif($userKyc && $userKyc->status === 'pending')
-            <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8 flex items-center justify-between shadow-sm">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-yellow-500 text-white rounded-full flex items-center justify-center text-2xl shrink-0">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-yellow-900">Verification Under Review</h2>
-                        <p class="text-xs text-yellow-700 mt-1">Our compliance team is verifying your uploaded documents.</p>
-                    </div>
-                </div>
-                <span class="px-3 py-1 bg-yellow-200 text-yellow-900 rounded-full text-xs font-extrabold uppercase">Under Review</span>
-            </div>
-        @endif
+              <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
+                  <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
+                          <i class="fa-solid fa-shield-check"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-sm font-bold text-gray-900">KYC Verified & Active</h2>
+                          <p class="text-[11px] text-gray-500 mt-1">Your identity documents are verified. Shipping and COD payouts are fully unlocked.</p>
+                      </div>
+                  </div>
+                  <span class="hidden sm:inline-block px-3 py-1 bg-green-100 text-green-700 border border-green-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-circle-check mr-1"></i> Verified</span>
+              </div>
+          @elseif($userKyc && $userKyc->status === 'pending')
+              <div class="bg-yellow-50/60 border border-yellow-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
+                  <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-yellow-200">
+                          <i class="fa-solid fa-clock-rotate-left"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-sm font-bold text-gray-900">Verification Under Review</h2>
+                          <p class="text-[11px] text-gray-500 mt-1">Our compliance team is verifying your uploaded documents.</p>
+                      </div>
+                  </div>
+                  <span class="hidden sm:inline-block px-3 py-1 bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-hourglass-half mr-1"></i> Under Review</span>
+              </div>
+          @endif
 
         @if(!$userKyc || $userKyc->status !== 'approved')
-            <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
-                <h3 class="font-bold text-gray-900 text-lg mb-2">Submit Business KYC Documents</h3>
-                <p class="text-xs text-gray-500 mb-6">Government ID proof and PAN card are required for shipping compliance.</p>
+              <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm max-w-4xl mt-4">
+                  <div class="mb-8">
+                      <div class="flex items-center gap-3 mb-2">
+                          <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                              <i class="fa-solid fa-file-shield"></i>
+                          </div>
+                          <h3 class="font-extrabold text-gray-900 text-xl md:text-2xl">Complete KYC Verification</h3>
+                      </div>
+                      <p class="text-xs md:text-sm text-gray-500 max-w-xl pl-13">Upload your business and identity documents to unlock live shipping and COD payouts.</p>
+                  </div>
+      
+                  <form action="{{ route('seller.kyc.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6 md:space-y-8 pl-0 md:pl-13">
+                      @csrf
+                      
+                      <!-- Section 1 -->
+                      <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                          <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                              <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">1</span> Business Details
+                          </h4>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Business Structure</label>
+                                  <select name="business_type" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                                      <option value="Individual">Individual / Freelancer</option>
+                                      <option value="Sole Proprietorship">Sole Proprietorship</option>
+                                      <option value="Private Limited">Private Limited (Pvt Ltd)</option>
+                                      <option value="Partnership / LLP">Partnership / LLP</option>
+                                  </select>
+                              </div>
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">PAN Card Number</label>
+                                  <input type="text" maxlength="10" name="pan_number" value="{{ $userKyc->pan_number ?? Auth::user()->pan_number ?? '' }}" placeholder="ABCDE1234F" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 uppercase focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                          </div>
+                      </div>
 
-                <form action="{{ route('seller.kyc.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                    @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Business Structure</label>
-                            <select name="business_type" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                                <option value="Individual">Individual / Freelancer</option>
-                                <option value="Sole Proprietorship">Sole Proprietorship</option>
-                                <option value="Private Limited">Private Limited (Pvt Ltd)</option>
-                                <option value="Partnership / LLP">Partnership / LLP</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Identity Document Type</label>
-                            <select name="document_type" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                                <option value="Aadhaar">Aadhaar Card</option>
-                                <option value="Voter ID">Voter ID Card</option>
-                                <option value="Passport">Passport</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Identity Document Number</label>
-                            <input type="text" name="document_number" value="{{ $userKyc->document_number ?? '' }}" placeholder="Aadhaar / Passport No." class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">PAN Card Number</label>
-                            <input type="text" maxlength="10" name="pan_number" value="{{ $userKyc->pan_number ?? Auth::user()->pan_number ?? '' }}" placeholder="ABCDE1234F" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm font-mono focus:outline-none focus:border-[#4338ca]" required>
-                        </div>
-                    </div>
+                      <!-- Section 2 -->
+                      <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                          <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                              <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">2</span> Identity Proof
+                          </h4>
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Document Type</label>
+                                  <select name="document_type" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                                      <option value="Aadhaar">Aadhaar Card</option>
+                                      <option value="Voter ID">Voter ID Card</option>
+                                      <option value="Passport">Passport</option>
+                                  </select>
+                              </div>
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Document Number</label>
+                                  <input type="text" name="document_number" value="{{ $userKyc->document_number ?? '' }}" placeholder="Enter ID Number" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                          </div>
+                      </div>
+      
+                      <!-- Section 3 -->
+                      <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                          <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                              <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">3</span> Document Uploads
+                          </h4>
+                          
+                          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" x-data="{
+                              files: { id_front: null, id_back: null, pan_doc: null, gst_doc: null },
+                              handleFile(e, type) {
+                                  if(e.target.files.length > 0) {
+                                      this.files[type] = e.target.files[0].name;
+                                  }
+                              }
+                          }">
+                              <!-- ID Front -->
+                              <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#4338ca] hover:bg-blue-50/30 transition-all group">
+                                  <input type="file" name="id_front" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'id_front')" required>
+                                  <i class="fa-solid fa-cloud-arrow-up text-gray-300 text-xl mb-2 group-hover:text-[#4338ca] transition"></i>
+                                  <span class="text-[11px] font-bold text-gray-700">ID Front</span>
+                                  <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.id_front ? files.id_front : 'Select File'"></span>
+                                  <div x-show="files.id_front" class="absolute top-2 right-2 text-green-500 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                              </label>
+                              
+                              <!-- ID Back -->
+                              <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#4338ca] hover:bg-blue-50/30 transition-all group">
+                                  <input type="file" name="id_back" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'id_back')" required>
+                                  <i class="fa-solid fa-cloud-arrow-up text-gray-300 text-xl mb-2 group-hover:text-[#4338ca] transition"></i>
+                                  <span class="text-[11px] font-bold text-gray-700">ID Back</span>
+                                  <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.id_back ? files.id_back : 'Select File'"></span>
+                                  <div x-show="files.id_back" class="absolute top-2 right-2 text-green-500 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                              </label>
 
-                    <div class="pt-6 border-t border-gray-100">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4"><i class="fa-solid fa-cloud-arrow-up text-[#4338ca]"></i> Document Image Uploads</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="border border-dashed border-gray-300 p-4 rounded-xl text-center">
-                                <span class="block text-xs font-bold text-gray-700">ID Proof Front</span>
-                                <input type="file" name="id_front" accept="image/*,.pdf" class="mt-2 text-xs text-gray-500 w-full">
-                            </div>
-                            <div class="border border-dashed border-gray-300 p-4 rounded-xl text-center">
-                                <span class="block text-xs font-bold text-gray-700">ID Proof Back</span>
-                                <input type="file" name="id_back" accept="image/*,.pdf" class="mt-2 text-xs text-gray-500 w-full">
-                            </div>
-                            <div class="border border-dashed border-gray-300 p-4 rounded-xl text-center">
-                                <span class="block text-xs font-bold text-gray-700">PAN Card Photo</span>
-                                <input type="file" name="pan_doc" accept="image/*,.pdf" class="mt-2 text-xs text-gray-500 w-full">
-                            </div>
-                            <div class="border border-dashed border-gray-300 p-4 rounded-xl text-center">
-                                <span class="block text-xs font-bold text-gray-700">GST Certificate (Optional)</span>
-                                <input type="file" name="gst_doc" accept="image/*,.pdf" class="mt-2 text-xs text-gray-500 w-full">
-                            </div>
-                        </div>
-                    </div>
+                              <!-- PAN -->
+                              <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#4338ca] hover:bg-blue-50/30 transition-all group">
+                                  <input type="file" name="pan_doc" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'pan_doc')" required>
+                                  <i class="fa-solid fa-cloud-arrow-up text-gray-300 text-xl mb-2 group-hover:text-[#4338ca] transition"></i>
+                                  <span class="text-[11px] font-bold text-gray-700">PAN Card</span>
+                                  <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.pan_doc ? files.pan_doc : 'Select File'"></span>
+                                  <div x-show="files.pan_doc" class="absolute top-2 right-2 text-green-500 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                              </label>
 
-                    <div class="pt-6 border-t border-gray-100 flex justify-end">
-                        <button type="submit" class="px-8 py-3 bg-[#4338ca] text-white font-bold rounded-lg hover:bg-[#3730a3] transition shadow-md flex items-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Submit KYC Documents
-                        </button>
-                    </div>
-                </form>
-            </div>
-        @endif
+                              <!-- GST -->
+                              <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-[#4338ca] hover:bg-blue-50/30 transition-all group">
+                                  <input type="file" name="gst_doc" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'gst_doc')">
+                                  <i class="fa-solid fa-cloud-arrow-up text-gray-300 text-xl mb-2 group-hover:text-[#4338ca] transition"></i>
+                                  <span class="text-[11px] font-bold text-gray-700">GST (Opt.)</span>
+                                  <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.gst_doc ? files.gst_doc : 'Select File'"></span>
+                                  <div x-show="files.gst_doc" class="absolute top-2 right-2 text-green-500 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                              </label>
+                          </div>
+                      </div>
+      
+                      <div class="pt-4 flex justify-end">
+                          <button type="submit" class="px-8 py-3 bg-[#0f172a] text-white text-xs font-bold hover:bg-black rounded-xl transition shadow-md w-full sm:w-auto">
+                              Submit Documents
+                          </button>
+                      </div>
+                  </form>
+              </div>
+          @endif
     </div>
 
     <!-- VIEW 3: Pickup Warehouses (Complete Management) -->
@@ -426,8 +518,9 @@
         </div>
 
         <h3 class="font-bold text-gray-900 mb-4">Active API Tokens</h3>
-        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-            <table class="w-full text-left text-sm whitespace-nowrap">
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto shadow-sm">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
                 <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-bold uppercase">
                     <tr><th class="px-6 py-3">Token Name</th><th class="px-6 py-3">Created At</th><th class="px-6 py-3 text-right">Action</th></tr>
                 </thead>
@@ -451,6 +544,7 @@
                     </template>
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 

@@ -72,6 +72,17 @@ function faqApp() {
         activeCategory: 'all',
         openFaq: 0,
         faqs: [
+            @foreach($faqs as $faq)
+            {
+                category: 'general',
+                q: `{!! addslashes($faq->question) !!}`,
+                a: `{!! addslashes($faq->answer) !!}`
+            },
+            @endforeach
+        ]
+    }
+}
+</script>        faqs: [
             {
                 category: 'general',
                 q: 'How do I get started with OneStall Cargo?',

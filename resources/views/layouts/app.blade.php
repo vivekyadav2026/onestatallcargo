@@ -25,8 +25,7 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="/" class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-[#FFD700] text-gray-900 flex items-center justify-center font-black text-xl shadow-lg">O</div>
-                        <span class="font-extrabold text-2xl tracking-tight text-white">OneStall Cargo</span>
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-10 object-contain rounded bg-white p-1" style="max-width: 150px;">
                     </a>
                 </div>
 
@@ -93,8 +92,7 @@
                 <!-- Branding -->
                 <div class="col-span-1 md:col-span-1">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 rounded-lg bg-[#FFD700] text-gray-900 flex items-center justify-center font-black text-lg">O</div>
-                        <span class="font-extrabold text-xl text-white">OneStall Cargo</span>
+                        <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-10 object-contain rounded bg-white p-1" style="max-width: 150px;">
                     </div>
                     <p class="text-sm mb-6 leading-relaxed">Your ultimate logistics partner. B2B, B2C, Freight, and E-commerce aggregator API connecting you to the best delivery networks worldwide.</p>
                     <div class="flex space-x-4">
@@ -130,9 +128,9 @@
                 <div>
                     <h3 class="text-white font-bold mb-4 uppercase tracking-wider text-xs">Get In Touch</h3>
                     <ul class="space-y-3 text-sm">
-                        <li class="flex items-start"><i class="fa-solid fa-location-dot mt-1 mr-3 text-[#FFD700]"></i> 123 Logistics Park, Mumbai, India 400001</li>
-                        <li class="flex items-center"><i class="fa-solid fa-envelope mr-3 text-[#FFD700]"></i> support@onestallcargo.com</li>
-                        <li class="flex items-center"><i class="fa-solid fa-phone mr-3 text-[#FFD700]"></i> 1800-123-4567</li>
+                        <li class="flex items-start"><i class="fa-solid fa-location-dot mt-1 mr-3 text-[#FFD700]"></i> {{ setting('site_address', '123 Logistics Park, Mumbai, India 400001') }}</li>
+                        <li class="flex items-center"><i class="fa-solid fa-envelope mr-3 text-[#FFD700]"></i> {{ setting('site_email', 'support@onestallcargo.com') }}</li>
+                        <li class="flex items-center"><i class="fa-solid fa-phone mr-3 text-[#FFD700]"></i> {{ setting('site_phone', '1800-123-4567') }}</li>
                     </ul>
                 </div>
             </div>

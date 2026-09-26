@@ -86,6 +86,11 @@
                     </tbody>
                 </table>
             </div>
+            @if($pendingPickups->hasPages())
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                    {{ $pendingPickups->links() }}
+                </div>
+            @endif
         </form>
     </div>
 </div>

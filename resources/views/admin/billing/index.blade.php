@@ -15,8 +15,9 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left text-sm whitespace-nowrap">
+    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-x-auto">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
             <thead>
                 <tr class="bg-gray-50 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                     <th class="px-6 py-4">Seller Details</th>
@@ -56,6 +57,12 @@
                 @endforelse
             </tbody>
         </table>
+</div>
+        @if($ledgers->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                {{ $ledgers->links() }}
+            </div>
+        @endif
     </div>
 </div>
 @endsection

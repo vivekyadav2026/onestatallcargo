@@ -87,6 +87,34 @@ class SellerShipmentController extends Controller
         $shipment->is_cod = $is_cod;
         $shipment->invoice_value = $validated['invoice_value'] ?? 0;
         $shipment->total_amount = $totalAmount;
+
+        // Product details handling
+        $productNames = $request->input('product_name', []);
+        $productSkus = $request->input('product_sku', []);
+        $productQtys = $request->input('product_qty', []);
+        $productPrices = $request->input('product_price', []);
+
+        if (!empty($productNames) && is_array($productNames)) {
+            $filteredNames = array_filter($productNames);
+            $shipment->product_name = !empty($filteredNames) ? implode(', ', $filteredNames) : 'General Parcel';
+            $shipment->product_sku = implode(', ', array_filter($productSkus)) ?: 'N/A';
+            $shipment->product_qty = array_sum(array_map('intval', $productQtys)) ?: 1;
+
+            $items = [];
+            for ($i = 0; $i < count($productNames); $i++) {
+                if (!empty($productNames[$i])) {
+                    $items[] = [
+                        'name' => $productNames[$i],
+                        'price' => $productPrices[$i] ?? 0,
+                        'qty' => $productQtys[$i] ?? 1,
+                        'sku' => $productSkus[$i] ?? '',
+                    ];
+                }
+            }
+            $shipment->product_details = json_encode($items);
+        } else {
+            $shipment->product_name = $shipment->product_name ?: 'General Parcel';
+        }
         
         if (!$isEdit) {
             $shipment->status = 'Manifested';
@@ -159,7 +187,25 @@ class SellerShipmentController extends Controller
 
     public function index(Request $request)
     {
-        $query = \App\Models\Shipment::where('user_id', \Illuminate\Support\Facades\Auth::id());
+        $userId = Auth::id();
+        $query = \App\Models\Shipment::where('user_id', $userId);
+
+        // Single aggregated SQL query for all status counts (high performance for 100k+ users)
+        $statusGroup = \App\Models\Shipment::where('user_id', $userId)
+            ->selectRaw("status, count(*) as total")
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
+        $counts = [
+            'new' => ($statusGroup['new'] ?? 0) + ($statusGroup['Manifested'] ?? 0) + ($statusGroup['Booked'] ?? 0) + ($statusGroup['booked'] ?? 0) + ($statusGroup['New'] ?? 0),
+            'pickups' => ($statusGroup['pickup_scheduled'] ?? 0) + ($statusGroup['Pickup Scheduled'] ?? 0) + ($statusGroup['pickups'] ?? 0),
+            'transit' => ($statusGroup['in_transit'] ?? 0) + ($statusGroup['In Transit'] ?? 0) + ($statusGroup['transit'] ?? 0),
+            'delivered' => ($statusGroup['delivered'] ?? 0) + ($statusGroup['Delivered'] ?? 0),
+            'rto' => ($statusGroup['rto'] ?? 0) + ($statusGroup['RTO'] ?? 0),
+            'cancelled' => ($statusGroup['cancelled'] ?? 0) + ($statusGroup['Cancelled'] ?? 0),
+            'all' => array_sum($statusGroup),
+        ];
 
         if ($request->filled('status') && $request->status !== 'all') {
             $status = $request->status;
@@ -206,14 +252,20 @@ class SellerShipmentController extends Controller
         $shipments = $query->orderBy('created_at', 'desc')->paginate(15);
         $shipments->appends($request->all());
 
-        return view('seller.shipments', compact('shipments'));
+        return view('seller.shipments', compact('shipments', 'counts'));
     }
 
     public function cancel($id)
     {
         $shipment = \App\Models\Shipment::where('user_id', Auth::id())->where('id', $id)->firstOrFail();
         
-        if (in_array(strtolower($shipment->status), ['new', 'manifested', 'booked'])) {
+        if (strtolower($shipment->status) === 'cancelled') {
+            return back()->with('error', 'This shipment is already cancelled.');
+        }
+
+        $cancellableStatuses = ['new', 'manifested', 'booked', 'pickup_scheduled', 'pending', 'new order'];
+        
+        if (in_array(strtolower(trim($shipment->status)), $cancellableStatuses)) {
             $shipment->status = 'cancelled';
             $shipment->save();
             
@@ -224,18 +276,20 @@ class SellerShipmentController extends Controller
                 $user->save();
                 
                 // create wallet transaction
-                \App\Models\Transaction::create([
+                \App\Models\WalletTransaction::create([
                     'user_id' => $user->id,
                     'amount' => $shipment->total_amount,
                     'type' => 'credit',
+                    'balance_after' => $user->wallet_balance,
+                    'reference_id' => $shipment->awb_number,
                     'description' => 'Refund for cancelled shipment ' . $shipment->awb_number,
-                    'closing_balance' => $user->wallet_balance
+                    'status' => 'success',
                 ]);
             }
             return back()->with('success', 'Shipment cancelled successfully and amount refunded to wallet.');
         }
 
-        return back()->with('error', 'Only new shipments can be cancelled.');
+        return back()->with('error', "Shipment with status '{$shipment->status}' cannot be cancelled. Only orders not yet picked up can be cancelled.");
     }
 
     public function bulkCancel(Request $request)
@@ -262,12 +316,14 @@ class SellerShipmentController extends Controller
             $user->wallet_balance += $totalRefund;
             $user->save();
 
-            \App\Models\Transaction::create([
+            \App\Models\WalletTransaction::create([
                 'user_id' => $user->id,
                 'amount' => $totalRefund,
                 'type' => 'credit',
+                'balance_after' => $user->wallet_balance,
+                'reference_id' => 'BULK_CANCEL',
                 'description' => "Bulk refund for $count cancelled shipments",
-                'closing_balance' => $user->wallet_balance
+                'status' => 'success',
             ]);
         }
 

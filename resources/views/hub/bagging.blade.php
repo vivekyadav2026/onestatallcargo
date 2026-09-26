@@ -63,7 +63,8 @@
             <div class="p-4 bg-gray-50 border-b border-gray-200">
                 <h2 class="font-extrabold text-gray-800">Recent Bags</h2>
             </div>
-            <table class="w-full text-left text-sm whitespace-nowrap">
+            <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
                 <thead>
                     <tr class="bg-white text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                         <th class="px-6 py-3">Bag ID</th>
@@ -89,6 +90,7 @@
                     @endforelse
                 </tbody>
             </table>
+</div>
         </div>
     </div>
 </div>

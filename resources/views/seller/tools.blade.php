@@ -144,8 +144,9 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                        <table class="w-full text-sm">
+                    <div class="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-sm">
                             <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-bold uppercase">
                                 <tr>
                                     <th class="px-6 py-4">Courier Partner</th>
@@ -174,6 +175,7 @@
                                 </template>
                             </tbody>
                         </table>
+</div>
                     </div>
                 </div>
             </div>
@@ -183,8 +185,9 @@
         <div x-show="activeTab === 'chart'" class="p-8 bg-[#fbfcfd] min-h-[500px]" style="display: none;">
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Standard Rate Chart</h2>
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
+                <div class="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
                         <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-bold uppercase">
                             <tr>
                                 <th class="px-6 py-4">Courier</th>
@@ -211,6 +214,7 @@
                             </tr>
                         </tbody>
                     </table>
+</div>
                 </div>
             </div>
         </div>
@@ -292,8 +296,9 @@
         <div x-show="activeTab === 'logs'" class="p-8 bg-[#fbfcfd] min-h-[500px]" style="display: none;">
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">System Activity Logs</h2>
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
+                <div class="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
+                        <div class="overflow-x-auto w-full">
+<table class="w-full text-left text-sm whitespace-nowrap">
                         <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-bold uppercase">
                             <tr>
                                 <th class="px-6 py-4">Date / Time</th>
@@ -309,6 +314,7 @@
                             </tr>
                         </tbody>
                     </table>
+</div>
                 </div>
             </div>
         </div>

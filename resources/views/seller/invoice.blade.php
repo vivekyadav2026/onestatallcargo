@@ -55,8 +55,8 @@
         </div>
 
         <!-- Itemized Goods -->
-        <div class="border border-gray-300 rounded-lg overflow-hidden mb-8">
-            <table class="w-full text-left text-sm">
+        <div class="border border-gray-300 rounded-lg overflow-x-auto mb-8">
+                        <table class="w-full text-left text-sm">
                 <thead>
                     <tr class="bg-gray-100 text-gray-800 uppercase tracking-wider text-[10px] font-bold border-b border-gray-300">
                         <th class="px-4 py-3">Qty</th>

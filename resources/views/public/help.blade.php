@@ -130,7 +130,7 @@
                 </div>
                 <h4 class="font-bold text-gray-900 mb-1 text-base">Toll-Free Helpline</h4>
                 <p class="text-xs text-gray-600 mb-4">Speak directly to an operations representative for urgent issues.</p>
-                <a href="tel:1800123456" class="inline-block text-xs font-bold text-brand-navy hover:underline">1800-123-4567</a>
+                <a href="tel:1800123456" class="inline-block text-xs font-bold text-brand-navy hover:underline">{{ setting('site_phone', '1800-123-4567') }}</a>
             </div>
         </div>
     </div>

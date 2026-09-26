@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'OneStall Cargo | Premium Logistics & Courier Platform')</title>
-    <meta name="description" content="@yield('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.')">
+    <title>@yield('title', setting('site_name', 'OneStall Cargo') . ' | ' . setting('site_tagline', 'Premium Logistics & Courier Platform'))</title>
+    <meta name="description" content="@yield('meta_description', setting('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.'))">
     
     <!-- Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -236,8 +236,8 @@
                     <ul class="space-y-3 text-sm">
                         <li><a href="{{ route('developers') }}" class="hover:text-white transition">API Overview</a></li>
                         <li><a href="{{ route('docs') }}" class="hover:text-white transition">API Documentation</a></li>
-                        <li><a href="#" class="hover:text-white transition">Webhooks</a></li>
-                        <li><a href="#" class="hover:text-white transition">Sandbox</a></li>
+                        <li><a href="{{ route('docs') }}#webhooks" class="hover:text-white transition">Webhooks</a></li>
+                        <li><a href="{{ route('docs') }}#sandbox" class="hover:text-white transition">Sandbox</a></li>
                     </ul>
                 </div>
 
@@ -257,9 +257,9 @@
             <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
                 <p>&copy; 2026 OneStall Cargo. All rights reserved.</p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition">Terms of Service</a>
-                    <a href="#" class="hover:text-white transition">Cookies</a>
+                    <a href="/privacy" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="/terms" class="hover:text-white transition">Terms of Service</a>
+                    <a href="/cookies" class="hover:text-white transition">Cookies</a>
                 </div>
             </div>
         </div>

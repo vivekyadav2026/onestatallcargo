@@ -84,7 +84,7 @@ class KycController extends Controller
             $query->orderByRaw("FIELD(status, 'pending', 'rejected', 'approved')");
         }
 
-        $kycs = $query->latest()->paginate(15);
+        $kycs = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.kyc.index', compact('kycs'));
     }

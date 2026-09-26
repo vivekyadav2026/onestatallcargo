@@ -17,7 +17,7 @@ class PricingService
 
         foreach ($activeCouriers as $courier) {
             // Instantiate the correct service based on courier name
-            $serviceClass = "App\\Services\\Couriers\\" . ucfirst(strtolower($courier->name)) . "Service";
+            $serviceClass = "App\\Services\\Couriers\\" . str_replace(' ', '', ucwords(strtolower($courier->name))) . "Service";
             
             if (class_exists($serviceClass)) {
                 $service = new $serviceClass($courier->api_credentials ?? []);
