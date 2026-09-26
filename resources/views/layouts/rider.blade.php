@@ -34,12 +34,12 @@
         @yield('content')
     </main>
 
-    <!-- Bottom Nav -->
+        <!-- Bottom Nav -->
     <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 pb-safe z-50">
-        <a href="#" class="flex flex-col items-center text-[#D4AF37]"><i class="fa-solid fa-list-check text-xl mb-1"></i><span class="text-[10px] font-bold">Tasks</span></a>
-        <a href="#" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-camera text-xl mb-1"></i><span class="text-[10px] font-bold">Scan</span></a>
-        <a href="#" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-wallet text-xl mb-1"></i><span class="text-[10px] font-bold">COD</span></a>
-        <a href="#" class="flex flex-col items-center text-gray-400"><i class="fa-solid fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">Profile</span></a>
+        <a href="{{ route('rider.dashboard') }}" class="flex flex-col items-center {{ request()->routeIs('rider.dashboard') ? 'text-[#D4AF37]' : 'text-gray-400' }}"><i class="fa-solid fa-list-check text-xl mb-1"></i><span class="text-[10px] font-bold">Tasks</span></a>
+        <a href="{{ route('rider.scan') }}" class="flex flex-col items-center {{ request()->routeIs('rider.scan') ? 'text-[#D4AF37]' : 'text-gray-400' }}"><i class="fa-solid fa-camera text-xl mb-1"></i><span class="text-[10px] font-bold">Scan</span></a>
+        <a href="{{ route('rider.cod') }}" class="flex flex-col items-center {{ request()->routeIs('rider.cod') ? 'text-[#D4AF37]' : 'text-gray-400' }}"><i class="fa-solid fa-wallet text-xl mb-1"></i><span class="text-[10px] font-bold">COD</span></a>
+        <a href="{{ route('rider.profile') }}" class="flex flex-col items-center {{ request()->routeIs('rider.profile') ? 'text-[#D4AF37]' : 'text-gray-400' }}"><i class="fa-solid fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">Profile</span></a>
     </nav>
     
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
