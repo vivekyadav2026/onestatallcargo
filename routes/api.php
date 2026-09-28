@@ -20,3 +20,11 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/rates', [\App\Http\Controllers\Api\V1\RateCalculatorController::class, 'calculate']);
     
 });
+
+
+Route::prefix('v1/external')->group(function () {
+    Route::post('/serviceability', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'checkServiceability']);
+    Route::post('/rate', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'calculateRate']);
+    Route::post('/shipment', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'createShipment']);
+    Route::get('/track/{awb}', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'trackShipment']);
+});

@@ -17,6 +17,12 @@ Route::get('/services', function () {
     $services = \App\Models\Service::where('is_active', true)->get();
     return view('services', compact('services')); 
 })->name('services');
+Route::get('/rider/register', [\App\Http\Controllers\RiderRegistrationController::class, 'create'])->name('rider.register');
+Route::post('/rider/register', [\App\Http\Controllers\RiderRegistrationController::class, 'store'])->name('rider.store');
+
+Route::get('/franchise/register', [\App\Http\Controllers\FranchiseController::class, 'create'])->name('franchise.register');
+Route::post('/franchise/register', [\App\Http\Controllers\FranchiseController::class, 'store'])->name('franchise.store');
+
 Route::get('/track', [\App\Http\Controllers\TrackController::class, 'index'])->name('track');
 Route::post('/track', [\App\Http\Controllers\TrackController::class, 'track'])->name('track.post');
 Route::get('/api-docs', function () { return view('public.developers.docs'); })->name('api-docs');

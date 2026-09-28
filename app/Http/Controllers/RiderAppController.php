@@ -59,6 +59,20 @@ class RiderAppController extends Controller
         return back()->with('success', $validated['action_type'] . ' complete! Evidence uploaded for ' . $validated['awb_number']);
     }
 
+    public function autoNdr(Request $request, $awb)
+    {
+        $validated = $request->validate([
+            'ndr_reason' => 'required|string'
+        ]);
+
+        $shipment = Shipment::where('awb_number', $awb)->where('rider_id', Auth::id())->firstOrFail();
+        $shipment->status = 'NDR';
+        $shipment->ndr_reason = $validated['ndr_reason'];
+        $shipment->save();
+
+        return back()->with('success', 'Shipment marked as NDR successfully.');
+    }
+
     public function scan()
     {
         return view('rider.scan');

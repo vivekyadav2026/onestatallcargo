@@ -118,7 +118,8 @@ class SellerShipmentController extends Controller
         
         if (!$isEdit) {
             $shipment->status = 'Manifested';
-            $carriers = ['Delhivery', 'BlueDart', 'OneStall Direct'];
+            $activeCouriers = \App\Models\Courier::where('is_active', true)->pluck('name')->toArray();
+            $carriers = !empty($activeCouriers) ? $activeCouriers : ['Onestall Cargo'];
             $shipment->courier_partner = $carriers[array_rand($carriers)];
         }
         
