@@ -68,4 +68,47 @@ class AdminHubController extends Controller
 
         return back()->with('success', 'Franchise application rejected.');
     }
+
+    public function edit($id)
+    {
+        $hub = Hub::findOrFail($id);
+        $managers = User::where('role', 'franchise')->get();
+        return view('admin.hubs.edit', compact('hub', 'managers'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $hub = Hub::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'pincode' => 'required|string|max:20',
+            'capacity' => 'required|numeric|min:1',
+            'manager_id' => 'nullable|exists:users,id'
+        ]);
+
+        $hub->update($validated);
+
+        return redirect()->route('admin.hubs.index')->with('success', 'Hub updated successfully.');
+    }
+    public function storeManager(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20|unique:users,phone',
+            'password' => 'required|string|min:8'
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+            'role' => 'franchise'
+        ]);
+
+        return back()->with('success', 'Franchise Manager created successfully! You can now assign them to a hub.');
+    }
 }

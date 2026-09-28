@@ -1,4 +1,4 @@
-@extends('layouts.rider')
+﻿@extends('layouts.rider')
 
 @section('content')
 <div x-data="{ tab: 'deliveries' }">

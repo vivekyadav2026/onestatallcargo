@@ -174,6 +174,9 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/hubs', [\App\Http\Controllers\AdminHubController::class, 'index'])->name('admin.hubs.index');
         Route::post('/hubs', [\App\Http\Controllers\AdminHubController::class, 'store'])->name('admin.hubs.store');
+        Route::post('/hubs/manager', [\App\Http\Controllers\AdminHubController::class, 'storeManager'])->name('admin.hubs.store_manager');
+        Route::get('/hubs/{id}/edit', [\App\Http\Controllers\AdminHubController::class, 'edit'])->name('admin.hubs.edit');
+        Route::post('/hubs/{id}/update', [\App\Http\Controllers\AdminHubController::class, 'update'])->name('admin.hubs.update');
         Route::post('/hubs/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggle'])->name('admin.hubs.toggle');
         Route::post('/hubs/franchise/{id}/approve', [\App\Http\Controllers\AdminHubController::class, 'approveFranchise'])->name('admin.hubs.approve_franchise');
         Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
@@ -194,6 +197,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
         Route::get('/riders', [\App\Http\Controllers\AdminRiderController::class, 'index'])->name('admin.riders.index');
         Route::post('/riders', [\App\Http\Controllers\AdminRiderController::class, 'store'])->name('admin.riders.store');
+        Route::post('/riders/{id}/update', [\App\Http\Controllers\AdminRiderController::class, 'update'])->name('admin.riders.update');
         Route::post('/riders/{id}/delete', [\App\Http\Controllers\AdminRiderController::class, 'destroy'])->name('admin.riders.destroy');
         Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
@@ -279,19 +283,50 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/api-keys/generate', [\App\Http\Controllers\SellerApiController::class, 'generate'])->name('seller.api-keys.generate');
     });
 
-    // HUB PORTAL (Requires Franchise Role)
+        // HUB PORTAL (Requires Franchise Role)
     Route::middleware(['role:franchise'])->prefix('hub')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\HubDashboardController::class, 'index'])->name('hub.dashboard');
+        Route::get('/profile', [\App\Http\Controllers\HubDashboardController::class, 'profile'])->name('hub.profile');
+        Route::post('/profile', [\App\Http\Controllers\HubDashboardController::class, 'updateProfile'])->name('hub.profile.update');
         
         // KYC Submission
         Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('hub.kyc.submit');
         Route::post('/scan', [\App\Http\Controllers\HubDashboardController::class, 'scan'])->name('hub.scan');
-        Route::get('/bagging', [\App\Http\Controllers\HubDashboardController::class, 'bagging'])->name('hub.bagging');
-        Route::post('/bagging/create', [\App\Http\Controllers\HubDashboardController::class, 'createBag'])->name('hub.bagging.create');
-        Route::post('/bagging/scan', [\App\Http\Controllers\HubDashboardController::class, 'scanToBag'])->name('hub.bagging.scan');
+        
+                // Hub Fleet Management
+        Route::get("/fleet", [\App\Http\Controllers\HubRiderController::class, "index"])->name("hub.fleet.index");
+        Route::post("/fleet", [\App\Http\Controllers\HubRiderController::class, "store"])->name("hub.fleet.store");
+        Route::post("/fleet/{id}/update", [\App\Http\Controllers\HubRiderController::class, "update"])->name("hub.fleet.update");
+        Route::post("/fleet/{id}/delete", [\App\Http\Controllers\HubRiderController::class, "destroy"])->name("hub.fleet.destroy");
+
+        
+        // Hub Rider Assignment
+        Route::get('/assignments/pickups', [\App\Http\Controllers\HubAssignmentController::class, 'pickups'])->name('hub.assignments.pickups');
+        Route::get('/assignments/deliveries', [\App\Http\Controllers\HubAssignmentController::class, 'deliveries'])->name('hub.assignments.deliveries');
+        Route::post('/assignments/assign', [\App\Http\Controllers\HubAssignmentController::class, 'assign'])->name('hub.assignments.assign');
+
+        // Hub NDR & RTO
+        Route::get('/ndr', [\App\Http\Controllers\HubNdrController::class, 'index'])->name('hub.ndr.index');
+        Route::post('/ndr/{id}/action', [\App\Http\Controllers\HubNdrController::class, 'action'])->name('hub.ndr.action');
+
+        // Hub Wallet / Commissions
+        Route::get('/wallet', [\App\Http\Controllers\HubWalletController::class, 'index'])->name('hub.wallet.index');
+
+        // Hub Bagging & Manifests
+        Route::get('/bagging', [\App\Http\Controllers\HubBaggingController::class, 'index'])->name('hub.bagging.index');
+        Route::post('/bagging/create', [\App\Http\Controllers\HubBaggingController::class, 'storeBag'])->name('hub.bagging.store');
+        Route::get('/bagging/{id}', [\App\Http\Controllers\HubBaggingController::class, 'showBag'])->name('hub.bagging.show');
+        Route::post('/bagging/{id}/add', [\App\Http\Controllers\HubBaggingController::class, 'addShipment'])->name('hub.bagging.add_shipment');
+        Route::post('/bagging/{bag_id}/remove/{shipment_id}', [\App\Http\Controllers\HubBaggingController::class, 'removeShipment'])->name('hub.bagging.remove_shipment');
+        Route::post('/bagging/{id}/seal', [\App\Http\Controllers\HubBaggingController::class, 'sealBag'])->name('hub.bagging.seal');
+        Route::post('/bagging/{id}/manifest', [\App\Http\Controllers\HubBaggingController::class, 'createManifest'])->name('hub.bagging.manifest');
+        
+        Route::get('/manifests/{id}', [\App\Http\Controllers\HubBaggingController::class, 'showManifest'])->name('hub.manifests.show');
+        Route::get('/manifests/{id}/print', [\App\Http\Controllers\HubBaggingController::class, 'printManifest'])->name('hub.manifests.print');
+        Route::post('/manifests/{id}/dispatch', [\App\Http\Controllers\HubBaggingController::class, 'dispatchManifest'])->name('hub.manifests.dispatch');
     });
 
-            // RIDER PORTAL (Requires Rider Role)
+    // RIDER PORTAL (Requires Rider Role)
     Route::middleware(['role:rider,pickup_rider,delivery_rider'])->prefix('rider')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\RiderAppController::class, 'index'])->name('rider.dashboard');
         Route::get('/scan', [\App\Http\Controllers\RiderAppController::class, 'scan'])->name('rider.scan');
@@ -309,3 +344,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'resolveNdr'])->name('ndr.resolve');
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
+
+
+

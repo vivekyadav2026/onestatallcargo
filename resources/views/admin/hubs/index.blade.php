@@ -3,13 +3,14 @@
 @section('title', 'Hubs & Franchises - OneStall Cargo')
 
 @section('content')
-<div class="space-y-6" x-data="{ showAddModal: false }">
+<div class="space-y-6" x-data="{ showAddModal: false, showAddManagerModal: false }">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Hubs & Franchises</h1>
             <p class="text-sm text-gray-500 mt-1">Manage network hubs, sorting centers, and regional franchises</p>
         </div>
         <div class="flex gap-2">
+            <button @click="showAddManagerModal = true" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white border border-gray-200 text-gray-900 shadow-sm hover:bg-gray-50 transition-colors"><i class="fa-solid fa-user-plus"></i> Add Manager</button>
             <button @click="showAddModal = true" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)] transition-colors"><i class="fa-solid fa-plus"></i> Add New Hub</button>
         </div>
     </div>
@@ -104,8 +105,9 @@
                                     <button type="submit" class="text-[10px] font-bold uppercase {{ $hub->is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }}">
                                         {{ $hub->is_active ? 'Deactivate' : 'Activate' }}
                                     </button>
-                                </form>
-                            </td>
+                                  </form>
+                                  <a href="{{ route('admin.hubs.edit', $hub->id) }}" class="text-[10px] font-bold uppercase text-blue-600 hover:text-blue-800 ml-3">Edit</a>
+                              </td>
                         </tr>
                     @empty
                         <tr>
@@ -192,5 +194,58 @@
             </div>
         </div>
     </div>
+    <!-- Add Manager Modal -->
+    <div x-show="showAddManagerModal" style="display: none;" class="fixed z-50 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="showAddManagerModal" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showAddManagerModal = false" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div x-show="showAddManagerModal"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
+                <form action="{{ route('admin.hubs.store_manager') }}" method="POST">
+                    @csrf
+                    <div class="bg-white px-6 pt-6 pb-6">
+                        <div class="flex justify-between items-center mb-5">
+                            <h3 class="text-lg font-extrabold text-gray-900" id="modal-title">Create Franchise Manager</h3>
+                            <button type="button" @click="showAddManagerModal = false" class="text-gray-400 hover:text-gray-500 transition"><i class="fa-solid fa-times"></i></button>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Manager Name</label>
+                                <input type="text" name="name" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[var(--gold)] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Email Address</label>
+                                <input type="email" name="email" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[var(--gold)] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Phone Number</label>
+                                <input type="text" name="phone" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[var(--gold)] outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Password</label>
+                                <input type="password" name="password" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[var(--gold)] outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 gap-2">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-6 py-2.5 bg-gray-900 text-base font-bold text-white hover:bg-black sm:w-auto sm:text-sm">
+                            Create Manager
+                        </button>
+                        <button type="button" @click="showAddManagerModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-6 py-2.5 bg-white text-base font-bold text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
+
+

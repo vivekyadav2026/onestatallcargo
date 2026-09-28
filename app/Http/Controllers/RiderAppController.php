@@ -30,6 +30,7 @@ class RiderAppController extends Controller
 
     public function uploadEvidence(Request $request)
     {
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
         $validated = $request->validate([
             'awb_number'  => 'required|string',
             'action_type' => 'required|string',
@@ -37,7 +38,12 @@ class RiderAppController extends Controller
             'otp'         => 'nullable|string',
         ]);
 
-        $shipment = Shipment::where('awb_number', $validated['awb_number'])->first();
+        
+        $shipment = Shipment::where('awb_number', $validated['awb_number'])
+            ->where('rider_id', Auth::id())
+            ->lockForUpdate()
+            ->first();
+
 
         if (!$shipment) {
             return back()->with('error', 'Invalid AWB');
@@ -64,6 +70,7 @@ class RiderAppController extends Controller
         ]);
 
         return back()->with('success', $validated['action_type'] . ' complete! Evidence uploaded for ' . $validated['awb_number']);
+        });
     }
 
     public function autoNdr(Request $request, $awb)

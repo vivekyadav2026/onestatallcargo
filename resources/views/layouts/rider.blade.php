@@ -17,6 +17,7 @@
         <div class="flex items-center gap-2">
             <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-8 object-contain rounded bg-white p-1">
             <div class="font-bold leading-tight ml-2">
+                <div class="text-sm">{{ Auth::user()->name ?? 'Rider' }}</div>
                 <div class="text-[10px] text-green-400"><i class="fa-solid fa-circle text-[8px]"></i> Online</div>
             </div>
         </div>

@@ -77,5 +77,9 @@ class User extends Authenticatable
     {
         return $this->kyc && $this->kyc->status === 'approved';
     }
-}
 
+    public function rider()
+    {
+        return $this->hasOne(Rider::class, 'user_id');
+    }
+}

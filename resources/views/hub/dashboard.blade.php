@@ -7,7 +7,7 @@
     $kycPending = $kyc && $kyc->status === 'pending';
 @endphp
 
-<div x-data="{ showKycModal: false }" class="space-y-6">
+<div x-data="{ showKycModal: {{ $errors->any() ? 'true' : 'false' }} }" class="space-y-6">
 
     @if(session('success'))
         <div class="p-4 bg-green-50 text-green-700 font-bold rounded-xl border border-green-200 text-sm">
@@ -15,7 +15,26 @@
         </div>
     @endif
 
-    @if(!$kycDone)
+    @if(session('error'))
+        <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl border border-red-200 text-sm mb-6">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ session('error') }}
+        </div>
+    @endif
+
+    @if($franchise && $franchise->status !== 'approved')
+    <!-- Franchise Pending Banner -->
+    <div class="bg-gradient-to-r from-red-600 to-red-500 rounded-2xl p-6 text-white shadow-md flex items-center justify-between gap-6 mb-6">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">Application Pending Approval</h2>
+                <p class="text-sm text-red-100 mt-1">Your franchise application is currently being reviewed by our Admin team. You cannot operate the hub until it is approved.</p>
+            </div>
+        </div>
+    </div>
+    @elseif(!$kycDone)
     <!-- Franchise KYC Banner -->
     <div class="bg-gradient-to-r {{ $kycPending ? 'from-yellow-600 to-yellow-500' : 'from-[#1e293b] to-black' }} rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center gap-4">
@@ -111,7 +130,7 @@
                                 <span class="px-2 py-1 rounded bg-gray-100 font-bold text-[10px] uppercase tracking-wider text-gray-600">{{ $scan->status }}</span>
                             </td>
                             <td class="px-6 py-3 text-xs text-gray-500">
-                                {{ $scan->rider_id ? \App\Models\User::find($scan->rider_id)->name : '-' }}
+                                {{ $scan->rider_id ? optional(\App\Models\User::find($scan->rider_id))->name ?? 'Deleted Rider' : '-' }}
                             </td>
                         </tr>
                         @endforeach
@@ -138,7 +157,7 @@
                         <h3 class="text-lg font-extrabold text-gray-900" id="modal-title">Franchise KYC Submission</h3>
                         <button type="button" @click="showKycModal = false" class="text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
                     </div>
-                    <div class="space-y-4">
+                    @if($errors->any()) <div class='mb-4 p-3 bg-red-50 text-red-700 text-xs font-bold rounded-lg border border-red-200'><ul class='list-disc pl-4'>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div> @endif <div class='space-y-4'>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">Business Type</label>
