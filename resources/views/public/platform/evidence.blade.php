@@ -41,7 +41,7 @@
                 </div>
                 <div class="absolute -top-4 -right-4 bg-white p-3.5 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3 z-20">
                     <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-brand-navy font-bold">
-                        <i class="fa-solid fa-shield-check"></i>
+                        <i class="fa-solid fa-shield"></i>
                     </div>
                     <div>
                         <div class="text-xs text-gray-500 font-medium">Dispute Win Rate</div>

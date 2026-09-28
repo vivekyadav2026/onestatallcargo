@@ -3,12 +3,36 @@
 
 @section('content')
 <div class="space-y-6" x-data="{ showModal: false, selectedImg: '' }">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Weight Discrepancies (Admin)</h1>
             <p class="text-sm text-gray-500 mt-1">Manage and resolve weight disputes across all sellers.</p>
         </div>
+        
+        <form action="{{ route('admin.weight.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
+            @csrf
+            <div class="relative">
+                <input type="file" name="csv_file" accept=".csv" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                <div class="px-4 py-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-100 flex items-center gap-2">
+                    <i class="fa-solid fa-file-csv text-green-600"></i> Select Courier Bill (CSV)
+                </div>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-[#1e1b4b] text-white text-xs font-bold rounded-lg hover:bg-black transition">
+                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Sync Discrepancies
+            </button>
+        </form>
     </div>
+
+    @if(session('success'))
+        <div class="p-4 bg-green-50 text-green-700 font-bold rounded-xl border border-green-200 text-sm">
+            <i class="fa-solid fa-check-circle mr-1"></i> {{ session('success') }}
+        </div>
+    @endif
+    @if($errors->any())
+        <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl border border-red-200 text-sm">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> Error importing CSV.
+        </div>
+    @endif
 
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-x-auto">
                         <div class="overflow-x-auto w-full">

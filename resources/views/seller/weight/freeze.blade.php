@@ -17,6 +17,21 @@
         </div>
     </div>
 
+    @if(session('success'))
+        <div class="p-4 bg-green-50 text-green-700 font-bold rounded-xl border border-green-200 text-sm">
+            <i class="fa-solid fa-check-circle mr-1"></i> {{ session('success') }}
+        </div>
+    @endif
+    
+    @if($errors->any())
+        <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl border border-red-200 text-sm">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> 
+            @foreach($errors->all() as $err)
+                {{ $err }}<br>
+            @endforeach
+        </div>
+    @endif
+
     <!-- Main Container -->
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         

@@ -90,7 +90,7 @@ class SellerShipmentController extends Controller
         $totalAmount = $rateData['total'];
         $is_cod = $validated['is_cod'] ?? false;
         
-        if (!$isEdit && !$is_cod) {
+        if (!$isEdit) {
             try {
                 app(\App\Services\WalletService::class)->deduct(
                     $user->id, 
@@ -163,6 +163,15 @@ class SellerShipmentController extends Controller
         }
 
         $shipment->save();
+
+        if (!$isEdit) {
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $shipment->id,
+                'status' => 'Manifested',
+                'location' => $shipment->pickup_city ?? 'Origin',
+                'remarks' => 'Shipment Booked & Manifested successfully.'
+            ]);
+        }
 
         $shipNow = !empty($validated['ship_now']) && $validated['ship_now'] == '1';
 

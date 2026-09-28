@@ -20,13 +20,17 @@ class AdminCourierController extends Controller
             'credentials' => 'required|array',
             'credentials.api_url' => 'required|url',
             'credentials.api_key' => 'required|string',
+            'markup_type' => 'required|in:percentage,flat',
+            'markup_value' => 'required|numeric|min:0'
         ]);
 
         Courier::create([
             'name' => $validated['name'],
             'mode' => $validated['mode'],
             'api_credentials' => $validated['credentials'], // This will be auto-encrypted due to model casting
-            'is_active' => true
+            'is_active' => true,
+            'markup_type' => $validated['markup_type'],
+            'markup_value' => $validated['markup_value']
         ]);
 
         return back()->with('success', 'Courier partner added securely.');

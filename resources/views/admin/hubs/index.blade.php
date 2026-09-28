@@ -29,6 +29,38 @@
         </div>
     @endif
 
+    @if($pendingFranchises->count() > 0)
+    <!-- Pending Applications -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-3xl p-6 mb-6">
+        <h2 class="text-lg font-extrabold text-yellow-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-clock"></i> Pending Franchise Applications ({{ $pendingFranchises->count() }})</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach($pendingFranchises as $app)
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-yellow-100">
+                <div class="font-extrabold text-gray-900 mb-1">{{ $app->company_name }}</div>
+                <div class="text-xs text-gray-500 mb-3"><i class="fa-solid fa-user text-gray-400 mr-1"></i> {{ $app->owner_name }}</div>
+                
+                <div class="space-y-1 mb-4">
+                    <div class="text-[11px]"><span class="text-gray-400">Phone:</span> <span class="font-bold text-gray-700">{{ $app->phone }}</span></div>
+                    <div class="text-[11px]"><span class="text-gray-400">City:</span> <span class="font-bold text-gray-700">{{ $app->city }}, {{ $app->state }}</span></div>
+                    <div class="text-[11px]"><span class="text-gray-400">Pincodes:</span> <span class="font-bold text-gray-700">{{ is_array($app->serviceable_pincodes) ? implode(', ', $app->serviceable_pincodes) : $app->serviceable_pincodes }}</span></div>
+                </div>
+
+                <div class="flex gap-2">
+                    <form action="{{ route('admin.hubs.approve_franchise', $app->id) }}" method="POST" class="flex-1">
+                        @csrf
+                        <button type="submit" class="w-full py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition shadow-sm">Approve</button>
+                    </form>
+                    <form action="{{ route('admin.hubs.reject_franchise', $app->id) }}" method="POST" class="flex-1">
+                        @csrf
+                        <button type="submit" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition border border-red-200">Reject</button>
+                    </form>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Data Table -->
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">

@@ -37,12 +37,12 @@
         <p class="text-sm text-gray-300">Use your token as a Bearer Token in the Authorization header.</p>
         
         <div class="space-y-2 text-sm mt-4">
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/v1/shipments/book</code></div>
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>api.onestallcargo.com/v1/track/{awb}</code></div>
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/v1/rates</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/api/v1/external/shipment</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>api.onestallcargo.com/api/v1/external/track/{awb}</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/api/v1/external/rate</code></div>
         </div>
         
-        <a href="/api-docs" class="inline-block mt-4 text-[#E8027D] text-sm font-bold hover:underline">View Full Documentation &rarr;</a>
+        <a href="/api-docs" class="inline-block mt-4 text-[#E8027D] text-sm font-bold hover:underline">View Full Interactive Documentation &rarr;</a>
     </div>
 </div>
 @endsection

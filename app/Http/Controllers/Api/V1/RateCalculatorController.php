@@ -20,6 +20,8 @@ class RateCalculatorController extends Controller
             'pickup_pincode' => 'required|digits:6',
             'delivery_pincode' => 'required|digits:6',
             'weight' => 'required|numeric|min:0.1',
+            'payment_mode' => 'nullable|string',
+            'shipment_value' => 'nullable|numeric',
         ]);
 
         $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($request->delivery_pincode);
@@ -31,13 +33,19 @@ class RateCalculatorController extends Controller
             ], 404);
         }
 
+        $l = $request->input('dimensions.l') ?: 10;
+        $w = $request->input('dimensions.w') ?: 10;
+        $h = $request->input('dimensions.h') ?: 10;
+        $is_cod = $request->input('payment_mode') === 'cod';
+        $invoice_value = $request->input('shipment_value') ?: 0;
+
         try {
             $rateData = $this->pricingService->calculateRate(
                 $routing['fulfillment_type'],
                 $request->pickup_pincode,
                 $request->delivery_pincode,
                 $request->weight,
-                10, 10, 10, false, 0, false, false, 0,
+                $l, $w, $h, $is_cod, $invoice_value, false, false, 0,
                 $routing['provider_id']
             );
 

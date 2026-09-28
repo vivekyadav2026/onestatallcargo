@@ -44,6 +44,12 @@ class SellerNdrController extends Controller
         // Only update the ndr_action, leave status as NDR so it moves to "Action Taken" tab
         $shipment->ndr_action = $validated['ndr_action'];
         $shipment->save();
+        
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => $shipment->id,
+            'status' => 'NDR Action: ' . $validated['ndr_action'],
+            'remarks' => 'Seller submitted NDR action: ' . $validated['ndr_action']
+        ]);
 
         return back()->with('success', 'NDR Action (' . $validated['ndr_action'] . ') submitted for ' . $awb);
     }

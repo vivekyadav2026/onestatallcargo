@@ -16,7 +16,7 @@
         </p>
 
         <!-- Search Bar Input -->
-        <form action="{{ route('faq') }}" method="GET">`n        <div class="relative max-w-xl mx-auto">
+        <form action="{{ route('faq') }}" method="GET">        <div class="relative max-w-xl mx-auto">
             <input type="text" name="q" placeholder="Search for help topics, guides, or troubleshooting..." class="w-full px-5 py-3.5 pl-12 rounded-full border border-gray-200 shadow-md text-sm focus:outline-none focus:border-brand-navy">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
         </div>

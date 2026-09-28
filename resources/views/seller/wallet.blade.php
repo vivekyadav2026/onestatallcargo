@@ -94,7 +94,7 @@
                                 @forelse($transactions as $txn)
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4">
-                                        <div class="font-bold text-gray-900">{{ $txn->transaction_id ?? 'TXN-'.$txn->id }}</div>
+                                        <div class="font-bold text-gray-900">{{ $txn->reference_id ?? 'TXN-'.$txn->id }}</div>
                                         <div class="text-[10px] text-gray-500">{{ $txn->created_at->format('d M Y, h:i A') }}</div>
                                     </td>
                                     <td class="px-6 py-4">
@@ -117,7 +117,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-gray-700">
-                                        &#8377;{{ number_format($txn->closing_balance ?? 0, 2) }}
+                                        &#8377;{{ number_format($txn->balance_after ?? 0, 2) }}
                                     </td>
                                 </tr>
                                 @empty
@@ -164,6 +164,15 @@ function walletManager() {
         amount: 1000,
         loading: false,
         view: 'transactions',
+        
+        init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order_id');
+            if (orderId) {
+                this.verifyRecharge(orderId, false);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        },
         
         async initiateRecharge() {
             if(this.amount < 100) {

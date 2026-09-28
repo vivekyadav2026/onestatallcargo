@@ -1,42 +1,63 @@
 @extends('layouts.admin')
 @section('title', 'Create Testimonial - OneStall Cargo')
-@section('content')
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Create Testimonial</h1>
-</div>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <form action="{{ route('admin.testimonials.store') }}" method="POST" class="space-y-4">
-                    @csrf
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Client Name</label>
-                        <input type="text" name="client_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Company (Optional)</label>
-                        <input type="text" name="company" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Content</label>
-                        <textarea name="content" required rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Rating (1-5)</label>
-                        <input type="number" name="rating" min="1" max="5" value="5" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_active" value="1" checked class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                        <label class="ml-2 block text-sm text-gray-900">Active</label>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <a href="{{ route('admin.testimonials.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Cancel</a>
-                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
-                    </div>
-                </form>
-            </div>
+@section('content')
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Create Testimonial</h1>
+            <p class="text-sm text-gray-500 mt-1">Add a new client review to showcase on your website.</p>
         </div>
+        <a href="{{ route('admin.testimonials.index') }}" class="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 flex items-center gap-2 shadow-sm transition"><i class="fa-solid fa-arrow-left"></i> Back to List</a>
     </div>
 
+    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6 md:p-8 max-w-3xl">
+        <form action="{{ route('admin.testimonials.store') }}" method="POST" class="space-y-5">
+            @csrf
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Client Name</label>
+                    <input type="text" name="client_name" required placeholder="e.g. John Doe" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] outline-none transition shadow-sm placeholder:text-gray-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Company <span class="text-gray-400 font-medium normal-case">(Optional)</span></label>
+                    <input type="text" name="company" placeholder="e.g. Acme Corp" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] outline-none transition shadow-sm placeholder:text-gray-400">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Review Content</label>
+                <textarea name="content" required rows="4" placeholder="What did the client say about your service?" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] outline-none transition shadow-sm placeholder:text-gray-400"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Rating (1-5)</label>
+                    <div class="relative">
+                        <input type="number" name="rating" min="1" max="5" value="5" required class="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] outline-none transition shadow-sm font-bold text-[var(--gold-deep)]">
+                        <i class="fa-solid fa-star absolute left-3 top-1/2 -translate-y-1/2 text-[var(--gold)] text-xs"></i>
+                    </div>
+                </div>
+                
+                <div class="pb-2.5">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center">
+                            <input type="checkbox" name="is_active" value="1" checked class="peer sr-only">
+                            <div class="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                        </div>
+                        <span class="text-sm font-bold text-gray-700 group-hover:text-gray-900 transition">Publish Immediately</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-4 mt-2 border-t border-gray-100 flex justify-end gap-3">
+                <a href="{{ route('admin.testimonials.index') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-bold rounded-xl text-sm hover:bg-gray-50 transition shadow-sm">Cancel</a>
+                <button type="submit" class="px-8 py-2.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl text-sm transition shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Save Testimonial
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

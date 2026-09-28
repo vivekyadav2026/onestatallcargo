@@ -17,4 +17,9 @@ class Shipment extends Model
     {
         return $this->belongsTo(User::class, 'rider_id');
     }
+
+    public function mediaEvidences()
+    {
+        return $this->hasMany(MediaEvidence::class);
+    }
 }

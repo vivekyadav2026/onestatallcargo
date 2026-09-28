@@ -127,9 +127,9 @@
                 
                 <!-- Filters -->
                 <div class="flex gap-3 mb-6">
-                    <button class="px-6 py-1.5 rounded-full bg-white text-black text-xs font-bold">All</button>
-                    <button class="px-6 py-1.5 rounded-full border border-white/30 text-white text-xs font-medium hover:border-white transition">Air</button>
-                    <button class="px-6 py-1.5 rounded-full border border-white/30 text-white text-xs font-medium hover:border-white transition">Surface</button>
+                    <button @click="filterMode = 'all'" :class="filterMode === 'all' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">All</button>
+                    <button @click="filterMode = 'air'" :class="filterMode === 'air' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">Air</button>
+                    <button @click="filterMode = 'surface'" :class="filterMode === 'surface' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">Surface</button>
                 </div>
 
                 <!-- Error Message -->
@@ -151,12 +151,22 @@
                         </thead>
                         <tbody class="divide-y divide-white/10 text-sm">
                             <template x-for="rate in rates" :key="rate.courier_name">
-                                <tr class="hover:bg-white/5 transition">
-                                    <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Surface'"></td>
-                                    <td class="py-4 px-2 text-white/80">Surface</td>
-                                    <td class="py-4 px-2 font-medium">&#8377; <span x-text="rate.rate.toFixed(2)"></span></td>
-                                    <td class="py-4 px-2 text-white/80"><span x-text="rate.estimated_delivery_days"></span> Days</td>
-                                </tr>
+                                <template x-if="true">
+                                    <tbody class="divide-y divide-white/10 text-sm contents">
+                                        <tr class="hover:bg-white/5 transition" x-show="filterMode === 'all' || filterMode === 'surface'">
+                                            <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Surface'"></td>
+                                            <td class="py-4 px-2 text-white/80">Surface</td>
+                                            <td class="py-4 px-2 font-medium">&#8377; <span x-text="rate.rate.toFixed(2)"></span></td>
+                                            <td class="py-4 px-2 text-white/80"><span x-text="rate.estimated_delivery_days"></span> Days</td>
+                                        </tr>
+                                        <tr class="hover:bg-white/5 transition" x-show="filterMode === 'all' || filterMode === 'air'">
+                                            <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Air'"></td>
+                                            <td class="py-4 px-2 text-white/80">Air</td>
+                                            <td class="py-4 px-2 font-medium">&#8377; <span x-text="(rate.rate * 1.5).toFixed(2)"></span></td>
+                                            <td class="py-4 px-2 text-white/80"><span x-text="Math.max(1, rate.estimated_delivery_days - 1)"></span> Days</td>
+                                        </tr>
+                                    </tbody>
+                                </template>
                             </template>
                         </tbody>
                     </table>
@@ -209,6 +219,7 @@
 <script>
 function liveRateCalculator() {
     return {
+        filterMode: 'all',
         pickup_pincode: '',
         delivery_pincode: '',
         weightKg: '',

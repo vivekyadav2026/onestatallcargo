@@ -45,7 +45,7 @@ class PricingService
         $zoneName = $this->determineZone($pickup_pin, $delivery_pin);
         
         $zoneRate = RateCardZone::where('rate_card_id', $rateCard->id)
-            ->where('zone_name', $zoneName)
+            ->where('zone_name', 'LIKE', $zoneName . '%')
             ->first();
 
         if (!$zoneRate || $zoneRate->first_0_5_kg === null) {
@@ -171,19 +171,35 @@ class PricingService
             // Pass is_cod and invoice_value so each courier can compute its own COD surcharge
             $rateResponse = $service->calculateRate($pickup_pin, $delivery_pin, $weight, $is_cod, $invoice_value);
             if ($rateResponse['status'] === 'success') {
-                $total = $rateResponse['base_rate'] ?? $rateResponse['total'] ?? 0;
+                $baseFreight = $rateResponse['base_freight'] ?? $rateResponse['base_rate'] ?? $rateResponse['total'] ?? 0;
+                
+                // Admin Markup Calculation
+                $markupAmount = 0;
+                if ($courier->markup_type === 'percentage') {
+                    $markupAmount = $baseFreight * ($courier->markup_value / 100);
+                } elseif ($courier->markup_type === 'flat') {
+                    $markupAmount = $courier->markup_value;
+                }
+                
+                $finalBaseFreight = $baseFreight + $markupAmount;
+                $fsc = $rateResponse['fsc'] ?? 0;
+                $cod = $rateResponse['cod_charge'] ?? 0;
+                
+                $total = $finalBaseFreight + $fsc + $cod;
+
                 return [
                     "zone"             => $rateResponse['zone']      ?? "External",
                     "physical_weight"  => $weight,
                     "volumetric_weight"=> 0,
                     "chargeable_weight"=> $weight,
-                    "base_freight"     => round($rateResponse['base_freight'] ?? $total, 2),
-                    "fsc_amount"       => round($rateResponse['fsc']           ?? 0, 2),
-                    "cod_charge"       => round($rateResponse['cod_charge']    ?? 0, 2),
+                    "base_freight"     => round($finalBaseFreight, 2),
+                    "fsc_amount"       => round($fsc, 2),
+                    "cod_charge"       => round($cod, 2),
                     "gst"              => 0,
                     "total"            => round($total, 2),
                     "provider"         => $courier->name,
                     "breakdown"        => $rateResponse['breakdown'] ?? [],
+                    "markup_applied"   => round($markupAmount, 2)
                 ];
             }
         }

@@ -20,12 +20,12 @@ Route::get('/services', function () {
 Route::get('/rider/register', [\App\Http\Controllers\RiderRegistrationController::class, 'create'])->name('rider.register');
 Route::post('/rider/register', [\App\Http\Controllers\RiderRegistrationController::class, 'store'])->name('rider.store');
 
-Route::get('/franchise/register', [\App\Http\Controllers\FranchiseController::class, 'create'])->name('franchise.register');
-Route::post('/franchise/register', [\App\Http\Controllers\FranchiseController::class, 'store'])->name('franchise.store');
+
+Route::post('/franchise', [\App\Http\Controllers\FranchiseController::class, 'store'])->name('franchise.store');
 
 Route::get('/track', [\App\Http\Controllers\TrackController::class, 'index'])->name('track');
 Route::post('/track', [\App\Http\Controllers\TrackController::class, 'track'])->name('track.post');
-Route::get('/api-docs', function () { return view('public.developers.docs'); })->name('api-docs');
+Route::get('/api-docs', function () { $apiDocs = \App\Models\ApiDoc::all(); return view('public.developers.docs', compact('apiDocs')); })->name('api-docs');
 Route::get('/pricing', function () { return view('pricing'); })->name('pricing');
 Route::get('/privacy', function () { return view('legal', ['title' => 'Privacy Policy']); })->name('privacy');
 Route::get('/terms', function () { return view('legal', ['title' => 'Terms of Service']); })->name('terms');
@@ -175,7 +175,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/hubs', [\App\Http\Controllers\AdminHubController::class, 'index'])->name('admin.hubs.index');
         Route::post('/hubs', [\App\Http\Controllers\AdminHubController::class, 'store'])->name('admin.hubs.store');
         Route::post('/hubs/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggle'])->name('admin.hubs.toggle');
-        Route::post('/hubs', [\App\Http\Controllers\AdminHubController::class, 'store'])->name('admin.hubs.store');
+        Route::post('/hubs/franchise/{id}/approve', [\App\Http\Controllers\AdminHubController::class, 'approveFranchise'])->name('admin.hubs.approve_franchise');
+        Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
         Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
         Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
         Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
@@ -193,6 +194,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
         Route::get('/riders', [\App\Http\Controllers\AdminRiderController::class, 'index'])->name('admin.riders.index');
         Route::post('/riders', [\App\Http\Controllers\AdminRiderController::class, 'store'])->name('admin.riders.store');
+        Route::post('/riders/{id}/delete', [\App\Http\Controllers\AdminRiderController::class, 'destroy'])->name('admin.riders.destroy');
         Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
         
@@ -204,6 +206,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports', [\App\Http\Controllers\AdminReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\AdminReportController::class, 'exportCsv'])->name('admin.reports.export');
         Route::get('/weight-discrepancies', [\App\Http\Controllers\AdminWeightController::class, 'index'])->name('admin.weight');
+        Route::post('/weight-discrepancies/import', [\App\Http\Controllers\AdminWeightController::class, 'import'])->name('admin.weight.import');
         Route::post('/weight-discrepancies/{id}/action', [\App\Http\Controllers\AdminWeightController::class, 'action'])->name('admin.weight.action');
         Route::get('/weight-freeze', [\App\Http\Controllers\AdminWeightFreezeController::class, 'index'])->name('admin.weight.freeze');
         Route::post('/weight-freeze/{id}/action', [\App\Http\Controllers\AdminWeightFreezeController::class, 'action'])->name('admin.weight.freeze.action');
@@ -251,6 +254,7 @@ Route::middleware(['auth'])->group(function () {
         
         // Bookings
         Route::get('/shipments', [\App\Http\Controllers\SellerShipmentController::class, 'index'])->name('seller.shipments.index');
+        Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('seller.shipments.evidence');
         Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\SellerShipmentController::class, 'bulkCancel'])->name('seller.shipments.bulk-cancel');
         Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\SellerShipmentController::class, 'cancel'])->name('seller.shipments.cancel');
         Route::get('/book', [\App\Http\Controllers\SellerShipmentController::class, 'create'])->name('seller.book');
@@ -278,6 +282,9 @@ Route::middleware(['auth'])->group(function () {
     // HUB PORTAL (Requires Franchise Role)
     Route::middleware(['role:franchise'])->prefix('hub')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\HubDashboardController::class, 'index'])->name('hub.dashboard');
+        
+        // KYC Submission
+        Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('hub.kyc.submit');
         Route::post('/scan', [\App\Http\Controllers\HubDashboardController::class, 'scan'])->name('hub.scan');
         Route::get('/bagging', [\App\Http\Controllers\HubDashboardController::class, 'bagging'])->name('hub.bagging');
         Route::post('/bagging/create', [\App\Http\Controllers\HubDashboardController::class, 'createBag'])->name('hub.bagging.create');

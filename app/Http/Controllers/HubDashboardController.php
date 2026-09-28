@@ -9,11 +9,10 @@ class HubDashboardController extends Controller
 {
     public function index()
     {
-        // Hubs will primarily scan packages and build bags.
-        // For dashboard, we can just show recent activity in this Hub's city/zone (mocked for now).
         $recentScans = Shipment::orderBy('updated_at', 'desc')->take(10)->get();
         $riders = \App\Models\User::where('role', 'rider')->get();
-        return view('hub.dashboard', compact('recentScans', 'riders'));
+        $kyc = \App\Models\Kyc::where('user_id', Auth::id())->first();
+        return view('hub.dashboard', compact('recentScans', 'riders', 'kyc'));
     }
 
     public function scan(Request $request)
@@ -38,7 +37,12 @@ class HubDashboardController extends Controller
 
         $shipment->save();
 
-        // Normally we would create a ShipmentEvent entry here.
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => $shipment->id,
+            'status' => $validated['action'],
+            'location' => $shipment->delivery_city ?? 'Hub',
+            'remarks' => 'Hub scanned package: ' . $validated['action']
+        ]);
 
         return back()->with('success', 'Shipment ' . $validated['awb_number'] . ' marked as: ' . $validated['action']);
     }

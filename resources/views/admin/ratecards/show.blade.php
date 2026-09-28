@@ -47,17 +47,24 @@
                         <tbody>
                             @php
                                 $defaultZoneNames = [
-                                    'Zone 1 - Local', 'Zone 2 - Regional', 'Zone 3 - Metros', 
-                                    'Zone 4 - Rest of India', 'Zone 5 - NE/J&K/Kerala', 'Zone 6 - Special Destination'
+                                    'Zone 1' => 'Zone 1 - Local', 
+                                    'Zone 2' => 'Zone 2 - Regional', 
+                                    'Zone 3' => 'Zone 3 - Metros', 
+                                    'Zone 4' => 'Zone 4 - Rest of India', 
+                                    'Zone 5' => 'Zone 5 - NE/J&K/Kerala', 
+                                    'Zone 6' => 'Zone 6 - Special Destination'
                                 ];
                             @endphp
-                            @foreach($defaultZoneNames as $zoneName)
+                            @foreach($defaultZoneNames as $zoneKey => $zoneFullName)
                                 @php
-                                    $zone = $rateCard->zones->where('zone_name', $zoneName)->first();
+                                    // Match either the full name or just the short prefix (Zone 1)
+                                    $zone = $rateCard->zones->filter(function($z) use ($zoneKey, $zoneFullName) {
+                                        return str_starts_with($z->zone_name, $zoneKey);
+                                    })->first();
                                 @endphp
                                 <tr class="hover:bg-gray-50 border-b">
-                                    <td class="p-2 border font-bold text-gray-700">{{ $zoneName }}</td>
-                                    @if($zone && $zone->first_0_5_kg)
+                                    <td class="p-2 border font-bold text-gray-700">{{ $zoneFullName }}</td>
+                                    @if($zone && $zone->first_0_5_kg !== null)
                                         <td class="p-2 border text-right">₹{{ number_format($zone->first_0_5_kg, 2) }}</td>
                                         <td class="p-2 border text-right">₹{{ number_format($zone->addl_0_5_kg, 2) }}</td>
                                         <td class="p-2 border text-right">₹{{ number_format($zone->first_2_kg, 2) }}</td>
@@ -256,9 +263,9 @@ function calculatePreview() {
         document.getElementById('res-zone').innerText = rate.zone || 'N/A';
         document.getElementById('res-vol-wt').innerText = (rate.volumetric_weight || 0) + ' kg';
         document.getElementById('res-chg-wt').innerText = (rate.chargeable_weight || 0) + ' kg';
-        document.getElementById('res-freight').innerText = '₹' + parseFloat(rate.freight).toFixed(2);
-        document.getElementById('res-fsc').innerText = '₹' + parseFloat(rate.fsc).toFixed(2);
-        document.getElementById('res-cod').innerText = '₹' + parseFloat(rate.cod).toFixed(2);
+        document.getElementById('res-freight').innerText = '₹' + parseFloat(rate.base_freight).toFixed(2);
+        document.getElementById('res-fsc').innerText = '₹' + parseFloat(rate.fsc_amount).toFixed(2);
+        document.getElementById('res-cod').innerText = '₹' + parseFloat(rate.cod_charge).toFixed(2);
         document.getElementById('res-gst').innerText = '₹' + parseFloat(rate.gst).toFixed(2);
         document.getElementById('res-total').innerText = '₹' + parseFloat(rate.total).toFixed(2);
     })

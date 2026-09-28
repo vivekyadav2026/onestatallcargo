@@ -15,7 +15,7 @@ class RiderAppController extends Controller
     {
         $riderId = Auth::id();
 
-        $pendingPickups = Shipment::where('status', 'Manifested')
+        $pendingPickups = Shipment::whereIn('status', ['Manifested', 'Pickup Scheduled'])
                             ->where('rider_id', $riderId)
                             ->orderBy('created_at', 'desc')
                             ->get();

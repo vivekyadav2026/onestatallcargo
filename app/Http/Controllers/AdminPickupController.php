@@ -29,7 +29,19 @@ class AdminPickupController extends Controller
         ]);
 
         Shipment::whereIn('id', $validated['shipment_ids'])
-                ->update(['rider_id' => $validated['rider_id']]);
+                ->update([
+                    'rider_id' => $validated['rider_id'],
+                    'status' => 'Pickup Scheduled'
+                ]);
+
+        foreach ($validated['shipment_ids'] as $id) {
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $id,
+                'status' => 'Pickup Scheduled',
+                'location' => 'Origin',
+                'remarks' => 'Admin assigned pickup rider'
+            ]);
+        }
 
         return back()->with('success', count($validated['shipment_ids']) . ' shipments assigned to rider successfully.');
     }

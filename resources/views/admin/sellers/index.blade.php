@@ -43,6 +43,7 @@
                         <th class="px-6 py-4">Company & Brand</th>
                         <th class="px-6 py-4">GSTIN / PAN</th>
                         <th class="px-6 py-4">Wallet Balance</th>
+                        <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
                 </thead>
@@ -76,7 +77,14 @@
                             <td class="px-6 py-4 font-bold {{ $seller->wallet_balance < 0 ? 'text-red-500' : 'text-[var(--gold-deep)]' }}">
                                 &#8377; {{ number_format($seller->wallet_balance, 2) }}
                             </td>
-                            <td class="px-6 py-4 text-right space-x-3">
+                            <td class="px-6 py-4">
+                                @if($seller->status === 'active')
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-full uppercase">Active</span>
+                                @else
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-[10px] font-bold rounded-full uppercase">Suspended</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
                                 <button @click="editData = { 
                                     id: {{ $seller->id }}, 
                                     name: '{{ addslashes($seller->name) }}', 
@@ -90,14 +98,29 @@
                                     company_city: '{{ addslashes($seller->company_city ?? '') }}',
                                     company_state: '{{ addslashes($seller->company_state ?? '') }}',
                                     company_pincode: '{{ addslashes($seller->company_pincode ?? '') }}'
-                                }; showEditModal = true" class="text-gray-500 hover:text-gray-900 font-bold text-xs"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+                                }; showEditModal = true" class="text-gray-500 hover:text-gray-900 font-bold text-xs" title="Edit Profile"><i class="fa-solid fa-pen"></i></button>
                                 
-                                <a href="{{ route('admin.billing.index') }}" class="text-[var(--gold-deep)] hover:text-yellow-600 font-bold text-xs"><i class="fa-solid fa-file-invoice"></i> COD Ledger</a>
+                                <a href="{{ route('admin.billing.index') }}" class="text-[var(--gold-deep)] hover:text-yellow-600 font-bold text-xs" title="COD Ledger"><i class="fa-solid fa-file-invoice"></i></a>
+
+                                <form action="{{ route('admin.sellers.toggle', $seller->id) }}" method="POST" class="inline-block ml-1">
+                                    @csrf
+                                    <button type="submit" class="text-xs font-bold {{ $seller->status === 'active' ? 'text-red-500 hover:text-red-700' : 'text-green-500 hover:text-green-700' }}" title="{{ $seller->status === 'active' ? 'Suspend Account' : 'Reactivate Account' }}">
+                                        <i class="fa-solid {{ $seller->status === 'active' ? 'fa-ban' : 'fa-check' }}"></i>
+                                    </button>
+                                </form>
+
+                                <form action="{{ route('admin.sellers.destroy', $seller->id) }}" method="POST" class="inline-block ml-1" onsubmit="return confirm('Are you sure you want to permanently delete this seller?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-gray-400 hover:text-red-600 text-xs" title="Delete Seller">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-400">
                                 <p>No sellers found.</p>
                             </td>
                         </tr>

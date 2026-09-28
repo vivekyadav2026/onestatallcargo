@@ -159,6 +159,14 @@
                 <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap">Billing & Wallet</span>
             </a>
 
+            <!-- API Integration Tab -->
+            <a href="{{ route('seller.api-keys') }}" class="sidebar-item {{ request()->routeIs('seller.api-keys') ? 'active' : '' }}" title="API Integration">
+                <div class="icon-box">
+                    <i class="fa-solid fa-code text-base"></i>
+                </div>
+                <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap">API Integration</span>
+            </a>
+
             <a href="{{ route('seller.settings') }}" class="sidebar-item {{ request()->routeIs('seller.settings') ? 'active' : '' }}" title="Settings">
                 <div class="icon-box">
                     <i class="fa-solid fa-gear text-base"></i>

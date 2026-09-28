@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Route;
 // Public API endpoints (Used by the frontend website rate calculator)
 Route::prefix('v1/public')->group(function () {
     Route::post('/rates', [\App\Http\Controllers\Api\V1\RateCalculatorController::class, 'calculate']);
+
+    // Shipment Management APIs
+    Route::get('/shipments', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'index']);
+    Route::post('/shipments', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'store']);
+    Route::get('/shipments/{awb}', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'show']);
+    Route::post('/shipments/{awb}/cancel', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'cancel']);
 });
 
 // Token-based API Routes for E-commerce integrations and external customers
@@ -18,6 +24,12 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
     // Rate Calculator API (Calls the Pricing Engine securely for Sellers)
     Route::post('/rates', [\App\Http\Controllers\Api\V1\RateCalculatorController::class, 'calculate']);
+
+    // Shipment Management APIs
+    Route::get('/shipments', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'index']);
+    Route::post('/shipments', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'store']);
+    Route::get('/shipments/{awb}', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'show']);
+    Route::post('/shipments/{awb}/cancel', [\App\Http\Controllers\Api\V1\ShipmentApiController::class, 'cancel']);
     
 });
 

@@ -26,11 +26,11 @@
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Twilio / MSG91 API Key (SMS)</label>
-                    <input type="text" value="msg91_live_xxxxxxxxxx" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
+                    <input type="text" value="{{ $settings['msg91_api_key'] ?? '' }}" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">WhatsApp Business API Token</label>
-                    <input type="password" value="wa_live_xxxxxxxxxx" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
+                    <input type="password" value="{{ $settings['whatsapp_token'] ?? '' }}" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-gray-500">
                 </div>
                 <div class="md:col-span-2">
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -49,17 +49,17 @@
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cashfree App ID</label>
-                    <input type="text" name="cashfree_app_id" placeholder="Enter App ID" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
+                    <input type="text" name="cashfree_app_id" value="{{ $settings['cashfree_app_id'] ?? '' }}" placeholder="Enter App ID" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cashfree Secret Key</label>
-                    <input type="password" name="cashfree_secret_key" placeholder="Enter Secret Key" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
+                    <input type="password" name="cashfree_secret_key" value="{{ $settings['cashfree_secret_key'] ?? '' }}" placeholder="Enter Secret Key" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Environment</label>
                     <select name="cashfree_environment" class="w-full text-sm font-bold px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl outline-none focus:border-purple-500">
-                        <option value="sandbox">Sandbox (Testing)</option>
-                        <option value="production">Production (Live)</option>
+                        <option value="sandbox" {{ ($settings['cashfree_environment'] ?? '') === 'sandbox' ? 'selected' : '' }}>Sandbox (Testing)</option>
+                        <option value="production" {{ ($settings['cashfree_environment'] ?? '') === 'production' ? 'selected' : '' }}>Production (Live)</option>
                     </select>
                 </div>
             </div>

@@ -52,7 +52,7 @@
                         <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                         <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
                         <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
-                        <a href="\{\{ route('admin.weight.freeze') \}\}" class="sidebar-item \{\{ request()->routeIs('admin.weight.freeze') ? 'active' : '' \}\}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
+                        <a href="{{ route('admin.weight.freeze') }}" class="sidebar-item {{ request()->routeIs('admin.weight.freeze') ? 'active' : '' }}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                         <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
                         
@@ -102,7 +102,7 @@
                 <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                 <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
                         <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
-                        <a href="\{\{ route('admin.weight.freeze') \}\}" class="sidebar-item \{\{ request()->routeIs('admin.weight.freeze') ? 'active' : '' \}\}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
+                        <a href="{{ route('admin.weight.freeze') }}" class="sidebar-item {{ request()->routeIs('admin.weight.freeze') ? 'active' : '' }}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                 <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
                 
@@ -121,7 +121,7 @@
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Business</div></div>
                 <a href="{{ route('admin.sellers.index') }}" class="sidebar-item {{ request()->routeIs('admin.sellers.*') ? 'active' : '' }}"><i class="fa-solid fa-users w-4 text-center"></i> <span>Sellers Directory</span></a>
-                <a href="{{ route('admin.kyc.index') }}" class="sidebar-item {{ request()->routeIs('admin.kyc.*') ? 'active' : '' }}"><i class="fa-solid fa-shield-check w-4 text-center"></i> <span>KYC Approvals</span></a>
+                <a href="{{ route('admin.kyc.index') }}" class="sidebar-item {{ request()->routeIs('admin.kyc.*') ? 'active' : '' }}"><i class="fa-solid fa-id-card w-4 text-center"></i> <span>KYC Approvals</span></a>
                 <a href="{{ route('admin.ratecards.index') }}" class="sidebar-item {{ request()->routeIs('admin.ratecards.*') ? 'active' : '' }}"><i class="fa-solid fa-indian-rupee-sign w-4 text-center"></i> <span>Rate Engine</span></a>
                 <a href="{{ route('admin.billing.index') }}" class="sidebar-item {{ request()->routeIs('admin.billing.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i> <span>Billing & COD</span></a>
 

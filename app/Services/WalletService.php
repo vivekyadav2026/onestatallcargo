@@ -33,7 +33,7 @@ class WalletService
                 'type' => 'debit',
                 'amount' => $amount,
                 'description' => $description,
-                'reference' => $reference,
+                'reference_id' => $reference,
                 'balance_after' => $user->wallet_balance
             ]);
 
@@ -63,7 +63,7 @@ class WalletService
                 'type' => 'credit',
                 'amount' => $amount,
                 'description' => $description,
-                'reference' => $reference,
+                'reference_id' => $reference,
                 'balance_after' => $user->wallet_balance
             ]);
 

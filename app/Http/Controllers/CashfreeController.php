@@ -11,10 +11,17 @@ class CashfreeController extends Controller
 {
     private function getHeaders()
     {
-        // In a real app, fetch from database settings.
-        // E.g., Option::get('cashfree_app_id')
-        $appId = env('CASHFREE_APP_ID', 'TEST_APP_ID');
-        $secret = env('CASHFREE_SECRET_KEY', 'TEST_SECRET');
+        // Fetch from database settings
+        $appId = \App\Models\Setting::where('key', 'cashfree_app_id')->value('value');
+        $secret = \App\Models\Setting::where('key', 'cashfree_secret_key')->value('value');
+
+        // Fallback to TEST_APP_ID if empty
+        if (!$appId) {
+            $appId = env('CASHFREE_APP_ID', 'TEST_APP_ID');
+        }
+        if (!$secret) {
+            $secret = env('CASHFREE_SECRET_KEY', 'TEST_SECRET');
+        }
 
         return [
             'x-client-id' => $appId,
@@ -27,7 +34,9 @@ class CashfreeController extends Controller
 
     private function getBaseUrl()
     {
-        return env('CASHFREE_ENV', 'sandbox') === 'production' 
+        $env = \App\Models\Setting::where('key', 'cashfree_environment')->value('value') ?: env('CASHFREE_ENV', 'sandbox');
+        
+        return $env === 'production' 
             ? 'https://api.cashfree.com/pg' 
             : 'https://sandbox.cashfree.com/pg';
     }
@@ -51,15 +60,18 @@ class CashfreeController extends Controller
         $transaction->status = 'pending';
         $transaction->save();
 
+        $appId = \App\Models\Setting::where('key', 'cashfree_app_id')->value('value');
+        $env = \App\Models\Setting::where('key', 'cashfree_environment')->value('value') ?: env('CASHFREE_ENV', 'sandbox');
+
         // Check if we have valid real credentials
-        if (env('CASHFREE_APP_ID') == null || env('CASHFREE_APP_ID') == 'TEST_APP_ID') {
+        if (empty($appId) || $appId == 'TEST_APP_ID') {
             // For testing purposes when the user hasn't put real keys yet
             // Just simulate a successful checkout session
             return response()->json([
                 'success' => true,
                 'payment_session_id' => 'mock_session_id',
                 'order_id' => $orderId,
-                'environment' => 'sandbox',
+                'environment' => $env,
                 'mock_mode' => true
             ]);
         }
@@ -76,8 +88,8 @@ class CashfreeController extends Controller
                 'customer_name' => $user->name
             ],
             'order_meta' => [
-                // In production this should be a real callback URL
-                'return_url' => route('seller.dashboard') . '?order_id={order_id}',
+                // If user is redirected on mobile, they come back to wallet page to verify
+                'return_url' => route('seller.wallet') . '?order_id={order_id}',
                 'notify_url' => url('/api/webhooks/cashfree') // for background verification
             ]
         ];

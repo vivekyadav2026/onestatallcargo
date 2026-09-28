@@ -12,7 +12,8 @@ class AdminHubController extends Controller
     {
         $hubs = Hub::with('manager')->orderBy('created_at', 'desc')->paginate(15);
         $managers = User::where('role', 'franchise')->get();
-        return view('admin.hubs.index', compact('hubs', 'managers'));
+        $pendingFranchises = \App\Models\Franchise::where('status', 'pending')->orderBy('created_at', 'desc')->get();
+        return view('admin.hubs.index', compact('hubs', 'managers', 'pendingFranchises'));
     }
 
     public function store(Request $request)
@@ -46,5 +47,25 @@ class AdminHubController extends Controller
         $hub->save();
 
         return back()->with('success', 'Hub status updated.');
+    }
+
+    public function approveFranchise($id)
+    {
+        $franchise = \App\Models\Franchise::findOrFail($id);
+        $franchise->status = 'approved';
+        $franchise->save();
+
+        // Optionally, automatically create a Hub here?
+        // Let's just approve the application so the user can log in as franchise manager.
+        return back()->with('success', 'Franchise application approved! You can now create a Hub and assign this manager.');
+    }
+
+    public function rejectFranchise($id)
+    {
+        $franchise = \App\Models\Franchise::findOrFail($id);
+        $franchise->status = 'rejected';
+        $franchise->save();
+
+        return back()->with('success', 'Franchise application rejected.');
     }
 }

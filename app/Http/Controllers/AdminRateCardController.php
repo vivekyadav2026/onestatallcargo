@@ -74,8 +74,8 @@ class AdminRateCardController extends Controller
                 ]);
 
                 foreach ($validated['zones'] as $zone) {
-                    // Only save if first_0_5_kg is present (i.e. not Zone 6 unsupported)
-                    if (!empty($zone['first_0_5_kg'])) {
+                    // Only save if first_0_5_kg is present and not an empty string (allow 0 as a valid rate)
+                    if (isset($zone['first_0_5_kg']) && $zone['first_0_5_kg'] !== null) {
                         $zone['rate_card_id'] = $rateCard->id;
                         RateCardZone::create($zone);
                     }
@@ -156,7 +156,7 @@ class AdminRateCardController extends Controller
 
                 // Re-create zones
                 foreach ($validated['zones'] as $zone) {
-                    if (!empty($zone['first_0_5_kg'])) {
+                    if (isset($zone['first_0_5_kg']) && $zone['first_0_5_kg'] !== null) {
                         $zone['rate_card_id'] = $rateCard->id;
                         RateCardZone::create($zone);
                     }

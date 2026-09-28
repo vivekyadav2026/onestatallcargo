@@ -55,6 +55,20 @@
                 </div>
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Markup Type</label>
+                    <select name="markup_type" class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="flat">Flat Amount (₹)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Markup Value</label>
+                    <input type="number" step="0.01" name="markup_value" placeholder="e.g. 10" value="0" required class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                </div>
+            </div>
+
             <div class="flex justify-end pt-2">
                 <button type="submit" class="px-6 py-2.5 bg-[#1e293b] text-white rounded-xl font-bold shadow-md hover:bg-black transition text-sm">
                     <i class="fa-solid fa-link mr-1"></i> Add Partner & Encrypt Keys
@@ -91,10 +105,18 @@
                         {{ $courier->api_credentials['api_url'] ?? 'N/A' }}
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Secret Key</label>
-                    <div class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-400 font-mono">
-                        ******** (Encrypted in DB)
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Markup Type</label>
+                        <div class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-600 capitalize">
+                            {{ $courier->markup_type ?? 'percentage' }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Markup Value</label>
+                        <div class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-600 font-mono text-brand-red font-bold">
+                            {{ $courier->markup_type === 'flat' ? '₹' : '' }}{{ $courier->markup_value ?? 0 }}{{ $courier->markup_type === 'percentage' ? '%' : '' }}
+                        </div>
                     </div>
                 </div>
             </div>

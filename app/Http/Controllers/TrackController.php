@@ -15,7 +15,9 @@ class TrackController extends Controller
     {
         $request->validate(['awb_number' => 'required|string']);
         
-        $shipment = Shipment::where('awb_number', strtoupper($request->awb_number))->first();
+        $shipment = Shipment::where('awb_number', strtoupper($request->awb_number))->with(['events' => function($q) {
+            $q->orderBy('created_at', 'desc');
+        }])->first();
 
         if (!$shipment) {
             return back()->with('error', 'No shipment found with that AWB Number.');

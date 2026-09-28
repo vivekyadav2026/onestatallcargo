@@ -73,7 +73,7 @@
                         <h3 class="font-extrabold text-base text-gray-900">Courier Performance</h3>
                         <p class="text-xs text-gray-500 mt-1">Delivery accuracy & RTO metrics across integrated partners</p>
                     </div>
-                    <a href="#" class="text-xs font-bold text-[var(--gold-deep)] hover:underline">View All</a>
+                    <a href="{{ route('admin.reports.index') }}" class="text-xs font-bold text-[var(--gold-deep)] hover:underline">View All Analytics</a>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -93,7 +93,7 @@
                                 <td class="py-4">{{ $partner['name'] }}</td>
                                 <td class="py-4">{{ number_format($partner['load'] ?? 0) }}</td>
                                 <td class="py-4"><span class="px-2 py-1 rounded {{ ($partner['efficiency'] ?? 0) >= 80 ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700' }} text-xs font-bold">{{ $partner['efficiency'] ?? 0 }}%</span></td>
-                                <td class="py-4">—</td>
+                                <td class="py-4 font-bold text-rose-500">{{ $partner['rto'] ?? 0 }}</td>
                                 <td class="py-4"><span class="w-2 h-2 inline-block rounded-full bg-green-500 mr-2"></span>Active</td>
                             </tr>
                             @endforeach
@@ -103,6 +103,7 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
             <!-- Recent Bookings Widget -->
             <div class="p-6 rounded-3xl bg-white border border-gray-200 shadow-sm space-y-4 mt-6">
                 <div class="flex items-center justify-between border-b pb-4 border-gray-100">
@@ -143,7 +144,9 @@
                                     </span>
                                 </td>
                                 <td class="py-3 text-right">
-                                    <button class="text-gray-400 hover:text-gray-900 transition"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                    <a href="{{ route('admin.shipments.index', ['search' => $booking['awb']]) }}" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition inline-flex items-center gap-1">
+                                        <i class="fa-solid fa-eye"></i> View
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
@@ -169,19 +172,44 @@
                     <div>
                         <div class="flex justify-between text-xs font-bold mb-1.5 text-gray-700">
                             <span>{{ $zone['city'] }} ({{ $zone['pincode'] }})</span>
-                            <span class="text-red-500">{{ $zone['ndr_rate'] }}% NDR</span>
+                            <span class="text-red-500">{{ $zone['ndr_rate'] }}% ({{ $zone['total_ndr'] }} items)</span>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-red-500 h-1.5 rounded-full" style="width: {{ min($zone['ndr_rate'] * 3, 100) }}%"></div>
+                            <div class="bg-red-500 h-1.5 rounded-full" style="width: {{ min($zone['ndr_rate'], 100) }}%"></div>
                         </div>
                     </div>
                     @endforeach
                 </div>
 
                 <div class="mt-6 pt-6 border-t border-gray-100">
-                    <button class="w-full py-2.5 rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
-                        View Network Analytics
-                    </button>
+                    <a href="{{ route('admin.ndr.index') }}" class="block text-center w-full py-2.5 rounded-xl text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                        View NDR Analytics
+                    </a>
+                </div>
+            </div>
+
+            <!-- System Overview -->
+            <div class="p-6 rounded-3xl bg-[#1e1b4b] text-white shadow-lg space-y-4 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-white/5">
+                    <i class="fa-solid fa-server text-8xl"></i>
+                </div>
+                <div class="flex items-center justify-between border-b pb-4 border-white/10 relative z-10">
+                    <h3 class="font-extrabold text-base">Network Users</h3>
+                    <i class="fa-solid fa-users text-blue-400"></i>
+                </div>
+                <div class="space-y-4 pt-2 relative z-10">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-300">Active Sellers</span>
+                        <span class="text-lg font-black text-white">{{ number_format($activeSellers ?? 0) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-300">Franchise Hubs</span>
+                        <span class="text-lg font-black text-white">{{ number_format($activeHubs ?? 0) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-300">Total Riders</span>
+                        <span class="text-lg font-black text-white">{{ number_format($totalRiders ?? 0) }}</span>
+                    </div>
                 </div>
             </div>
         </div>

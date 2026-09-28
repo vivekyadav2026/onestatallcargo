@@ -19,17 +19,46 @@ class AdminBillingController extends Controller
             ->with('user')
             ->paginate(15);
             
-        return view('admin.billing.index', compact('ledgers'));
+        $totalPendingCOD = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', false)->sum('invoice_value');
+        $totalSettledCOD = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', true)->sum('invoice_value');
+
+        return view('admin.billing.index', compact('ledgers', 'totalPendingCOD', 'totalSettledCOD'));
     }
 
     public function remit(Request $request, $userId)
     {
-        Shipment::where('user_id', $userId)
-            ->where('is_cod', true)
-            ->where('status', 'Delivered')
-            ->where('cod_remitted', false)
-            ->update(['cod_remitted' => true]);
+        DB::transaction(function () use ($userId) {
+            $user = User::findOrFail($userId);
 
-        return back()->with('success', 'COD Remittance settled successfully for seller.');
+            // Get total pending COD
+            $totalCod = Shipment::where('user_id', $userId)
+                ->where('is_cod', true)
+                ->where('status', 'Delivered')
+                ->where('cod_remitted', false)
+                ->sum('invoice_value');
+
+            // If wallet is negative, clear it from the COD payout (up to the total COD amount)
+            if ($user->wallet_balance < 0) {
+                $due = abs($user->wallet_balance);
+                
+                if ($totalCod >= $due) {
+                    // Settle full due
+                    $user->wallet_balance = 0;
+                } else {
+                    // Settle partial due
+                    $user->wallet_balance += $totalCod;
+                }
+                $user->save();
+            }
+
+            // Mark COD as remitted
+            Shipment::where('user_id', $userId)
+                ->where('is_cod', true)
+                ->where('status', 'Delivered')
+                ->where('cod_remitted', false)
+                ->update(['cod_remitted' => true]);
+        });
+
+        return back()->with('success', 'COD Remittance settled successfully, and any pending wallet dues were adjusted automatically.');
     }
 }

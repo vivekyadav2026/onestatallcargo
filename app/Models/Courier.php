@@ -10,7 +10,9 @@ class Courier extends Model
         'name',
         'mode', // 'sandbox' or 'production'
         'api_credentials',
-        'is_active'
+        'is_active',
+        'markup_type',
+        'markup_value'
     ];
 
     protected $casts = [

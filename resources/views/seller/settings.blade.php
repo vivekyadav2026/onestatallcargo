@@ -43,7 +43,7 @@
               <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
                   <div class="flex items-center gap-4">
                       <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
-                          <i class="fa-solid fa-shield-check"></i>
+                          <i class="fa-solid fa-shield"></i>
                       </div>
                       <div>
                           <h2 class="text-sm font-bold text-gray-900">KYC Verified & Active</h2>
@@ -233,7 +233,7 @@
               <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
                   <div class="flex items-center gap-4">
                       <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
-                          <i class="fa-solid fa-shield-check"></i>
+                          <i class="fa-solid fa-shield"></i>
                       </div>
                       <div>
                           <h2 class="text-sm font-bold text-gray-900">KYC Verified & Active</h2>

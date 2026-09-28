@@ -57,10 +57,10 @@ class AdminReportController extends Controller
                         $s->id,
                         $s->awb_number,
                         $s->user->name ?? 'Unknown',
-                        $s->delivery_name,
-                        $s->delivery_phone,
+                        $s->receiver_name,
+                        $s->receiver_phone,
                         $s->delivery_city,
-                        $s->delivery_state,
+                        'N/A', // delivery_state not directly in table
                         $s->delivery_pincode,
                         $s->is_cod ? 'COD' : 'Prepaid',
                         $s->invoice_value,

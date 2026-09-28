@@ -14,6 +14,15 @@
             <i class="fa-solid fa-circle-check mr-1"></i> {{ session('success') }}
         </div>
     @endif
+    
+    @if($errors->any())
+        <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl border border-red-200 text-sm">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> 
+            @foreach($errors->all() as $error)
+                {{ $error }}<br>
+            @endforeach
+        </div>
+    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Add New Rider Form -->
@@ -86,7 +95,10 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <button class="text-red-500 hover:text-red-700 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+                                    <form action="{{ route('admin.riders.destroy', $rider->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this rider?');" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="text-red-500 hover:text-red-700 font-bold text-xs"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
                                 </td>
                             </tr>
                             @empty

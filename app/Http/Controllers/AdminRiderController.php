@@ -37,4 +37,11 @@ class AdminRiderController extends Controller
 
         return back()->with('success', 'Rider profile created successfully.');
     }
+
+    public function destroy($id)
+    {
+        $user = User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])->findOrFail($id);
+        $user->delete();
+        return back()->with('success', 'Rider removed successfully.');
+    }
 }

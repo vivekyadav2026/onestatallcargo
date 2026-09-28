@@ -120,7 +120,8 @@
                         <div x-show="activeDropdown === 'resources'" x-transition x-cloak class="absolute left-0 mt-0 w-48 bg-white text-gray-800 rounded-b-lg shadow-xl border-t-2 border-brand-yellow overflow-hidden">
                             <a href="{{ route('about') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-circle-info text-brand-blue w-5"></i> About Us</a>
                             <a href="{{ route('faq') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-circle-question text-brand-blue w-5"></i> FAQ</a>
-                            <a href="{{ route('help') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-life-ring text-brand-blue w-5"></i> Help Center</a>
+                            <a href="{{ route('help') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-life-ring text-brand-blue w-5"></i> Help Center</a>
+                            <a href="{{ route('contact') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-address-book text-brand-blue w-5"></i> Contact Us</a>
                         </div>
                     </div>
                 </nav>
@@ -178,6 +179,7 @@
 
                 <a href="{{ route('developers') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Developers</a>
                 <a href="{{ route('pricing') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Pricing</a>
+                <a href="{{ route('contact') }}" class="block px-3 py-3 text-base font-semibold text-white hover:bg-gray-800 rounded">Contact Us</a>
                 
                 <div class="border-t border-gray-600 my-4"></div>
                 <a href="{{ route('track') }}" class="block px-3 py-3 text-base font-bold text-brand-red">Track Shipment</a>

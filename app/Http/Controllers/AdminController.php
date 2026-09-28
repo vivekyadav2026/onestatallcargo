@@ -24,9 +24,9 @@ class AdminController extends Controller
         $totalRevenue = WalletTransaction::where('type', 'debit')->where('status', 'completed')->sum('amount');
         $totalSettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'completed')->sum('amount');
 
-        // Couriers performance mock/dynamic blend
+        // Couriers performance
         $couriers = DB::table('shipments')
-            ->select('courier_partner', DB::raw('count(*) as total'), DB::raw('sum(case when status = "Delivered" then 1 else 0 end) as delivered'))
+            ->select('courier_partner', DB::raw('count(*) as total'), DB::raw('sum(case when status = "Delivered" then 1 else 0 end) as delivered'), DB::raw('sum(case when status like "RTO%" then 1 else 0 end) as rto_count'))
             ->whereNotNull('courier_partner')
             ->groupBy('courier_partner')
             ->get();
@@ -37,20 +37,27 @@ class AdminController extends Controller
             $courierPerformance[] = [
                 'name' => $c->courier_partner,
                 'load' => $c->total,
-                'efficiency' => $efficiency
+                'efficiency' => $efficiency,
+                'rto' => $c->rto_count
             ];
         }
 
-        // Weak zones based on NDR
+        // Weak zones based on NDR (calculate percentage)
         $weakZones = DB::table('shipments')
-            ->select('delivery_pincode as pincode', 'delivery_city as city', DB::raw('count(*) as total_ndr'))
-            ->where('status', 'NDR')
+            ->select('delivery_pincode as pincode', 'delivery_city as city', DB::raw('count(*) as total_orders'), DB::raw('sum(case when status = "NDR" then 1 else 0 end) as total_ndr'))
             ->groupBy('delivery_pincode', 'delivery_city')
+            ->having('total_ndr', '>', 0)
             ->orderByDesc('total_ndr')
-            ->limit(3)
+            ->limit(4)
             ->get()->map(function ($z) {
-                return ['pincode' => $z->pincode, 'city' => $z->city, 'ndr_rate' => $z->total_ndr];
+                $rate = $z->total_orders > 0 ? round(($z->total_ndr / $z->total_orders) * 100) : 0;
+                return ['pincode' => $z->pincode, 'city' => $z->city, 'ndr_rate' => $rate, 'total_ndr' => $z->total_ndr];
             });
+
+        // System Overview Data
+        $activeSellers = User::where('role', 'seller')->count();
+        $activeHubs = User::where('role', 'franchise')->count();
+        $totalRiders = User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])->count();
 
         // Recent Bookings
         $recentShipmentsRaw = Shipment::with('user')->latest()->limit(5)->get();
@@ -74,6 +81,9 @@ class AdminController extends Controller
             'totalSettlements',
             'courierPerformance',
             'weakZones',
+            'activeSellers',
+            'activeHubs',
+            'totalRiders',
             'recentShipments'
         ));
     }

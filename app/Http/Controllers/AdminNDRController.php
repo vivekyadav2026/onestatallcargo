@@ -27,18 +27,36 @@ class AdminNDRController extends Controller
             $shipment->status = 'Out for Delivery';
             $shipment->ndr_action = null; // Clear the pending seller action
             $shipment->save();
+            
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $shipment->id,
+                'status' => 'Out for Delivery',
+                'remarks' => 'Admin pushed shipment for Re-attempt delivery.'
+            ]);
             return back()->with('success', 'Shipment ' . $shipment->awb_number . ' pushed back to Out for Delivery.');
         }
 
         if ($validated['admin_action'] === 'rto') {
             $shipment->status = 'RTO Initiated';
             $shipment->save();
+            
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $shipment->id,
+                'status' => 'RTO Initiated',
+                'remarks' => 'Return to Origin (RTO) initiated by Admin.'
+            ]);
             return back()->with('success', 'RTO officially initiated for ' . $shipment->awb_number . '.');
         }
         
         if ($validated['admin_action'] === 'rto_delivered') {
             $shipment->status = 'RTO Delivered';
             $shipment->save();
+            
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $shipment->id,
+                'status' => 'RTO Delivered',
+                'remarks' => 'Shipment successfully returned and delivered to Seller.'
+            ]);
             return back()->with('success', 'Shipment ' . $shipment->awb_number . ' successfully returned to Seller.');
         }
         

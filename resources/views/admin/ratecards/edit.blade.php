@@ -125,7 +125,7 @@
                         
                         @foreach($defaultZoneNames as $index => $zoneName)
                             @php
-                                $existingZone = $rateCard->zones->where('zone_name', $zoneName)->first();
+                                \$existingZone = \$rateCard->zones->filter(function(\$z) use (\$zoneName) { return str_starts_with(\$zoneName, \$z->zone_name); })->first();
                             @endphp
                             <tr class="hover:bg-gray-50 text-sm">
                                 <td class="p-2 border font-bold text-gray-700">

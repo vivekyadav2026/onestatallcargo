@@ -20,9 +20,6 @@
                     <a href="#apply" class="px-8 py-3.5 rounded-full bg-brand-red text-white font-bold text-base hover:bg-brand-redHover transition shadow-md shadow-red-500/20">
                         Apply for Franchise
                     </a>
-                    <a href="{{ route('contact') }}" class="px-8 py-3.5 rounded-full border-2 border-brand-navy text-brand-navy font-bold text-base hover:bg-brand-navy hover:text-white transition">
-                        Download Brochure
-                    </a>
                 </div>
             </div>
 
@@ -98,8 +95,8 @@
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Booking Counter Micro-Hub</h3>
                 <p class="text-sm text-gray-600 mb-6">Perfect for existing shop owners, stationery stores, or retail counters looking to add shipping services.</p>
                 <div class="space-y-3 text-xs text-gray-700 mb-8">
-                    <div class="flex justify-between border-b pb-2"><span>Investment Required:</span> <strong class="text-brand-navy">&#8377; 50,000 - &#8377; 1,000,000</strong></div>
-                    <div class="flex justify-between border-b pb-2"><span>Space Needed:</span> <strong class="text-brand-navy">100 - 200 Sq. Ft.</strong></div>
+                    <div class="flex justify-between border-b pb-2"><span>Earning Potential:</span> <strong class="text-brand-navy">High Commission per Booking</strong></div>
+                    <div class="flex justify-between border-b pb-2"><span>Setup Time:</span> <strong class="text-brand-navy">Less than 48 Hours</strong></div>
                     <div class="flex justify-between border-b pb-2"><span>Role:</span> <strong>Parcel Intake & Booking Counter</strong></div>
                     <div class="flex justify-between border-b pb-2"><span>Software Provided:</span> <strong class="text-green-600">Hub Dashboard + Barcode Scanner</strong></div>
                 </div>
@@ -116,8 +113,8 @@
                 <h3 class="text-2xl font-bold text-gray-900 mb-2">Regional Sorting & Distribution Hub</h3>
                 <p class="text-sm text-gray-600 mb-6">For entrepreneurs seeking a full-scale logistics hub with last-mile rider fleet management and linehaul dispatch.</p>
                 <div class="space-y-3 text-xs text-gray-700 mb-8">
-                    <div class="flex justify-between border-b pb-2"><span>Investment Required:</span> <strong class="text-brand-red">&#8377; 3,000,000 - &#8377; 5,000,000</strong></div>
-                    <div class="flex justify-between border-b pb-2"><span>Space Needed:</span> <strong class="text-brand-navy">500 - 1200 Sq. Ft.</strong></div>
+                    <div class="flex justify-between border-b pb-2"><span>Earning Potential:</span> <strong class="text-brand-red">High Volume Margin</strong></div>
+                    <div class="flex justify-between border-b pb-2"><span>Setup Time:</span> <strong class="text-brand-navy">7 to 10 Days</strong></div>
                     <div class="flex justify-between border-b pb-2"><span>Role:</span> <strong>Sorting, Bagging & Rider Fleet Hub</strong></div>
                     <div class="flex justify-between border-b pb-2"><span>Territory:</span> <strong class="text-green-600">Exclusive Pin Code Rights</strong></div>
                 </div>
@@ -132,46 +129,108 @@
 <!-- 4. Lead Application Form -->
 <section id="apply" class="py-12 md:py-16 bg-gray-50/50 border-t border-gray-100">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-200">
-            <div class="text-center mb-8">
-                <h3 class="text-2xl font-bold text-brand-navy">Franchise Application Form</h3>
-                <p class="text-xs text-gray-500 font-medium">Fill in your details below and our franchise team will contact you within 24 hours</p>
-            </div>
+        
+        <div class="text-center mb-10">
+            <h3 class="text-3xl font-extrabold text-gray-900 tracking-tight">Become a Hub Partner</h3>
+            <p class="mt-2 text-sm text-gray-500">Join our logistics network. Fill out the application below to get started.</p>
+        </div>
 
-            <form class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Full Name</label>
-                        <input type="text" placeholder="Ramesh Kumar" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-navy">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" placeholder="9876543210" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-navy">
-                    </div>
+        <div class="bg-white py-10 px-8 shadow-sm border border-gray-200 sm:rounded-2xl">
+            @if(session('success'))
+                <div class="mb-8 p-4 bg-green-50 text-green-800 text-sm font-medium rounded-lg flex items-center gap-3">
+                    <i class="fa-solid fa-check-circle text-green-500"></i>
+                    {{ session('success') }}
                 </div>
+            @endif
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">City / Town</label>
-                        <input type="text" placeholder="Jaipur" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-navy">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Pin Code Needed</label>
-                        <input type="text" placeholder="302001" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-navy">
-                    </div>
+            @if($errors->any())
+                <div class="mb-8 p-4 bg-red-50 text-red-800 text-sm font-medium rounded-lg flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5"></i>
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
+            @endif
 
+            <form class="space-y-8" action="{{ route('franchise.store') }}" method="POST">
+                @csrf
+                
+                <!-- Business Details -->
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Preferred Franchise Model</label>
-                    <select class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-brand-navy">
-                        <option>Booking Counter Micro-Hub (&#8377;50k - &#8377;1L)</option>
-                        <option>Regional Sorting Hub (&#8377;3L - &#8377;5L)</option>
-                    </select>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-4 border-b border-gray-100 pb-2">Business Details</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Company/Shop Name</label>
+                            <input name="company_name" type="text" required value="{{ old('company_name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Owner Name</label>
+                            <input name="owner_name" type="text" required value="{{ old('owner_name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input name="phone" type="text" required value="{{ old('phone') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Email Address</label>
+                            <input name="email" type="email" required value="{{ old('email') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red text-white font-extrabold text-sm hover:bg-brand-redHover transition shadow-md mt-2">
-                    Submit Franchise Application &rarr;
-                </button>
+                <!-- Location -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-4 border-b border-gray-100 pb-2">Location</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">City</label>
+                            <input name="city" type="text" required value="{{ old('city') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">State</label>
+                            <input name="state" type="text" required value="{{ old('state') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Full Address</label>
+                            <textarea name="address" rows="2" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">{{ old('address') }}</textarea>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Serviceable Pincodes <span class="text-gray-400 font-normal">(Comma separated)</span></label>
+                            <input name="serviceable_pincodes" type="text" required value="{{ old('serviceable_pincodes') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                            <p class="mt-1.5 text-[11px] text-gray-500">Orders for these pincodes will be exclusively routed to your hub.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Setup -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 mb-4 border-b border-gray-100 pb-2">Account Setup</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Password</label>
+                            <input name="password" type="password" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Confirm Password</label>
+                            <input name="password_confirmation" type="password" required class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition">
+                        Submit Application
+                    </button>
+                </div>
             </form>
         </div>
     </div>
