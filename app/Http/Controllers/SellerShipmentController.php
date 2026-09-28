@@ -64,18 +64,48 @@ class SellerShipmentController extends Controller
             $shipment->awb_number = 'OSC' . strtoupper(Str::random(8));
         }
 
-        // Rate Calc Mock
-        $baseRate = $validated['shipment_type'] == 'International' ? 1500 : ($validated['shipment_type'] == 'B2B' ? 500 : 45);
-        $totalAmount = $baseRate + ($validated['weight_kg'] * 10);
+        $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($validated['delivery_pincode']);
+        if (!$routing['serviceable']) {
+            return back()->with('error', 'Delivery pincode is unserviceable.');
+        }
+
+        try {
+            $rateData = app(\App\Services\PricingService::class)->calculateRate(
+                $routing['fulfillment_type'],
+                $validated['pickup_pincode'],
+                $validated['delivery_pincode'],
+                $validated['weight_kg'],
+                $validated['length_cm'] ?? 10,
+                $validated['width_cm'] ?? 10,
+                $validated['height_cm'] ?? 10,
+                $validated['is_cod'] ?? false,
+                $validated['invoice_value'] ?? 0,
+                false, false, 0,
+                $routing['provider_id']
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', 'Pricing Error: ' . $e->getMessage());
+        }
+
+        $totalAmount = $rateData['total'];
         $is_cod = $validated['is_cod'] ?? false;
         
-        if (!$isEdit) {
-            if ($user->wallet_balance < $totalAmount && !$is_cod) {
-                return back()->with('error', 'Insufficient wallet balance. Required: ₹' . number_format($totalAmount, 2));
+        if (!$isEdit && !$is_cod) {
+            try {
+                app(\App\Services\WalletService::class)->deduct(
+                    $user->id, 
+                    $totalAmount, 
+                    'Shipment Booking Deduction', 
+                    $shipment->awb_number ?? null
+                );
+            } catch (\Exception $e) {
+                return back()->with('error', $e->getMessage());
             }
-            $user->wallet_balance -= $totalAmount;
-            $user->save();
         }
+
+        // Pass calculated rate to shipment saving
+        $shipment->shipping_charge = $totalAmount;
+        $shipment->total_amount = $totalAmount;
 
         $shipment->shipment_type = $validated['shipment_type'];
         $shipment->receiver_name = $validated['receiver_name'];
@@ -118,9 +148,7 @@ class SellerShipmentController extends Controller
         
         if (!$isEdit) {
             $shipment->status = 'Manifested';
-            $activeCouriers = \App\Models\Courier::where('is_active', true)->pluck('name')->toArray();
-            $carriers = !empty($activeCouriers) ? $activeCouriers : ['Onestall Cargo'];
-            $shipment->courier_partner = $carriers[array_rand($carriers)];
+            app(\App\Services\ShipmentService::class)->assignRouting($shipment, $shipment->delivery_pincode);
         }
         
         // B2B & Intl logic
@@ -179,7 +207,7 @@ class SellerShipmentController extends Controller
             $shipment->invoice_value = 500;
             $shipment->total_amount = 55;
             $shipment->status = 'Manifested';
-            $shipment->courier_partner = 'Delhivery';
+            app(\App\Services\ShipmentService::class)->assignRouting($shipment, $shipment->delivery_pincode);
             $shipment->save();
         }
 

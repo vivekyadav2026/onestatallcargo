@@ -201,7 +201,15 @@
                     <div class="mb-6 bg-white inline-block p-1.5 rounded-lg">
                         <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-12 w-auto">
                     </div>
-                    <p class="text-sm leading-relaxed mb-6">Complete logistics infrastructure for businesses. Ship B2B, B2C, and internationally on one platform.</p>
+                    <p class="text-sm leading-relaxed mb-4">Complete logistics infrastructure for businesses. Ship B2B, B2C, and internationally on one platform.</p>
+                    
+                    <!-- Registered Company Info -->
+                    <div class="mt-4 space-y-2 text-xs text-gray-500 leading-relaxed border-t border-gray-800 pt-4">
+                        <p class="font-semibold text-gray-400 uppercase tracking-wider text-[10px]">Registered Company</p>
+                        <p class="font-bold text-gray-300">ANYURVA AYURVEDA PRIVATE LIMITED</p>
+                        <p>CIN: U21003UP2024PTC205462</p>
+                        <p>569/153 KHA, Barigawan, KP Road,<br>32 BN PAC, Lucknow – 226023, U.P.</p>
+                    </div>
                 </div>
 
                 <!-- Column 2 -->
@@ -254,9 +262,12 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
-                <p>&copy; 2026 OneStall Cargo. All rights reserved.</p>
-                <div class="flex space-x-6 mt-4 md:mt-0">
+            <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-sm gap-4">
+                <div class="text-center md:text-left">
+                    <p>&copy; {{ date('Y') }} OneStall Cargo &mdash; A Brand of <span class="text-gray-300 font-semibold">Anyurva Ayurveda Private Limited</span></p>
+                    <p class="text-[11px] text-gray-600 mt-1">CIN: U21003UP2024PTC205462 &nbsp;|&nbsp; Lucknow, U.P. &nbsp;|&nbsp; All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6 mt-2 md:mt-0">
                     <a href="/privacy" class="hover:text-white transition">Privacy Policy</a>
                     <a href="/terms" class="hover:text-white transition">Terms of Service</a>
                     <a href="/cookies" class="hover:text-white transition">Cookies</a>

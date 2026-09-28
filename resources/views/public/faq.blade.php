@@ -5,7 +5,7 @@
 <div class="bg-gray-50/50 py-10 md:py-12" x-data="faqApp()">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="inline-block px-3 py-0.5 rounded-full border border-blue-200 bg-blue-50 text-brand-navy text-[10px] font-bold mb-3 uppercase tracking-wider">
-            Help & FAQs
+            Help &amp; FAQs
         </div>
         <h1 class="text-2xl md:text-4xl font-extrabold text-brand-navy leading-tight mb-3">
             Frequently Asked <span class="text-brand-red">Questions</span>
@@ -23,16 +23,21 @@
         <!-- Category Filter Pills -->
         <div class="flex flex-wrap justify-center gap-1.5 mb-8 text-[11px] font-bold">
             <button @click="activeCategory = 'all'" :class="activeCategory === 'all' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">All FAQs</button>
-            <button @click="activeCategory = 'general'" :class="activeCategory === 'general' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">General</button>
-            <button @click="activeCategory = 'shipping'" :class="activeCategory === 'shipping' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">Shipping & Rates</button>
-            <button @click="activeCategory = 'cod'" :class="activeCategory === 'cod' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">COD & Remittance</button>
-            <button @click="activeCategory = 'ndr'" :class="activeCategory === 'ndr' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">NDR & Disputes</button>
-            <button @click="activeCategory = 'integrations'" :class="activeCategory === 'integrations' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition">APIs & Integrations</button>
+            @foreach($faqs->pluck('category')->unique()->filter() as $cat)
+            <button @click="activeCategory = '{{ $cat }}'" :class="activeCategory === '{{ $cat }}' ? 'bg-brand-navy text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'" class="px-3 py-1.5 rounded-full transition capitalize">{{ ucfirst(str_replace('_', ' ', $cat)) }}</button>
+            @endforeach
         </div>
     </div>
 
-    <!-- Accordion FAQ List -->
+    <!-- Accordion FAQ List - powered by DB data via Alpine -->
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        @if($faqs->isEmpty())
+        <div class="text-center text-gray-400 py-12">
+            <i class="fa-solid fa-circle-question text-4xl mb-4"></i>
+            <p class="font-bold">No FAQs available yet.</p>
+            <p class="text-xs mt-1">Check back soon or contact our support team.</p>
+        </div>
+        @else
         <div class="space-y-3">
             <template x-for="(faq, index) in filteredFaqs()" :key="index">
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition">
@@ -45,7 +50,11 @@
                     </div>
                 </div>
             </template>
+            <div x-show="filteredFaqs().length === 0" class="text-center py-8 text-gray-400 text-sm">
+                No FAQs match your search. <a href="{{ route('contact') }}" class="text-brand-navy font-bold underline">Ask us directly</a>.
+            </div>
         </div>
+        @endif
     </div>
 </div>
 
@@ -55,10 +64,7 @@
         <h3 class="text-lg font-bold text-brand-navy mb-1">Still Have Questions?</h3>
         <p class="text-xs text-gray-500 mb-4">Our support team is available 24/7 to assist you.</p>
         <div class="flex justify-center gap-3">
-            <a href="{{ route('help') }}" class="px-5 py-2 rounded-full bg-brand-navy text-white font-bold text-xs hover:bg-brand-blue transition">
-                Help Center
-            </a>
-            <a href="{{ route('contact') }}" class="px-5 py-2 rounded-full border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 transition">
+            <a href="{{ route('contact') }}" class="px-5 py-2 rounded-full bg-brand-navy text-white font-bold text-xs hover:bg-brand-blue transition">
                 Contact Support
             </a>
         </div>
@@ -68,21 +74,11 @@
 <script>
 function faqApp() {
     return {
-        searchQuery: '{{ $query ?? "" }}',
+        searchQuery: '',
         activeCategory: 'all',
-        openFaq: 0,
-        faqs: [
-            { category: 'general', q: 'How do I get started with OneStall Cargo?', a: 'Getting started takes less than 2 minutes! Create a free account on our registration page, recharge your shipping wallet with any amount, and connect your store (Shopify/WooCommerce) or create your first manual order immediately.' },
-            { category: 'general', q: 'Are there any monthly subscription fees or hidden setup charges?', a: 'No! OneStall Cargo operates on a 100% pay-as-you-go model. There are zero subscription fees, zero store integration fees, and zero hidden fuel surcharges. You only pay for the shipments you actually book.' },
-            { category: 'shipping', q: 'Which courier partners are available on OneStall Cargo?', a: 'We provide single-dashboard access to 15+ top courier partners in India, including Delhivery, BlueDart, XpressBees, Ecom Express, Shadowfax, DTDC, and Aramex for international shipments.' },
-            { category: 'shipping', q: 'How does automated courier allocation work?', a: 'Our recommendation engine automatically compares real-time delivery performance SLAs, cost efficiency, and pin code serviceability to recommend or automatically assign the best courier partner for every order.' },
-            { category: 'cod', q: 'How fast is Cash on Delivery (COD) remittance credited?', a: 'We offer early COD remittance in just 1-2 business days directly into your bank account, ensuring your business never suffers from frozen working capital.' },
-            { category: 'cod', q: 'What are the COD collection charges?', a: 'COD collection charges are flat 1.5% of the invoice value or Rs30 (whichever is higher) per delivered Cash on Delivery package.' },
-            { category: 'ndr', q: 'How does automated NDR management reduce RTO losses?', a: 'When a delivery fails, our automated NDR engine triggers outbound IVR phone calls, SMS, and interactive WhatsApp messages to the buyer to collect corrected addresses or delivery slot requests, converting up to 40% of undelivered packages into successful sales.' },
-            { category: 'ndr', q: 'How do I submit weight discrepancy video evidence?', a: 'If a courier overcharges shipment weight, click Flag Weight Dispute in your dashboard and attach your packing video or photo proof. Our team verifies the evidence and settles 98% of claims in your favor.' },
-            { category: 'integrations', q: 'How do I integrate Shopify or WooCommerce with OneStall?', a: 'Install the OneStall Cargo plugin from your store admin, paste your API token, and click Connect. Orders will sync automatically and AWB tracking numbers will be written back to your store admin panel.' },
-            { category: 'integrations', q: 'Do you offer REST APIs for custom websites or mobile apps?', a: 'Yes! We provide robust RESTful JSON APIs with complete Postman collections and webhooks for rate calculation, AWB generation, live tracking, and NDR actions.' }
-        ],
+        openFaq: null,
+        // DB-sourced FAQs injected from Blade
+        faqs: @json($faqs->map(fn($f) => ['q' => $f->question, 'a' => $f->answer, 'category' => $f->category ?? 'general'])),
         filteredFaqs() {
             return this.faqs.filter(faq => {
                 const matchesCategory = (this.activeCategory === 'all' || faq.category === this.activeCategory);

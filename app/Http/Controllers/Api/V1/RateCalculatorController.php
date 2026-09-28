@@ -22,13 +22,8 @@ class RateCalculatorController extends Controller
             'weight' => 'required|numeric|min:0.1',
         ]);
 
-        $rates = $this->pricingService->getAvailableRates(
-            $request->pickup_pincode,
-            $request->delivery_pincode,
-            $request->weight
-        );
-
-        if (empty($rates)) {
+        $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($request->delivery_pincode);
+        if (!$routing['serviceable']) {
             return response()->json([
                 'success' => false,
                 'message' => 'No service available for this route.',
@@ -36,19 +31,33 @@ class RateCalculatorController extends Controller
             ], 404);
         }
 
-        // Only return the final rate to the user (hide the base rate and margin)
-        $customerFacingRates = array_map(function($rate) {
-            return [
-                'courier_name' => $rate['courier_name'],
-                'rate' => $rate['final_rate'],
-                'estimated_delivery_days' => $rate['estimated_delivery_days']
-            ];
-        }, $rates);
+        try {
+            $rateData = $this->pricingService->calculateRate(
+                $routing['fulfillment_type'],
+                $request->pickup_pincode,
+                $request->delivery_pincode,
+                $request->weight,
+                10, 10, 10, false, 0, false, false, 0,
+                $routing['provider_id']
+            );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Rates fetched successfully',
-            'data' => $customerFacingRates
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Rates fetched successfully',
+                'data' => [
+                    [
+                        'courier_name' => $routing['fulfillment_type'] === 'onestall' ? 'OneStall Cargo' : \App\Models\Courier::find($routing['provider_id'])->name,
+                        'rate' => $rateData['total'],
+                        'estimated_delivery_days' => 3
+                    ]
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calculation error: ' . $e->getMessage(),
+                'data' => []
+            ], 404);
+        }
     }
 }

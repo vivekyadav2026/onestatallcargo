@@ -220,20 +220,115 @@
     </div>
 </section>
 
-<!-- 5. Courier Integration Logos -->
-<section class="py-8 bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-brand-navy font-bold text-xs uppercase tracking-widest mb-4">Integrated With India's Top Carriers</p>
-        <div class="flex flex-wrap justify-center items-center gap-6 md:gap-10 opacity-70">
-            <span class="text-lg md:text-xl font-black text-gray-500">Delhivery</span>
-            <span class="text-lg md:text-xl font-black text-gray-500">BlueDart</span>
-            <span class="text-lg md:text-xl font-black text-gray-500">XpressBees</span>
-            <span class="text-lg md:text-xl font-black text-gray-500">EcomExpress</span>
-            <span class="text-lg md:text-xl font-black text-gray-500">Shadowfax</span>
-            <span class="text-lg md:text-xl font-black text-gray-500">DTDC</span>
+<!-- 5. Integrations & Courier Logos (Scrolling Marquee) -->
+<style>
+    @keyframes marquee-left {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    @keyframes marquee-right {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(0); }
+    }
+    .animate-marquee-left {
+        animation: marquee-left 35s linear infinite;
+        display: flex;
+        width: max-content;
+    }
+    .animate-marquee-right {
+        animation: marquee-right 35s linear infinite;
+        display: flex;
+        width: max-content;
+    }
+    .marquee-container:hover .animate-marquee-left,
+    .marquee-container:hover .animate-marquee-right {
+        animation-play-state: paused;
+    }
+    /* Hide scrollbar for the container */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+<section class="py-12 bg-gray-50 border-b border-gray-100 overflow-hidden relative">
+    <div class="text-center mb-8">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-brand-navy">Integrated With Your Favorite Platforms</h2>
+        <p class="text-gray-500 font-medium mt-2">Connect your store and ship with India's top carriers in one click</p>
+    </div>
+
+    <!-- Integrations Row (Colorful Boxes) - Scrolling Left -->
+    <div class="relative w-full overflow-hidden marquee-container mb-8">
+        <!-- Fading Edges -->
+        <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+        
+        <div class="animate-marquee-left">
+            @php
+                $integrations = [
+                    ['name' => 'Razorpay', 'icon' => 'fa-solid fa-credit-card', 'bg' => 'bg-[#3382FF]'],
+                    ['name' => 'Instamojo', 'icon' => 'fa-solid fa-bolt', 'bg' => 'bg-[#1E194D]'],
+                    ['name' => 'Magento', 'icon' => 'fa-brands fa-magento', 'bg' => 'bg-[#F26522]'],
+                    ['name' => 'OpenCart', 'icon' => 'fa-solid fa-cart-shopping', 'bg' => 'bg-[#23A1D1]'],
+                    ['name' => 'BigCommerce', 'icon' => 'fa-solid fa-store', 'bg' => 'bg-[#121118]'],
+                    ['name' => 'Shopify', 'icon' => 'fa-brands fa-shopify', 'bg' => 'bg-[#95BF47]'],
+                    ['name' => 'WooCommerce', 'icon' => 'fa-brands fa-wordpress', 'bg' => 'bg-[#96588A]'],
+                    ['name' => 'WIX', 'icon' => 'fa-brands fa-wix', 'bg' => 'bg-black'],
+                    ['name' => 'Etsy', 'icon' => 'fa-brands fa-etsy', 'bg' => 'bg-[#F56400]'],
+                    ['name' => 'amazon', 'icon' => 'fa-brands fa-amazon', 'bg' => 'bg-[#232F3E]'],
+                    ['name' => 'IndiaMart', 'icon' => 'fa-solid fa-bag-shopping', 'bg' => 'bg-[#911212]'],
+                ];
+            @endphp
+            
+            <!-- First Set -->
+            <div class="flex items-center space-x-4 px-2">
+                @foreach($integrations as $item)
+                <div class="flex items-center justify-center {{ $item['bg'] }} text-white px-6 py-3.5 rounded-lg shadow-sm min-w-[170px] gap-2 transition transform hover:scale-105 cursor-pointer">
+                    <i class="{{ $item['icon'] }} text-xl"></i> <span class="font-bold text-lg tracking-wide">{{ $item['name'] }}</span>
+                </div>
+                @endforeach
+            </div>
+            <!-- Second Set (Duplicate for seamless loop) -->
+            <div class="flex items-center space-x-4 px-2">
+                @foreach($integrations as $item)
+                <div class="flex items-center justify-center {{ $item['bg'] }} text-white px-6 py-3.5 rounded-lg shadow-sm min-w-[170px] gap-2 transition transform hover:scale-105 cursor-pointer">
+                    <i class="{{ $item['icon'] }} text-xl"></i> <span class="font-bold text-lg tracking-wide">{{ $item['name'] }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <!-- Carriers Row (Grey Text) - Scrolling Right -->
+    <div class="relative w-full overflow-hidden marquee-container mt-6">
+        <!-- Fading Edges -->
+        <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+        
+        <div class="animate-marquee-right pt-2 pb-4">
+            @php
+                $carriers = ['Delhivery', 'BlueDart', 'XpressBees', 'EcomExpress', 'Shadowfax', 'DTDC', 'India Post', 'Amazon Shipping', 'Smartr', 'Gati'];
+            @endphp
+            
+            <!-- First Set -->
+            <div class="flex items-center space-x-12 px-6">
+                @foreach($carriers as $carrier)
+                <span class="text-2xl md:text-3xl font-black text-gray-400 uppercase tracking-widest hover:text-brand-navy transition-colors duration-300 cursor-pointer">{{ $carrier }}</span>
+                @endforeach
+            </div>
+            <!-- Second Set (Duplicate for seamless loop) -->
+            <div class="flex items-center space-x-12 px-6">
+                @foreach($carriers as $carrier)
+                <span class="text-2xl md:text-3xl font-black text-gray-400 uppercase tracking-widest hover:text-brand-navy transition-colors duration-300 cursor-pointer">{{ $carrier }}</span>
+                @endforeach
+            </div>
         </div>
     </div>
 </section>
+
 
 <!-- 6. Explore Platform Grid -->
 <section class="py-12 bg-gray-50/50">

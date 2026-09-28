@@ -21,14 +21,16 @@ class AdminFaqController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'question' => 'required|string|max:255',
-            'answer' => 'required|string',
+            'question'   => 'required|string|max:255',
+            'answer'     => 'required|string',
+            'category'   => 'nullable|string|max:50',
             'sort_order' => 'integer|nullable',
-            'is_active' => 'boolean',
+            'is_active'  => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active');
+        $validated['is_active']  = $request->has('is_active');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['category']   = $validated['category'] ?? 'general';
 
         Faq::create($validated);
 

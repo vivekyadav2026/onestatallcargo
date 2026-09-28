@@ -19,6 +19,16 @@
             <label class="block text-xs font-bold text-gray-700 mb-1">Sort Order</label>
             <input type="number" name="sort_order" value="0" class="w-full px-4 py-2 bg-gray-50 border rounded-xl">
         </div>
+        <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Category</label>
+            <select name="category" class="w-full px-4 py-2 bg-gray-50 border rounded-xl">
+                <option value="general">General</option>
+                <option value="shipping">Shipping &amp; Rates</option>
+                <option value="cod">COD &amp; Remittance</option>
+                <option value="ndr">NDR &amp; Disputes</option>
+                <option value="integrations">APIs &amp; Integrations</option>
+            </select>
+        </div>
         <div class="flex items-center">
             <input type="checkbox" name="is_active" value="1" checked class="mr-2">
             <label class="text-sm font-bold text-gray-700">Active</label>

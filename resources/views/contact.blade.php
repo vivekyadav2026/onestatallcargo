@@ -42,13 +42,55 @@
                 </form>
             </div>
             
-            <div class="flex flex-col justify-center">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Office</h2>
-                <p class="text-gray-600 mb-6">{{ setting('site_address', '123 Logistics Park, Mumbai, India 400001') }}</p>
-                <p class="text-gray-600 mb-2"><i class="fa-solid fa-envelope mr-2 text-brand-blue"></i> {{ setting('site_email', 'support@onestallcargo.com') }}</p>
-                <p class="text-gray-600 mb-8"><i class="fa-solid fa-phone mr-2 text-brand-blue"></i> {{ setting('site_phone', '1800-123-4567') }}</p>
-                <div class="h-64 bg-gray-200 rounded-2xl flex items-center justify-center">
-                    <span class="text-gray-400 font-bold">Map Embed</span>
+            <div class="flex flex-col justify-start pt-4">
+                <!-- Company Identity -->
+                <div class="mb-6">
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-brand-red mb-2 block">Registered Office</span>
+                    <h2 class="text-xl font-extrabold text-gray-900 mb-1">ANYURVA AYURVEDA PRIVATE LIMITED</h2>
+                    <p class="text-xs text-gray-400 font-medium mb-4">CIN: U21003UP2024PTC205462</p>
+                </div>
+
+                <!-- Contact Details -->
+                <div class="space-y-3 mb-8">
+                    <div class="flex items-start gap-3 text-gray-600">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-location-dot text-brand-blue text-sm"></i>
+                        </div>
+                        <div class="text-sm leading-relaxed">
+                            569/153 KHA, Barigawan, KP Road,<br>
+                            32 BN PAC, Lucknow – 226023<br>
+                            Uttar Pradesh, India
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-gray-600">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-envelope text-brand-blue text-sm"></i>
+                        </div>
+                        <a href="mailto:support@onestallcargo.com" class="text-sm hover:text-brand-blue transition">support@onestallcargo.com</a>
+                    </div>
+                    <div class="flex items-center gap-3 text-gray-600">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-phone text-brand-blue text-sm"></i>
+                        </div>
+                        <a href="tel:18001234567" class="text-sm hover:text-brand-blue transition">1800-123-4567</a>
+                    </div>
+                </div>
+
+                <!-- Google Map Embed – Lucknow area -->
+                <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3559.6787!2d80.9462!3d26.8467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd991f32b16b%3A0x93ccba8909978be7!2sLucknow%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1695000000000"
+                        width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        class="w-full">
+                    </iframe>
+                </div>
+
+                <!-- Business Hours -->
+                <div class="mt-6 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <p class="text-xs font-extrabold text-gray-700 uppercase tracking-wider mb-2"><i class="fa-solid fa-clock mr-1 text-brand-blue"></i> Support Hours</p>
+                    <p class="text-sm text-gray-600">Monday – Saturday: <span class="font-semibold text-gray-800">9:00 AM – 7:00 PM</span></p>
+                    <p class="text-sm text-gray-600">Sunday: <span class="font-semibold text-gray-800">10:00 AM – 4:00 PM</span></p>
                 </div>
             </div>
         </div>

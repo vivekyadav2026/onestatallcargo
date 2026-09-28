@@ -156,6 +156,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/live-map', [\App\Http\Controllers\AdminController::class, 'liveMap'])->name('admin.map');
         
         Route::get('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'index'])->name('admin.shipments.index');
+        Route::get('/shipments/create', [\App\Http\Controllers\AdminShipmentController::class, 'create'])->name('admin.shipments.create');
+        Route::post('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'store'])->name('admin.shipments.store');
+        
+        // Rate Cards
+        Route::post('/ratecards/{id}/duplicate', [\App\Http\Controllers\AdminRateCardController::class, 'duplicate'])->name('admin.ratecards.duplicate');
+        Route::post('/ratecards/{id}/activate', [\App\Http\Controllers\AdminRateCardController::class, 'activate'])->name('admin.ratecards.activate');
+        Route::post('/ratecards/{id}/preview', [\App\Http\Controllers\AdminRateCardController::class, 'preview'])->name('admin.ratecards.preview');
+        Route::resource('ratecards', \App\Http\Controllers\AdminRateCardController::class, ['as' => 'admin']);
+        
+        Route::resource('serviceability', \App\Http\Controllers\AdminServiceabilityController::class, ['as' => 'admin']);
         Route::get('/pickups', [\App\Http\Controllers\AdminPickupController::class, 'index'])->name('admin.pickups.index');
         Route::post('/pickups/assign', [\App\Http\Controllers\AdminPickupController::class, 'assignRider'])->name('admin.pickups.assign');
         Route::get('/ndr', [\App\Http\Controllers\AdminNDRController::class, 'index'])->name('admin.ndr.index');
@@ -173,10 +183,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'index'])->name('admin.sellers.index');
         Route::post('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'store'])->name('admin.sellers.store');
         Route::post('/sellers/{id}', [\App\Http\Controllers\AdminSellerController::class, 'update'])->name('admin.sellers.update');
-        Route::get('/rates', [\App\Http\Controllers\AdminRateController::class, 'index'])->name('admin.rates.index');
-        Route::post('/rates', [\App\Http\Controllers\AdminRateController::class, 'store'])->name('admin.rates.store');
-        Route::post('/rates/{id}', [\App\Http\Controllers\AdminRateController::class, 'update'])->name('admin.rates.update');
-        Route::post('/rates', [\App\Http\Controllers\AdminRateController::class, 'store'])->name('admin.rates.store');
+        Route::post('/sellers/{id}/toggle', [\App\Http\Controllers\AdminSellerController::class, 'toggleStatus'])->name('admin.sellers.toggle');
+        Route::delete('/sellers/{id}', [\App\Http\Controllers\AdminSellerController::class, 'destroy'])->name('admin.sellers.destroy');
+        
+        
+        
+        
         Route::get('/billing', [\App\Http\Controllers\AdminBillingController::class, 'index'])->name('admin.billing.index');
         Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
         Route::get('/riders', [\App\Http\Controllers\AdminRiderController::class, 'index'])->name('admin.riders.index');

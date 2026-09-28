@@ -13,7 +13,7 @@
                 <span class="text-[10px] font-extrabold uppercase tracking-wider">Total Shipments</span>
                 <i class="fa-solid fa-box text-blue-500"></i>
             </div>
-            <div class="text-3xl font-black text-gray-900">{{ number_format($totalShipments ?? 15420) }}</div>
+            <div class="text-3xl font-black text-gray-900">{{ number_format($totalShipments ?? 0) }}</div>
             <div class="text-[11px] font-medium text-gray-400">All Time Volume</div>
         </div>
 
@@ -26,7 +26,7 @@
                 <div class="flex items-center justify-between text-gray-900">
                     <span class="text-[10px] font-extrabold uppercase tracking-wider">In Transit</span>
                 </div>
-                <div class="text-3xl font-black text-gray-900">{{ number_format($inTransit ?? 3450) }}</div>
+                <div class="text-3xl font-black text-gray-900">{{ number_format($inTransit ?? 0) }}</div>
                 <div class="text-[11px] font-medium text-gray-800">Across All Couriers</div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <span class="text-[10px] font-extrabold uppercase tracking-wider">Delivered (Today)</span>
                 <i class="fa-solid fa-check-circle text-green-500"></i>
             </div>
-            <div class="text-3xl font-black text-gray-900">{{ number_format($deliveredToday ?? 1200) }}</div>
+            <div class="text-3xl font-black text-gray-900">{{ number_format($deliveredToday ?? 0) }}</div>
             <div class="text-[11px] font-medium text-gray-400">Successfully Delivered</div>
         </div>
 
@@ -47,7 +47,7 @@
                 <span class="text-[10px] font-extrabold uppercase tracking-wider">Active NDR</span>
                 <i class="fa-solid fa-triangle-exclamation text-red-500"></i>
             </div>
-            <div class="text-3xl font-black text-gray-900">{{ number_format($ndrCount ?? 120) }}</div>
+            <div class="text-3xl font-black text-gray-900">{{ number_format($ndrCount ?? 0) }}</div>
             <div class="text-[11px] font-medium text-gray-400">Pending Resolutions</div>
         </div>
 
@@ -57,7 +57,7 @@
                 <span class="text-[10px] font-extrabold uppercase tracking-wider">Revenue</span>
                 <i class="fa-solid fa-indian-rupee-sign text-[var(--gold)]"></i>
             </div>
-            <div class="text-3xl font-black text-gray-900">₹{{ number_format(($totalRevenue ?? 2540000) / 100000, 2) }}L</div>
+            <div class="text-3xl font-black text-gray-900">₹{{ number_format(($totalRevenue ?? 0) / 100, 2) }}</div>
             <div class="text-[11px] font-medium text-gray-400">Total Billed Volume</div>
         </div>
     </div>
@@ -91,14 +91,14 @@
                             @foreach($courierPerformance ?? [] as $partner)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="py-4">{{ $partner['name'] }}</td>
-                                <td class="py-4">{{ number_format($partner['shipments']) }}</td>
-                                <td class="py-4"><span class="px-2 py-1 rounded {{ $partner['accuracy'] >= 95 ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700' }} text-xs font-bold">{{ $partner['accuracy'] }}%</span></td>
-                                <td class="py-4">{{ $partner['rto'] }}</td>
+                                <td class="py-4">{{ number_format($partner['load'] ?? 0) }}</td>
+                                <td class="py-4"><span class="px-2 py-1 rounded {{ ($partner['efficiency'] ?? 0) >= 80 ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700' }} text-xs font-bold">{{ $partner['efficiency'] ?? 0 }}%</span></td>
+                                <td class="py-4">—</td>
                                 <td class="py-4"><span class="w-2 h-2 inline-block rounded-full bg-green-500 mr-2"></span>Active</td>
                             </tr>
                             @endforeach
                             @if(empty($courierPerformance))
-                            <tr><td colspan="5" class="py-4 text-center text-gray-400">No data available</td></tr>
+                            <tr><td colspan="5" class="py-4 text-center text-gray-400">No shipment data yet</td></tr>
                             @endif
                         </tbody>
                     </table>

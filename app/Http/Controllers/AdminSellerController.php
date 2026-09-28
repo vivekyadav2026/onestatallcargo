@@ -81,4 +81,30 @@ class AdminSellerController extends Controller
 
         return back()->with('success', 'Seller details and company profile updated successfully.');
     }
+
+    public function toggleStatus($id)
+    {
+        $seller = User::findOrFail($id);
+        // Toggle suspended status
+        if ($seller->status === 'suspended') {
+            $seller->status = 'active';
+            $msg = 'Seller account has been re-activated.';
+        } else {
+            $seller->status = 'suspended';
+            $msg = 'Seller account has been suspended.';
+        }
+        $seller->save();
+        return back()->with('success', $msg);
+    }
+
+    public function destroy($id)
+    {
+        $seller = User::findOrFail($id);
+        // Safety: do not delete admins via this endpoint
+        if ($seller->role === 'admin') {
+            return back()->with('error', 'Cannot delete an admin account from here.');
+        }
+        $seller->delete();
+        return back()->with('success', 'Seller account has been permanently deleted.');
+    }
 }
