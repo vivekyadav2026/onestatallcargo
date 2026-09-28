@@ -20,6 +20,74 @@ class PublicContactController extends Controller
         ContactLead::create($validated);
 
         return back()->with('success', 'Thank you for contacting us! Our team will get back to you shortly.');
+    
+    public function resolveNdr(\)
+    {
+        \ = \App\Models\Shipment::where('awb_number', \)->where('status', 'NDR')->firstOrFail();
+        return view('ndr_resolve', compact('shipment'));
+    }
+
+    public function submitResolveNdr(\Illuminate\Http\Request \, \)
+    {
+        \->validate([
+            'customer_action' => 'required|in:reattempt,rto'
+        ]);
+
+        \ = \App\Models\Shipment::where('awb_number', \)->where('status', 'NDR')->firstOrFail();
+        
+        if (\->customer_action === 'reattempt') {
+            \->status = 'Out for Delivery';
+            \->ndr_action = 'Customer Requested Re-attempt';
+        } else {
+            \->status = 'RTO Initiated';
+            \->ndr_action = 'Customer Refused';
+        }
+        
+        \->save();
+        
+        // Log event
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => \->id,
+            'status' => \->status,
+            'location' => \->delivery_city,
+            'remarks' => \->ndr_action
+        ]);
+
+        return back()->with('success', 'Thank you! Your response has been recorded.');
     }
 }
+    public function resolveNdr(\)
+    {
+        \ = \App\Models\Shipment::where('awb_number', \)->where('status', 'NDR')->firstOrFail();
+        return view('ndr_resolve', compact('shipment'));
+    }
 
+    public function submitResolveNdr(\Illuminate\Http\Request \, \)
+    {
+        \->validate([
+            'customer_action' => 'required|in:reattempt,rto'
+        ]);
+
+        \ = \App\Models\Shipment::where('awb_number', \)->where('status', 'NDR')->firstOrFail();
+        
+        if (\->customer_action === 'reattempt') {
+            \->status = 'Out for Delivery';
+            \->ndr_action = 'Customer Requested Re-attempt';
+        } else {
+            \->status = 'RTO Initiated';
+            \->ndr_action = 'Customer Refused';
+        }
+        
+        \->save();
+        
+        // Log event
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => \->id,
+            'status' => \->status,
+            'location' => \->delivery_city,
+            'remarks' => \->ndr_action
+        ]);
+
+        return back()->with('success', 'Thank you! Your response has been recorded.');
+    }
+}

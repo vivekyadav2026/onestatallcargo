@@ -16,8 +16,8 @@
         </p>
 
         <!-- Search Bar Input -->
-        <div class="relative max-w-xl mx-auto">
-            <input type="text" placeholder="Search for help topics, guides, or troubleshooting..." class="w-full px-5 py-3.5 pl-12 rounded-full border border-gray-200 shadow-md text-sm focus:outline-none focus:border-brand-navy">
+        <form action="{{ route('faq') }}" method="GET">`n        <div class="relative max-w-xl mx-auto">
+            <input type="text" name="q" placeholder="Search for help topics, guides, or troubleshooting..." class="w-full px-5 py-3.5 pl-12 rounded-full border border-gray-200 shadow-md text-sm focus:outline-none focus:border-brand-navy">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
         </div>
     </div>
@@ -77,7 +77,7 @@
             <!-- Card 5 -->
             <div class="bg-gray-50/70 p-6 rounded-2xl border border-gray-200 hover:shadow-md transition">
                 <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mb-4">
-                    <i class="fa-solid fa-[#E7004C] fa-shield-cat"></i>
+                    <i class="fa-solid fa-shield-cat"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">NDR, RTO & Weight Disputes</h3>
                 <p class="text-xs text-gray-600 mb-4">Automated IVR/WhatsApp outreach, address edits, video evidence submission, and claims.</p>

@@ -49,12 +49,85 @@ Route::get('/platform/live-tracking', function () { return view('public.platform
 Route::get('/platform/awb-labels', function () { return view('public.platform.awb'); })->name('platform.awb');
 
 Route::get('/developers', function () { return view('public.developers.index'); })->name('developers');
-Route::get('/docs', function () { return view('public.developers.docs'); })->name('docs');
+Route::get('/docs/postman', function () {
+    $apiDocs = \App\Models\ApiDoc::where('is_active', true)->orderBy('sort_order')->get();
+    
+    $item = [];
+    foreach ($apiDocs as $doc) {
+        $item[] = [
+            'name' => $doc->title,
+            'request' => [
+                'method' => $doc->method,
+                'header' => [
+                    ['key' => 'Authorization', 'value' => 'Bearer {{api_key}}', 'type' => 'text']
+                ],
+                'url' => [
+                    'raw' => '{{base_url}}' . $doc->path,
+                    'host' => ['{{base_url}}'],
+                    'path' => explode('/', ltrim($doc->path, '/'))
+                ],
+                'description' => $doc->description
+            ]
+        ];
+    }
+    
+    $postman = [
+        'info' => [
+            'name' => 'OneStall Cargo API',
+            'description' => 'Interactive RESTful API for developers.',
+            'schema' => 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'
+        ],
+        'item' => $item,
+        'variable' => [
+            ['key' => 'base_url', 'value' => 'https://api.onestallcargo.com/api', 'type' => 'string'],
+            ['key' => 'api_key', 'value' => 'OSC_YOUR_KEY', 'type' => 'string']
+        ]
+    ];
+    return response()->json($postman)->header('Content-Disposition', 'attachment; filename="onestall_cargo_postman.json"');
+})->name('docs.postman');
+
+Route::get('/docs/openapi', function () {
+    $apiDocs = \App\Models\ApiDoc::where('is_active', true)->orderBy('sort_order')->get();
+    
+    $paths = [];
+    foreach ($apiDocs as $doc) {
+        $method = strtolower($doc->method);
+        $paths[$doc->path] = [
+            $method => [
+                'summary' => $doc->title,
+                'description' => $doc->description,
+                'responses' => [
+                    '200' => ['description' => 'Successful operation']
+                ]
+            ]
+        ];
+    }
+    
+    $openapi = [
+        'openapi' => '3.0.0',
+        'info' => [
+            'title' => 'OneStall Cargo API',
+            'version' => '1.0.0',
+            'description' => 'API reference for integrating OneStall Cargo logistics into your application.'
+        ],
+        'servers' => [
+            ['url' => 'https://api.onestallcargo.com/api']
+        ],
+        'paths' => $paths
+    ];
+    return response()->json($openapi)->header('Content-Disposition', 'attachment; filename="onestall_cargo_openapi.json"');
+})->name('docs.openapi');
+
+Route::get('/docs', function () {
+    $apiDocs = \App\Models\ApiDoc::where('is_active', true)->orderBy('sort_order')->get();
+    return view('public.developers.docs', compact('apiDocs'));
+})->name('docs');
 
 Route::get('/corporate', function () { return view('public.corporate'); })->name('corporate');
 Route::get('/partners', function () { return view('public.partners'); })->name('partners');
 Route::get('/about', function () { return view('public.about'); })->name('about');
-Route::get('/faq', function () { 
+Route::get('/faq', function (\Illuminate\Http\Request $request) {
+    $query = $request->get('q'); 
     $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get();
     return view('public.faq', compact('faqs')); 
 })->name('faq');
@@ -77,6 +150,7 @@ Route::middleware(['auth'])->group(function () {
     // ADMIN PORTAL (Requires Admin Role, but handled by Admin role itself)
     Route::middleware(['role:admin,operations'])->prefix('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::resource('api_docs', \App\Http\Controllers\AdminApiDocController::class, ['as' => 'admin']);
         Route::get('/contacts', [\App\Http\Controllers\AdminContactController::class, 'index'])->name('admin.contacts.index');
         Route::post('/contacts/{id}', [\App\Http\Controllers\AdminContactController::class, 'action'])->name('admin.contacts.action');
         Route::get('/live-map', [\App\Http\Controllers\AdminController::class, 'liveMap'])->name('admin.map');
@@ -212,3 +286,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
+
+
+Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'resolveNdr'])->name('ndr.resolve');
+Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');

@@ -68,7 +68,20 @@ class RiderAppController extends Controller
         $shipment = Shipment::where('awb_number', $awb)->where('rider_id', Auth::id())->firstOrFail();
         $shipment->status = 'NDR';
         $shipment->ndr_reason = $validated['ndr_reason'];
-        $shipment->save();
+        $shipment        \->save();
+        
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => \->id,
+            'status' => 'NDR',
+            'remarks' => 'Rider marked as NDR: ' . \['ndr_reason'],
+            'location' => \->delivery_city
+        ]);
+
+        \ = app(\App\Services\WebhookService::class);
+        \->dispatchEvent(\->user_id, 'ndr.created', \->formatShipmentPayload(\));
+
+        // In a real system, we'd trigger an SMS/Email to the customer here with the link:
+        // url('/ndr/resolve/' . \)
 
         return back()->with('success', 'Shipment marked as NDR successfully.');
     }
