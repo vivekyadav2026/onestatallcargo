@@ -1,4 +1,4 @@
-﻿@extends('layouts.rider')
+@extends('layouts.rider')
 @section('title', 'COD Collection')
 
 @section('content')

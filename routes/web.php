@@ -173,6 +173,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/evidence', [\App\Http\Controllers\AdminEvidenceController::class, 'index'])->name('admin.evidence.index');
         
         Route::get('/hubs', [\App\Http\Controllers\AdminHubController::class, 'index'])->name('admin.hubs.index');
+        Route::get('/pincodes', [\App\Http\Controllers\AdminPincodeController::class, 'index'])->name('admin.pincodes.index');
+        Route::post('/pincodes', [\App\Http\Controllers\AdminPincodeController::class, 'store'])->name('admin.pincodes.store');
+        Route::post('/pincodes/import', [\App\Http\Controllers\AdminPincodeController::class, 'import'])->name('admin.pincodes.import');
+        Route::post('/pincodes/{id}/delete', [\App\Http\Controllers\AdminPincodeController::class, 'destroy'])->name('admin.pincodes.destroy');
         Route::post('/hubs', [\App\Http\Controllers\AdminHubController::class, 'store'])->name('admin.hubs.store');
         Route::post('/hubs/manager', [\App\Http\Controllers\AdminHubController::class, 'storeManager'])->name('admin.hubs.store_manager');
         Route::get('/hubs/{id}/edit', [\App\Http\Controllers\AdminHubController::class, 'edit'])->name('admin.hubs.edit');

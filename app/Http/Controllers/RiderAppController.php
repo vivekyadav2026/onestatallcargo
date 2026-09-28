@@ -58,6 +58,7 @@ class RiderAppController extends Controller
             $shipment->status = 'In Transit';
         } else {
             $shipment->status = 'Delivered';
+            app(\App\Services\NotificationService::class)->notifyShipmentUpdate($shipment, 'Good news! Your shipment ' . $shipment->awb_number . ' has been successfully delivered.');
         }
 
         $shipment->save();
@@ -166,3 +167,4 @@ class RiderAppController extends Controller
         return back()->with('success', 'Profile and Settings updated successfully!');
     }
 }
+

@@ -63,6 +63,7 @@
 
 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                         <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
+                <a href="{{ route('admin.pincodes.index') }}" class="sidebar-item {{ request()->routeIs('admin.pincodes.*') ? 'active' : '' }}"><i class="fa-solid fa-map-location-dot w-4 text-center"></i> <span>Pincode Mapping</span></a>
                         <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 
                         <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Business</div></div>
@@ -117,6 +118,7 @@
 
 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Network</div></div>
                 <a href="{{ route('admin.hubs.index') }}" class="sidebar-item {{ request()->routeIs('admin.hubs.*') ? 'active' : '' }}"><i class="fa-solid fa-building w-4 text-center"></i> <span>Hubs / Franchise</span></a>
+                <a href="{{ route('admin.pincodes.index') }}" class="sidebar-item {{ request()->routeIs('admin.pincodes.*') ? 'active' : '' }}"><i class="fa-solid fa-map-location-dot w-4 text-center"></i> <span>Pincode Mapping</span></a>
                 <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Business</div></div>
