@@ -22,4 +22,9 @@ class Shipment extends Model
     {
         return $this->hasMany(MediaEvidence::class);
     }
+
+    public function events()
+    {
+        return $this->hasMany(ShipmentEvent::class);
+    }
 }
