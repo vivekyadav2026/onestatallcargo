@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -25,9 +27,30 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+            $user = Auth::user();
 
-            return $this->redirectBasedOnRole(Auth::user());
+            if ($user->status === 'pending') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Your account is pending admin approval.',
+                ])->onlyInput('email');
+            }
+
+            if ($user->status === 'rejected') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Your account registration has been rejected.',
+                ])->onlyInput('email');
+            }
+
+            $request->session()->regenerate();
+            return $this->redirectBasedOnRole($user);
         }
 
         return back()->withErrors([
@@ -105,6 +128,48 @@ class AuthController extends Controller
                 
             default:
                 return redirect('/');
+        }
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            
+            // Check if user exists
+            $user = User::where('email', $googleUser->getEmail())->first();
+            
+            if ($user) {
+                // Check status
+                if ($user->status === 'pending') {
+                    return redirect()->route('login')->withErrors(['email' => 'Your account is pending admin approval.']);
+                }
+                if ($user->status === 'rejected') {
+                    return redirect()->route('login')->withErrors(['email' => 'Your account registration has been rejected.']);
+                }
+                
+                Auth::login($user, true);
+                return $this->redirectBasedOnRole($user);
+            } else {
+                // Register new user (default to seller for self-serve via Google)
+                $newUser = new User();
+                $newUser->name = $googleUser->getName();
+                $newUser->email = $googleUser->getEmail();
+                $newUser->password = Hash::make(Str::random(16));
+                $newUser->role = 'seller';
+                $newUser->status = 'active'; // Sellers don't need initial admin approval, just KYC later
+                $newUser->save();
+                
+                Auth::login($newUser, true);
+                return redirect()->route('seller.dashboard');
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors(['email' => 'Unable to login with Google. Please try again.']);
         }
     }
 }

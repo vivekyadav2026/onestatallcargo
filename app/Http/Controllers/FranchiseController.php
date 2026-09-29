@@ -36,7 +36,8 @@ class FranchiseController extends Controller
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
                 'password' => Hash::make($validated['password']),
-                'role' => 'franchise' // assuming role column exists
+                'role' => 'franchise', // assuming role column exists
+                'status' => 'pending'
             ]);
 
             // Create franchise record

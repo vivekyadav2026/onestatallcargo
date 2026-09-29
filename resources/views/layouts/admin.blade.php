@@ -73,7 +73,7 @@
 
                         <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
                         <a href="{{ route('admin.reports.index') }}" class="sidebar-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice w-4 text-center"></i> <span>Reports</span></a>
-                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
+                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>All Users & Roles</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
                     </nav>
                 </div>
                 
@@ -129,7 +129,7 @@
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">System</div></div>
                 <a href="{{ route('admin.reports.index') }}" class="sidebar-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice w-4 text-center"></i> <span>Reports</span></a>
-                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>Roles & Permissions</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
+                        <a href="{{ route('admin.roles.index') }}" class="sidebar-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}"><i class="fa-solid fa-user-shield w-4 text-center"></i> <span>All Users & Roles</span></a>                        <a href="{{ route('admin.integrations') }}" class="sidebar-item {{ request()->routeIs('admin.integrations') ? 'active' : '' }}"><i class="fa-solid fa-plug w-4 text-center"></i> <span>Integrations</span></a>
             </nav>
             
             <div class="p-4 border-t border-white/10 shrink-0">
@@ -163,6 +163,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>
+
 
 
 

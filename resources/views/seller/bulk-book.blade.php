@@ -8,7 +8,25 @@
     </div>
 
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 md:p-12 text-center">
-        <form action="{{ route('seller.bulk.post') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        @php
+            $kycApproved = Auth::user()->isKycApproved();
+        @endphp
+
+        @if(!$kycApproved)
+            <div class="bg-red-50 border border-red-100 rounded-xl p-8 text-center max-w-2xl mx-auto shadow-sm">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-lock text-2xl"></i>
+                </div>
+                <h2 class="font-black text-red-900 text-xl mb-3">KYC Verification Required</h2>
+                <p class="text-sm text-red-700 mb-6 font-medium leading-relaxed">
+                    To comply with logistics regulations and prevent fraud, all sellers must complete their KYC verification before creating bulk orders.
+                </p>
+                <a href="{{ route('seller.settings') }}?view=kyc" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4338ca] text-white text-sm font-bold rounded-xl hover:bg-[#3730a3] transition shadow-md">
+                    <i class="fa-solid fa-id-card"></i> Complete KYC Now
+                </a>
+            </div>
+        @else
+            <form action="{{ route('seller.bulk.post') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             
             <i class="fa-solid fa-file-csv text-6xl text-gray-300 mb-4"></i>
@@ -31,6 +49,7 @@
                 <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Process Bulk Upload
             </button>
         </form>
+        @endif
     </div>
 </div>
 @endsection

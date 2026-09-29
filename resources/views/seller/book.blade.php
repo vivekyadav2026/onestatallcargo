@@ -86,13 +86,31 @@
         </div>
     @endif
 
-    <form action="{{ route('seller.book.post') }}" method="POST" id="add-order-form">
-                @csrf
-        <input type="hidden" name="mode" value="{{ $mode ?? 'create' }}">
-        <input type="hidden" name="shipment_id" value="{{ ($mode ?? '') === 'edit' ? ($shipment->id ?? '') : '' }}">
-        <!-- Sync calculated invoice value with form submit -->
-        <input type="hidden" name="invoice_value" :value="totalOrderValue()">
-        <input type="hidden" name="ship_now" x-model="shipNow">
+    @php
+        $kycApproved = Auth::user()->isKycApproved();
+    @endphp
+
+    @if(!$kycApproved)
+        <div class="bg-red-50 border border-red-100 rounded-xl p-8 text-center max-w-2xl mx-auto mt-10 shadow-sm">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-lock text-2xl"></i>
+            </div>
+            <h2 class="font-black text-red-900 text-xl mb-3">KYC Verification Required</h2>
+            <p class="text-sm text-red-700 mb-6 font-medium leading-relaxed">
+                To comply with logistics regulations and prevent fraud, all sellers must complete their KYC verification before creating orders or generating shipments.
+            </p>
+            <a href="{{ route('seller.settings') }}?view=kyc" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4338ca] text-white text-sm font-bold rounded-xl hover:bg-[#3730a3] transition shadow-md">
+                <i class="fa-solid fa-id-card"></i> Complete KYC Now
+            </a>
+        </div>
+    @else
+        <form action="{{ route('seller.book.post') }}" method="POST" id="add-order-form">
+                    @csrf
+            <input type="hidden" name="mode" value="{{ $mode ?? 'create' }}">
+            <input type="hidden" name="shipment_id" value="{{ ($mode ?? '') === 'edit' ? ($shipment->id ?? '') : '' }}">
+            <!-- Sync calculated invoice value with form submit -->
+            <input type="hidden" name="invoice_value" :value="totalOrderValue()">
+            <input type="hidden" name="ship_now" x-model="shipNow">
         
         <!-- CARD 1: Shipment Type & Warehouse -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
@@ -402,8 +420,10 @@
         </div>
 
     </form>
+    
 </div>
 
+@if($kycApproved)
 <!-- Sticky Bottom Action Bar -->
 <div class="fixed bottom-0 left-0 md:left-16 right-0 bg-white border-t border-gray-200 p-4 z-40 flex items-center justify-end gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
     @if(($mode ?? 'create') === 'edit')
@@ -417,6 +437,8 @@
         <button type="button" @click="shipNow = 0; document.getElementById('add-order-form').submit()" class="px-5 py-2.5 bg-[#1e1b4b] text-white text-xs font-bold rounded-lg hover:bg-black transition shadow-md">Add Order</button>
     @endif
 </div>
+@endif
+    @endif
 
 <script>
 function bookingForm() {

@@ -34,7 +34,7 @@
                     <select name="franchise_id" required class="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm">
                         <option value="">Select an Approved Franchise...</option>
                         @foreach($franchises as $franchise)
-                            <option value="{{ $franchise->id }}">{{ $franchise->user->company_name ?? $franchise->user->name }} ({{ $franchise->city }})</option>
+                            <option value="{{ $franchise->id }}">{{ $franchise->user?->company_name ?? $franchise->user?->name ?? 'Unknown Franchise' }} ({{ $franchise->city }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -68,7 +68,7 @@
                     <select name="franchise_id" required class="w-full px-4 py-2 border border-gray-200 rounded-xl outline-none focus:border-blue-500 text-sm">
                         <option value="">Select an Approved Franchise...</option>
                         @foreach($franchises as $franchise)
-                            <option value="{{ $franchise->id }}">{{ $franchise->user->company_name ?? $franchise->user->name }} ({{ $franchise->city }})</option>
+                            <option value="{{ $franchise->id }}">{{ $franchise->user?->company_name ?? $franchise->user?->name ?? 'Unknown Franchise' }} ({{ $franchise->city }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -119,8 +119,8 @@
                             <div class="text-[10px] text-gray-400">{{ $pin->state }}</div>
                         </td>
                         <td class="px-6 py-3">
-                            <div class="font-bold text-blue-700">{{ optional($pin->franchise->user)->company_name ?? optional($pin->franchise->user)->name ?? 'Deleted' }}</div>
-                            <div class="text-[10px] text-gray-500">Franchise ID: #{{ $pin->franchise_id }}</div>
+                            <div class="font-bold text-blue-700">{{ $pin->franchise?->user?->company_name ?? $pin->franchise?->user?->name ?? 'Central Network / Unassigned' }}</div>
+                            <div class="text-[10px] text-gray-500">Franchise ID: {{ $pin->franchise_id ? '#' . $pin->franchise_id : 'N/A' }}</div>
                         </td>
                         <td class="px-6 py-3">
                             @if($pin->is_active)

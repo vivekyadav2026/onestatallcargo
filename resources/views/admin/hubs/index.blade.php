@@ -44,16 +44,17 @@
                     <div class="text-[11px]"><span class="text-gray-400">Phone:</span> <span class="font-bold text-gray-700">{{ $app->phone }}</span></div>
                     <div class="text-[11px]"><span class="text-gray-400">City:</span> <span class="font-bold text-gray-700">{{ $app->city }}, {{ $app->state }}</span></div>
                     <div class="text-[11px]"><span class="text-gray-400">Pincodes:</span> <span class="font-bold text-gray-700">{{ is_array($app->serviceable_pincodes) ? implode(', ', $app->serviceable_pincodes) : $app->serviceable_pincodes }}</span></div>
+                    <div class="text-[11px]"><span class="text-gray-400">Registered At:</span> <span class="font-bold text-gray-700">{{ $app->created_at->format('d M Y, h:i A') }}</span></div>
                 </div>
 
                 <div class="flex gap-2">
                     <form action="{{ route('admin.hubs.approve_franchise', $app->id) }}" method="POST" class="flex-1">
                         @csrf
-                        <button type="submit" class="w-full py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition shadow-sm">Approve</button>
+                        <button type="submit" class="w-full py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition shadow-sm inline-flex items-center justify-center"><i class="fa-solid fa-check mr-1"></i> Approve</button>
                     </form>
                     <form action="{{ route('admin.hubs.reject_franchise', $app->id) }}" method="POST" class="flex-1">
                         @csrf
-                        <button type="submit" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition border border-red-200">Reject</button>
+                        <button type="submit" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-xl transition border border-red-200 inline-flex items-center justify-center"><i class="fa-solid fa-xmark mr-1"></i> Reject</button>
                     </form>
                 </div>
             </div>
@@ -72,7 +73,7 @@
                         <th class="px-6 py-4">Hub Name</th>
                         <th class="px-6 py-4">City / Pincode</th>
                         <th class="px-6 py-4">Capacity</th>
-                        <th class="px-6 py-4">Franchise Manager</th>
+                        <th class="px-6 py-4">Registered At</th><th class="px-6 py-4">Franchise Manager</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
@@ -86,6 +87,7 @@
                             <td class="px-6 py-4 font-bold text-gray-900">{{ $hub->name }}</td>
                             <td class="px-6 py-4">{{ $hub->city }} ({{ $hub->pincode }})</td>
                             <td class="px-6 py-4">{{ number_format($hub->capacity) }} units/day</td>
+                            <td class="px-6 py-4 text-xs text-gray-500">{{ $hub->created_at->format('d M Y, h:i A') }}</td>
                             <td class="px-6 py-4">
                                 @if($hub->manager)
                                     <div class="font-bold text-gray-900">{{ $hub->manager->name }}</div>
@@ -102,11 +104,15 @@
                             <td class="px-6 py-4 text-right">
                                 <form action="{{ route('admin.hubs.toggle', $hub->id) }}" method="POST" class="inline-block">
                                     @csrf
-                                    <button type="submit" class="text-[10px] font-bold uppercase {{ $hub->is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }}">
-                                        {{ $hub->is_active ? 'Deactivate' : 'Activate' }}
+                                    <button type="submit" class="text-[10px] font-bold uppercase flex items-center {{ $hub->is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }}">
+                                        @if($hub->is_active)
+                                            <i class="fa-solid fa-ban mr-1"></i> Deactivate
+                                        @else
+                                            <i class="fa-solid fa-check-circle mr-1"></i> Activate
+                                        @endif
                                     </button>
                                   </form>
-                                  <a href="{{ route('admin.hubs.edit', $hub->id) }}" class="text-[10px] font-bold uppercase text-blue-600 hover:text-blue-800 ml-3">Edit</a>
+                                  <a href="{{ route('admin.hubs.edit', $hub->id) }}" class="text-[10px] font-bold uppercase text-blue-600 hover:text-blue-800 ml-3 inline-flex items-center"><i class="fa-solid fa-pen mr-1"></i> Edit</a>
                               </td>
                         </tr>
                     @empty
@@ -247,5 +253,10 @@
     </div>
 </div>
 @endsection
+
+
+
+
+
 
 

@@ -28,7 +28,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Main Burgundy Card -->
-        <div class="bg-[#8a0b38] rounded-3xl p-6 md:p-10 shadow-2xl">
+        <!-- Main Light Card -->
+        <div class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100">
             
             <div class="flex flex-col lg:flex-row gap-10">
                 
@@ -53,33 +54,41 @@
                         <!-- Row 1 -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs font-medium text-white mb-1">Pickup Area Pin Code*</label>
-                                <input type="text" x-model="pickup_pincode" maxlength="6" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="e.g. 110001">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Pickup Area Pin Code*</label>
+                                <input type="text" x-model="pickup_pincode" @input="fetchCity(pickup_pincode, 'pickupCity')" maxlength="6" required class="w-full bg-gray-50 border rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-1 transition" :class="pickupCity ? (pickupCity === 'Invalid Pincode' ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-green-400 focus:border-green-400 focus:ring-green-400') : 'border-gray-200 focus:border-[#4338ca] focus:ring-[#4338ca]'" placeholder="e.g. 110001">
+                                <div x-show="pickupCity" class="mt-1 text-[10px] font-bold flex items-center gap-1" :class="pickupCity === 'Invalid Pincode' ? 'text-red-500' : 'text-green-600'">
+                                    <i class="fa-solid fa-location-dot" x-show="pickupCity !== 'Invalid Pincode'"></i>
+                                    <span x-text="pickupCity"></span>
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-white mb-1">Delivery Area Pin Code*</label>
-                                <input type="text" x-model="delivery_pincode" maxlength="6" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="e.g. 400001">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Delivery Area Pin Code*</label>
+                                <input type="text" x-model="delivery_pincode" @input="fetchCity(delivery_pincode, 'deliveryCity')" maxlength="6" required class="w-full bg-gray-50 border rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-1 transition" :class="deliveryCity ? (deliveryCity === 'Invalid Pincode' ? 'border-red-400 focus:border-red-400 focus:ring-red-400' : 'border-green-400 focus:border-green-400 focus:ring-green-400') : 'border-gray-200 focus:border-[#4338ca] focus:ring-[#4338ca]'" placeholder="e.g. 400001">
+                                <div x-show="deliveryCity" class="mt-1 text-[10px] font-bold flex items-center gap-1" :class="deliveryCity === 'Invalid Pincode' ? 'text-red-500' : 'text-green-600'">
+                                    <i class="fa-solid fa-location-dot" x-show="deliveryCity !== 'Invalid Pincode'"></i>
+                                    <span x-text="deliveryCity"></span>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Row 2 -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs font-medium text-white mb-1">Weight*</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Weight*</label>
                                 <div class="flex relative">
-                                    <input type="number" step="0.1" x-model.number="weightKg" required class="w-full bg-transparent border border-white/30 rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="0.5">
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 text-xs">kg</span>
+                                    <input type="number" step="0.1" x-model.number="weightKg" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" placeholder="0.5">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">kg</span>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-white mb-1">Package Dimensions</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Package Dimensions</label>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" placeholder="L" x-model="dim_l" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
-                                    <span class="text-white/70 text-xs">X</span>
-                                    <input type="number" placeholder="W" x-model="dim_w" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
-                                    <span class="text-white/70 text-xs">X</span>
-                                    <input type="number" placeholder="H" x-model="dim_h" class="w-full bg-transparent border border-white/30 rounded-md px-2 py-3 text-center text-sm text-white focus:outline-none focus:border-white transition">
-                                    <span class="text-white/70 text-xs">CM</span>
+                                    <input type="number" placeholder="L" x-model="dim_l" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-400 text-xs font-bold">X</span>
+                                    <input type="number" placeholder="W" x-model="dim_w" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-400 text-xs font-bold">X</span>
+                                    <input type="number" placeholder="H" x-model="dim_h" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-400 text-xs font-bold">CM</span>
                                 </div>
                             </div>
                         </div>
@@ -87,34 +96,34 @@
                         <!-- Row 3 -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-xs font-medium text-white mb-2">Payment Mode*</label>
-                                <div class="flex gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer text-white text-sm">
-                                        <input type="radio" x-model="payment_mode" value="prepaid" class="w-4 h-4 text-[#d80032] bg-transparent border-white/30 focus:ring-[#d80032]">
+                                <label class="block text-xs font-bold text-gray-700 mb-2">Payment Mode*</label>
+                                <div class="flex gap-4 mt-2">
+                                    <label class="flex items-center gap-2 cursor-pointer text-gray-800 font-medium text-sm">
+                                        <input type="radio" x-model="payment_mode" value="prepaid" class="w-4 h-4 text-[#4338ca] border-gray-300 focus:ring-[#4338ca]">
                                         <span>Prepaid</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer text-white text-sm">
-                                        <input type="radio" x-model="payment_mode" value="cod" class="w-4 h-4 text-[#d80032] bg-white border-white focus:ring-[#d80032]">
+                                    <label class="flex items-center gap-2 cursor-pointer text-gray-800 font-medium text-sm">
+                                        <input type="radio" x-model="payment_mode" value="cod" class="w-4 h-4 text-[#4338ca] border-gray-300 focus:ring-[#4338ca]">
                                         <span>Cash on Delivery</span>
                                     </label>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-white mb-1">Shipment Value*</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Shipment Value*</label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-white/70 text-sm">&#8377;</span>
-                                    <input type="number" x-model="shipment_value" required class="w-full bg-transparent border border-white/30 rounded-md pl-8 pr-4 py-3 text-sm text-white focus:outline-none focus:border-white transition" placeholder="1000">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm">&#8377;</span>
+                                    <input type="number" x-model="shipment_value" required class="w-full bg-gray-50 border border-gray-200 rounded-lg pl-8 pr-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" placeholder="1000">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Buttons -->
-                        <div class="flex gap-4 pt-4 border-t border-white/10 mt-6">
-                            <button type="submit" class="px-8 py-3 rounded-full bg-[#d80032] text-white font-bold text-sm hover:bg-[#b00028] transition min-w-[160px]">
+                        <div class="flex gap-4 pt-4 border-t border-gray-100 mt-6">
+                            <button type="submit" class="px-8 py-3 rounded-xl bg-[#4338ca] text-white font-bold text-sm hover:bg-[#3730a3] shadow-md transition min-w-[160px]">
                                 <span x-show="!loading">Calculate Now</span>
                                 <span x-show="loading"><i class="fa-solid fa-spinner fa-spin"></i></span>
                             </button>
-                            <button type="button" @click="resetForm()" class="px-8 py-3 rounded-full border border-white/50 text-white font-bold text-sm hover:bg-white/10 transition">
+                            <button type="button" @click="resetForm()" class="px-8 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 font-bold text-sm hover:bg-gray-50 transition">
                                 Reset
                             </button>
                         </div>
@@ -123,54 +132,120 @@
             </div>
 
             <!-- RESULTS SECTION -->
-            <div x-show="showResults" style="display: none;" class="mt-12 bg-[#3b172a] rounded-2xl p-6 shadow-inner">
+            <div x-show="showResults" style="display: none;" class="mt-12 pt-8 border-t border-gray-100">
                 
                 <!-- Filters -->
-                <div class="flex gap-3 mb-6">
-                    <button @click="filterMode = 'all'" :class="filterMode === 'all' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">All</button>
-                    <button @click="filterMode = 'air'" :class="filterMode === 'air' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">Air</button>
-                    <button @click="filterMode = 'surface'" :class="filterMode === 'surface' ? 'bg-white text-black font-bold' : 'border border-white/30 text-white font-medium hover:border-white'" class="px-6 py-1.5 rounded-full text-xs transition">Surface</button>
+                <div class="flex gap-3 mb-8 justify-center">
+                    <button @click="filterMode = 'all'" :class="filterMode === 'all' ? 'bg-[#4338ca] text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#4338ca] hover:text-[#4338ca]'" class="px-6 py-2 rounded-full font-bold text-xs transition">All</button>
+                    <button @click="filterMode = 'air'" :class="filterMode === 'air' ? 'bg-[#4338ca] text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#4338ca] hover:text-[#4338ca]'" class="px-6 py-2 rounded-full font-bold text-xs transition">Air</button>
+                    <button @click="filterMode = 'surface'" :class="filterMode === 'surface' ? 'bg-[#4338ca] text-white shadow-md' : 'bg-white border border-gray-200 text-gray-600 hover:border-[#4338ca] hover:text-[#4338ca]'" class="px-6 py-2 rounded-full font-bold text-xs transition">Surface</button>
                 </div>
 
                 <!-- Error Message -->
-                <div x-show="error" class="text-red-300 text-sm font-medium py-4 text-center">
+                <div x-show="error" class="text-red-500 bg-red-50 border border-red-100 rounded-lg text-sm font-bold py-4 text-center">
                     <span x-text="error"></span>
                 </div>
 
-                <!-- Table -->
-                <div x-show="!error && rates.length > 0" class="overflow-x-auto">
-                    <div class="overflow-x-auto w-full">
-<table class="w-full text-left text-sm text-white border-collapse">
-                        <thead class="border-b border-white/20 text-xs text-white font-medium">
-                            <tr>
-                                <th class="pb-3 px-2 font-medium">Courier Name</th>
-                                <th class="pb-3 px-2 font-medium">Type</th>
-                                <th class="pb-3 px-2 font-medium">Courier Charges</th>
-                                <th class="pb-3 px-2 font-medium">AWB / Delivery</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-white/10 text-sm">
+                <!-- Card Layout -->
+                <div x-show="!error && rates.length > 0" class="w-full max-w-2xl mx-auto">
+                    <div class="text-center pb-4 px-4 w-full">
+                        <h2 class="text-gray-900 text-xl md:text-2xl font-black leading-relaxed mb-8 px-4">
+                            Rates for Shipping your Package from<br>
+                            <span class="text-[#4338ca]">(<span x-text="pickup_pincode"></span>)</span> to <span class="text-[#4338ca]">(<span x-text="delivery_pincode"></span>)</span>
+                        </h2>
+                        
+                        <div class="space-y-4">
                             <template x-for="rate in rates" :key="rate.courier_name">
-                                <template x-if="true">
-                                    <tbody class="divide-y divide-white/10 text-sm contents">
-                                        <tr class="hover:bg-white/5 transition" x-show="filterMode === 'all' || filterMode === 'surface'">
-                                            <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Surface'"></td>
-                                            <td class="py-4 px-2 text-white/80">Surface</td>
-                                            <td class="py-4 px-2 font-medium">&#8377; <span x-text="rate.rate.toFixed(2)"></span></td>
-                                            <td class="py-4 px-2 text-white/80"><span x-text="rate.estimated_delivery_days"></span> Days</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition" x-show="filterMode === 'all' || filterMode === 'air'">
-                                            <td class="py-4 px-2 font-medium" x-text="rate.courier_name + ' Air'"></td>
-                                            <td class="py-4 px-2 text-white/80">Air</td>
-                                            <td class="py-4 px-2 font-medium">&#8377; <span x-text="(rate.rate * 1.5).toFixed(2)"></span></td>
-                                            <td class="py-4 px-2 text-white/80"><span x-text="Math.max(1, rate.estimated_delivery_days - 1)"></span> Days</td>
-                                        </tr>
-                                    </tbody>
-                                </template>
+                                <div>
+                                    <!-- Surface Card -->
+                                    <div x-show="filterMode === 'all' || filterMode === 'surface'" x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors mb-3">
+                                        <div @click="expanded = !expanded" class="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition">
+                                            
+                                            <!-- Courier Logo/Name -->
+                                            <div class="flex-1 max-w-[35%] flex flex-col text-left justify-center">
+                                                <div class="font-extrabold text-[12px] md:text-[14px] text-gray-900 uppercase tracking-tight" x-text="rate.courier_name"></div>
+                                                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Surface</div>
+                                            </div>
+                                            
+                                            <!-- Weight & Rate -->
+                                            <div class="flex-1 flex justify-around items-center px-2 border-l border-r border-gray-100">
+                                                <div class="text-center">
+                                                    <div class="text-[10px] text-gray-400 mb-0.5">Weight</div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800" x-text="Math.max(weight, (l*b*h)/5000).toFixed(2)"></div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="rate.rate.toFixed(2)"></span></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Chevron -->
+                                            <div class="pl-3 transition-transform duration-200" :class="expanded ? 'rotate-90' : ''">
+                                                <i class="fa-solid fa-chevron-right text-[#4338ca] text-lg"></i>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Expanded Details -->
+                                        <div x-show="expanded" class="border-t border-gray-100 bg-[#f8faff] p-4 text-left text-xs" x-collapse>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <div class="text-gray-400 mb-1">Estimated Delivery</div>
+                                                    <div class="font-bold text-gray-800"><span x-text="rate.estimated_delivery_days"></span> Days</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-gray-400 mb-1">Service Type</div>
+                                                    <div class="font-bold text-[#4338ca]">Surface (Ground)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Air Card -->
+                                    <div x-show="filterMode === 'all' || filterMode === 'air'" x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors">
+                                        <div @click="expanded = !expanded" class="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition">
+                                            
+                                            <!-- Courier Logo/Name -->
+                                            <div class="flex-1 max-w-[35%] flex flex-col text-left justify-center">
+                                                <div class="font-extrabold text-[12px] md:text-[14px] text-gray-900 uppercase tracking-tight" x-text="rate.courier_name"></div>
+                                                <div class="text-[9px] text-[#4338ca] font-bold uppercase tracking-widest mt-1">Air</div>
+                                            </div>
+                                            
+                                            <!-- Weight & Rate -->
+                                            <div class="flex-1 flex justify-around items-center px-2 border-l border-r border-gray-100">
+                                                <div class="text-center">
+                                                    <div class="text-[10px] text-gray-400 mb-0.5">Weight</div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800" x-text="Math.max(weight, (l*b*h)/5000).toFixed(2)"></div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="(rate.rate * 1.5).toFixed(2)"></span></div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Chevron -->
+                                            <div class="pl-3 transition-transform duration-200" :class="expanded ? 'rotate-90' : ''">
+                                                <i class="fa-solid fa-chevron-right text-[#4338ca] text-lg"></i>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Expanded Details -->
+                                        <div x-show="expanded" class="border-t border-gray-100 bg-[#f8faff] p-4 text-left text-xs" x-collapse>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <div class="text-gray-400 mb-1">Estimated Delivery</div>
+                                                    <div class="font-bold text-gray-800"><span x-text="Math.max(1, rate.estimated_delivery_days - 1)"></span> Days</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-gray-400 mb-1">Service Type</div>
+                                                    <div class="font-bold text-[#4338ca]">Air (Express)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
-                        </tbody>
-                    </table>
-</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div x-show="!error && rates.length > 0" class="text-center mt-8">
@@ -222,6 +297,8 @@ function liveRateCalculator() {
         filterMode: 'all',
         pickup_pincode: '',
         delivery_pincode: '',
+        pickupCity: '',
+        deliveryCity: '',
         weightKg: '',
         dim_l: '',
         dim_w: '',
@@ -237,6 +314,8 @@ function liveRateCalculator() {
         resetForm() {
             this.pickup_pincode = '';
             this.delivery_pincode = '';
+            this.pickupCity = '';
+            this.deliveryCity = '';
             this.weightKg = '';
             this.dim_l = '';
             this.dim_w = '';
@@ -244,6 +323,25 @@ function liveRateCalculator() {
             this.payment_mode = 'prepaid';
             this.shipment_value = '';
             this.showResults = false;
+        },
+
+        async fetchCity(pincode, targetVar) {
+            if(pincode.length !== 6) {
+                this[targetVar] = '';
+                return;
+            }
+            try {
+                let res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                let data = await res.json();
+                if(data && data[0].Status === 'Success') {
+                    let po = data[0].PostOffice[0];
+                    this[targetVar] = `${po.District}, ${po.State}`;
+                } else {
+                    this[targetVar] = 'Invalid Pincode';
+                }
+            } catch(e) {
+                this[targetVar] = '';
+            }
         },
 
         async fetchRate() {

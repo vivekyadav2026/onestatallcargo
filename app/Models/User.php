@@ -37,6 +37,7 @@ class User extends Authenticatable
         'latitude',
         'longitude',
         'last_location_at',
+        'status',
     ];
 
     protected $hidden = [

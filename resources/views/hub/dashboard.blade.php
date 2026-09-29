@@ -34,9 +34,11 @@
             </div>
         </div>
     </div>
-    @elseif(!$kycDone)
+    @endif
+
+    @if(!$kycDone)
     <!-- Franchise KYC Banner -->
-    <div class="bg-gradient-to-r {{ $kycPending ? 'from-yellow-600 to-yellow-500' : 'from-[#1e293b] to-black' }} rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="bg-gradient-to-r {{ $kycPending ? 'from-yellow-600 to-yellow-500' : 'from-[#1e293b] to-black' }} rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                 <i class="fa-solid {{ $kycPending ? 'fa-clock' : 'fa-id-card' }} text-2xl"></i>

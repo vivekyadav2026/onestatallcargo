@@ -55,6 +55,12 @@ class AdminHubController extends Controller
         $franchise->status = 'approved';
         $franchise->save();
 
+        $user = \App\Models\User::find($franchise->user_id);
+        if ($user) {
+            $user->status = 'active';
+            $user->save();
+        }
+
         // Optionally, automatically create a Hub here?
         // Let's just approve the application so the user can log in as franchise manager.
         return back()->with('success', 'Franchise application approved! You can now create a Hub and assign this manager.');
@@ -65,6 +71,12 @@ class AdminHubController extends Controller
         $franchise = \App\Models\Franchise::findOrFail($id);
         $franchise->status = 'rejected';
         $franchise->save();
+
+        $user = \App\Models\User::find($franchise->user_id);
+        if ($user) {
+            $user->status = 'rejected';
+            $user->save();
+        }
 
         return back()->with('success', 'Franchise application rejected.');
     }

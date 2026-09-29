@@ -199,11 +199,14 @@ class SellerShipmentController extends Controller
 
     public function bulkStore(Request $request)
     {
+        $user = Auth::user();
+        if (!$user->isKycApproved()) {
+            return redirect()->route('seller.settings', ['view' => 'kyc'])->with('error', 'KYC Verification Required!');
+        }
+
         $request->validate([
             'bulk_file' => 'required|file|mimes:csv,txt'
         ]);
-
-        $user = Auth::user();
         for ($i = 0; $i < 3; $i++) {
             $shipment = new Shipment();
             $shipment->user_id = $user->id;
@@ -389,5 +392,6 @@ class SellerShipmentController extends Controller
         return view('seller.invoice', compact('shipment'));
     }
 }
+
 
 

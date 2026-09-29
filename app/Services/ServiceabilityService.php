@@ -16,12 +16,13 @@ class ServiceabilityService
     {
         // PRIORITY 1: OneStall Cargo own service/franchise
         $franchiseId = $this->getFranchiseForPincode($deliveryPincode);
+        $isDirectlyServiceable = \App\Models\ServiceablePincode::where('pincode', $deliveryPincode)->where('is_active', true)->exists();
 
-        if ($franchiseId) {
+        if ($franchiseId || $isDirectlyServiceable) {
             return [
                 'serviceable' => true,
                 'fulfillment_type' => 'onestall',
-                'franchise_id' => $franchiseId,
+                'franchise_id' => $franchiseId, // may be null if handled centrally
                 'provider_id' => null,
                 'reason' => 'OneStall Cargo service available',
             ];

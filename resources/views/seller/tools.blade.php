@@ -114,9 +114,9 @@
             </div>
 
             <!-- Right Results Area -->
-            <div class="flex-1 p-8 flex flex-col items-center justify-center text-center">
+            <div class="flex-1 p-4 md:p-8 flex flex-col w-full h-full" :class="(calc.hasResults) ? 'justify-start items-start' : 'items-center justify-center text-center'">
                 <!-- Empty State -->
-                <div x-show="!calc.hasResults && !calc.loading" class="max-w-xs">
+                <div x-show="!calc.hasResults && !calc.loading" class="max-w-xs text-center mx-auto">
                     <div class="w-16 h-16 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center text-gray-300 mb-6">
                         <i class="fa-solid fa-calculator text-2xl"></i>
                     </div>
@@ -125,57 +125,76 @@
                 </div>
 
                 <!-- Error State -->
-                <div x-show="calc.error && !calc.loading" class="bg-red-50 text-red-600 p-4 rounded-lg font-medium text-sm w-full max-w-md">
+                <div x-show="calc.error && !calc.loading" class="bg-red-50 text-red-600 p-4 rounded-lg font-medium text-sm w-full max-w-md mx-auto mt-8">
                     <i class="fa-solid fa-triangle-exclamation mr-2"></i> <span x-text="calc.error"></span>
                 </div>
 
                 <!-- Loading State -->
-                <div x-show="calc.loading" class="text-gray-400 flex flex-col items-center">
+                <div x-show="calc.loading" class="text-gray-400 flex flex-col items-center mx-auto mt-20">
                     <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-4 text-[#4338ca]"></i>
                     <p class="text-sm font-semibold text-gray-600">Fetching live rates...</p>
                 </div>
 
-                <!-- Results Table -->
-                <div x-show="calc.hasResults && !calc.loading" class="w-full text-left" style="display: none;">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-gray-900 text-lg">Available Couriers</h3>
-                        <div class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                            Chargeable Weight: <span class="text-[#4338ca]" x-text="chargeableWeight.toFixed(2) + ' kg'"></span>
+                <!-- Results Container Matching User Request -->
+                <div x-show="calc.hasResults && !calc.loading" class="w-full max-w-3xl mx-auto mt-2" style="display: none;">
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 text-center pt-5 pb-4 px-4 md:px-6 w-full">
+                        <h2 class="text-gray-900 text-lg md:text-xl font-bold leading-relaxed mb-6 px-4">
+                            Rates for Shipping your Package from<br>
+                            <span class="text-[#4338ca]">(<span x-text="calc.pickup"></span>)</span> to <span class="text-[#4338ca]">(<span x-text="calc.delivery"></span>)</span>
+                        </h2>
+                        
+                        <div class="space-y-3">
+                            <template x-for="rate in calc.rates" :key="rate.courier_name">
+                                <div x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors">
+                                    <div @click="expanded = !expanded" class="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition">
+                                        
+                                        <!-- Courier Logo/Name -->
+                                        <div class="flex-1 max-w-[35%] flex items-center text-left">
+                                            <div class="font-extrabold text-[12px] md:text-[14px] text-gray-900 uppercase tracking-tight" x-text="rate.courier_name"></div>
+                                        </div>
+                                        
+                                        <!-- Weight & Rate -->
+                                        <div class="flex-1 flex justify-around items-center px-2 border-l border-r border-gray-100">
+                                            <div class="text-center">
+                                                <div class="text-[10px] text-gray-400 mb-0.5">Weight</div>
+                                                <div class="text-[12px] md:text-[14px] font-bold text-gray-800" x-text="chargeableWeight.toFixed(2)"></div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
+                                                <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="(rate.rate + calculateCodCharge()).toFixed(2)"></span></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Chevron -->
+                                        <div class="pl-3 transition-transform duration-200" :class="expanded ? 'rotate-90' : ''">
+                                            <i class="fa-solid fa-chevron-right text-[#4338ca] text-lg"></i>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Expanded Details -->
+                                    <div x-show="expanded" class="border-t border-gray-100 bg-[#f8faff] p-4 text-left text-xs" x-collapse>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <div class="text-gray-400 mb-1">Estimated Delivery</div>
+                                                <div class="font-bold text-gray-800"><span x-text="rate.estimated_delivery_days"></span> Days</div>
+                                            </div>
+                                            <div x-show="calc.payment === 'cod'">
+                                                <div class="text-gray-400 mb-1">COD Charge</div>
+                                                <div class="font-bold text-gray-800">&#8377;<span x-text="calculateCodCharge().toFixed(2)"></span></div>
+                                            </div>
+                                            <div>
+                                                <div class="text-gray-400 mb-1">Base Rate</div>
+                                                <div class="font-bold text-gray-800">&#8377;<span x-text="rate.rate.toFixed(2)"></span></div>
+                                            </div>
+                                            <div>
+                                                <div class="text-gray-400 mb-1">Service Type</div>
+                                                <div class="font-bold text-[#4338ca]">Surface</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
-                    </div>
-                    
-                    <div class="bg-white border border-gray-200 rounded-xl overflow-x-auto shadow-sm">
-                        <div class="overflow-x-auto w-full">
-<table class="w-full text-sm">
-                            <thead class="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 font-bold uppercase">
-                                <tr>
-                                    <th class="px-6 py-4">Courier Partner</th>
-                                    <th class="px-6 py-4">Est. Delivery</th>
-                                    <th class="px-6 py-4" x-show="calc.payment === 'cod'">COD Charge</th>
-                                    <th class="px-6 py-4 text-right">Total Charge</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <template x-for="rate in calc.rates" :key="rate.courier_name">
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4">
-                                            <div class="font-bold text-gray-900" x-text="rate.courier_name"></div>
-                                            <div class="text-[10px] font-semibold text-gray-500 mt-1"><span class="px-1.5 py-0.5 bg-gray-200 rounded text-gray-600">Surface</span></div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <div class="font-bold text-gray-700"><span x-text="rate.estimated_delivery_days"></span> Days</div>
-                                        </td>
-                                        <td class="px-6 py-4" x-show="calc.payment === 'cod'">
-                                            <div class="font-bold text-yellow-600">&#8377; <span x-text="calculateCodCharge().toFixed(2)"></span></div>
-                                        </td>
-                                        <td class="px-6 py-4 text-right">
-                                            <div class="text-lg font-black text-[#4338ca]">&#8377; <span x-text="(rate.rate + calculateCodCharge()).toFixed(2)"></span></div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-</div>
                     </div>
                 </div>
             </div>

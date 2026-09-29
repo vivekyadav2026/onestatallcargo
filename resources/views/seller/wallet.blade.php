@@ -32,22 +32,37 @@
             </div>
 
             <!-- Recharge Box -->
+            @php
+                $kycApproved = Auth::user()->isKycApproved();
+            @endphp
+            
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 class="font-bold text-gray-900 text-lg mb-4">Recharge Wallet</h3>
                 
-                <form @submit.prevent="initiateRecharge">
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Enter Amount</label>
-                    <div class="relative mb-4">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">&#8377;</span>
-                        <input type="number" x-model="amount" min="100" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#E8027D] focus:ring-1 focus:ring-[#E8027D] font-bold text-gray-900 text-lg transition" required>
+                @if(!$kycApproved)
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-6 text-center">
+                        <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-lock text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-red-800 text-sm mb-2">KYC Verification Required</h3>
+                        <p class="text-xs text-red-600 mb-4 font-medium">You must complete and get your KYC verified before you can add funds to your wallet.</p>
+                        <a href="{{ route('seller.settings') }}?view=kyc" class="inline-block px-5 py-2.5 bg-[#4338ca] text-white text-xs font-bold rounded-lg hover:bg-[#3730a3] transition shadow-sm">Go to KYC Settings</a>
                     </div>
+                @else
+                    <form @submit.prevent="initiateRecharge">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Enter Amount</label>
+                        <div class="relative mb-4">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">&#8377;</span>
+                            <input type="number" x-model="amount" min="100" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#E8027D] focus:ring-1 focus:ring-[#E8027D] font-bold text-gray-900 text-lg transition" required>
+                        </div>
 
-                    <!-- Quick Chips -->
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <button type="button" @click="amount = 1000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;1,000</button>
-                        <button type="button" @click="amount = 5000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;5,000</button>
-                        <button type="button" @click="amount = 10000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;10,000</button>
-                    </div>
+                        <!-- Quick Chips -->
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <button type="button" @click="amount = 1000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;1,000</button>
+                            <button type="button" @click="amount = 5000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;5,000</button>
+                            <button type="button" @click="amount = 10000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;10,000</button>
+                        </div>
+
 
                     <button type="submit" class="w-full py-3 bg-[#E8027D] hover:bg-[#d60070] text-white font-bold rounded-lg text-sm transition shadow-sm flex justify-center items-center gap-2" :disabled="loading">
                         <span x-show="!loading">Proceed to Pay</span>
@@ -61,6 +76,7 @@
                         <span class="text-[10px] text-gray-400 font-semibold ml-1">Secured by Cashfree</span>
                     </div>
                 </form>
+                @endif
             </div>
         </div>
 

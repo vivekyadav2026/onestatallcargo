@@ -43,6 +43,14 @@ class CashfreeController extends Controller
 
     public function initiateRecharge(Request $request)
     {
+        $user = auth()->user();
+        if (!$user->isKycApproved()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please complete your KYC verification to recharge your wallet.'
+            ], 403);
+        }
+
         $request->validate([
             'amount' => 'required|numeric|min:1'
         ]);

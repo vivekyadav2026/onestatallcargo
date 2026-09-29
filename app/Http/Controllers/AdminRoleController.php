@@ -7,8 +7,26 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminRoleController extends Controller {
     
-    public function index() {
-        $users = User::orderBy('created_at', 'desc')->paginate(15);
+    public function index(Request $request) {
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         return view('admin.roles.index', compact('users'));
     }
 
