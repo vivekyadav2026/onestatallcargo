@@ -140,7 +140,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login/google', [AuthController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/forgot-password', function () { return view('auth.forgot-password'); })->name('password.request');
-Route::post('/forgot-password', function () { return back()->with('status', 'We have emailed your password reset link! (Demo mode)'); })->name('password.email');
+Route::post('/forgot-password', [\App\Http\Controllers\AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password/{token}', function (Illuminate\Http\Request $request, $token) { return view('auth.reset-password', ['token' => $token, 'email' => $request->email]); })->name('password.reset');
+Route::post('/reset-password', [\App\Http\Controllers\AuthController::class, 'resetPassword'])->name('password.update');
 
 // Dashboard Routes
 Route::middleware(['auth'])->group(function () {
@@ -350,6 +352,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'resolveNdr'])->name('ndr.resolve');
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
+
 
 
 
