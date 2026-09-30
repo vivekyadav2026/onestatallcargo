@@ -354,21 +354,8 @@ Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
 
 
-Route::get('/create-symlink', function () {
-    $targetFolder = storage_path('app/public');
-    $linkFolder = public_path('storage');
-    
-    if (file_exists($linkFolder)) {
-        return 'Storage link already exists! Everything is fine.';
-    }
-    
-    try {
-        symlink($targetFolder, $linkFolder);
-        return 'Storage Link Created Successfully without exec()!';
-    } catch (\Exception $e) {
-        return 'Failed to create symlink: ' . $e->getMessage();
-    }
-});
+
+
 
 
 

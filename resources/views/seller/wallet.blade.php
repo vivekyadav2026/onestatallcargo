@@ -217,7 +217,7 @@ function walletManager() {
                         this.verifyRecharge(data.order_id, true);
                     } else {
                         // Load actual Cashfree Checkout
-                        const cashfree = Cashfree({ mode: "sandbox" }); // Change to "production" in live
+                        const cashfree = Cashfree({ mode: data.environment || "sandbox" });
                         let checkoutOptions = {
                             paymentSessionId: data.payment_session_id,
                             redirectTarget: "_modal" // Opens in a modal overlay
@@ -271,4 +271,5 @@ function walletManager() {
 }
 </script>
 @endsection
+
 

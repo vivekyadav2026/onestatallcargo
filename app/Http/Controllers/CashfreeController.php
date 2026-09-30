@@ -111,7 +111,7 @@ class CashfreeController extends Controller
                 'success' => true,
                 'payment_session_id' => $data['payment_session_id'],
                 'order_id' => $orderId,
-                'environment' => env('CASHFREE_ENV', 'sandbox')
+                'environment' => \App\Models\Setting::where('key', 'cashfree_environment')->value('value') ?: env('CASHFREE_ENV', 'sandbox')
             ]);
         }
 
@@ -177,4 +177,5 @@ class CashfreeController extends Controller
         return response()->json(['success' => false, 'message' => 'Payment not verified']);
     }
 }
+
 
