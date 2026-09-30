@@ -25,6 +25,10 @@ class KycController extends Controller
             'id_back' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:4096',
             'pan_doc' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:4096',
             'gst_doc' => 'nullable|image|mimes:jpeg,png,jpg,pdf|max:4096',
+            'bank_name' => 'nullable|string|max:255',
+            'account_number' => 'nullable|string|max:50',
+            'ifsc_code' => 'nullable|string|max:11',
+            'account_holder_name' => 'nullable|string|max:255',
         ]);
 
         $user = Auth::user();
@@ -57,6 +61,15 @@ class KycController extends Controller
         // Also update User GSTIN and PAN if provided
         $user->gstin = $kyc->gst_number;
         $user->pan_number = $kyc->pan_number;
+
+        // Save Bank Details if provided
+        if ($request->filled('bank_name') && $request->filled('account_number')) {
+            $user->bank_name = $request->bank_name;
+            $user->account_number = $request->account_number;
+            $user->ifsc_code = strtoupper($request->ifsc_code);
+            $user->account_holder_name = $request->account_holder_name;
+        }
+
         $user->save();
 
         if ($request->wantsJson()) {
@@ -121,3 +134,6 @@ class KycController extends Controller
         return back()->with('success', "KYC rejected for seller: {$kyc->user->name}");
     }
 }
+
+
+

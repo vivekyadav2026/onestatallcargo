@@ -367,7 +367,32 @@
                           </div>
                       </div>
       
-                      <div class="pt-4 flex justify-end">
+                      <!-- Section 4 -->
+                        <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100 mb-6">
+                            <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">4</span> Bank Details <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">(Optional)</span>
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Account Holder Name</label>
+                                    <input type="text" name="account_holder_name" value="{{ Auth::user()->account_holder_name ?? '' }}" placeholder="Name as per Bank" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Bank Name</label>
+                                    <input type="text" name="bank_name" value="{{ Auth::user()->bank_name ?? '' }}" placeholder="e.g. HDFC Bank" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Account Number</label>
+                                    <input type="text" name="account_number" value="{{ Auth::user()->account_number ?? '' }}" placeholder="Account Number" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">IFSC Code</label>
+                                    <input type="text" name="ifsc_code" value="{{ Auth::user()->ifsc_code ?? '' }}" placeholder="e.g. HDFC0001234" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 uppercase focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-end">
                           <button type="submit" class="px-8 py-3 bg-[#0f172a] text-white text-xs font-bold hover:bg-black rounded-xl transition shadow-md w-full sm:w-auto">
                               Submit Documents
                           </button>
@@ -810,3 +835,8 @@ function settingsManager() {
 }
 </script>
 @endsection
+
+
+
+
+
