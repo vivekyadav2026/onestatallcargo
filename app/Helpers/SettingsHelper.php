@@ -11,7 +11,7 @@ if (!function_exists('setting')) {
                 return Setting::all()->pluck('value', 'key');
             });
             
-            return $settings->get($key, $default);
+            return data_get($settings, $key, $default);
         } catch (\Exception $e) {
             return $default;
         }
