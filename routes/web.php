@@ -146,7 +146,7 @@ Route::post('/reset-password', [\App\Http\Controllers\AuthController::class, 're
 
 // Dashboard Routes
 Route::middleware(['auth'])->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', function () { 
         return redirect('/login'); // Let AuthController redirect based on role instead, or just point to login logic
     })->name('dashboard');
@@ -352,6 +352,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'resolveNdr'])->name('ndr.resolve');
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
+
 
 
 
