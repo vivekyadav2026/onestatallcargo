@@ -5,44 +5,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Seller Dashboard - OneStall Cargo')</title>
-    <!-- Inter font for sleek tech UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Plus Jakarta Sans / Inter fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f5f9; color: #1e293b; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f5f9; color: #1e293b; }
         
-        /* Sidebar Item Base */
+        /* Clean Sidebar Item Base */
         .sidebar-item { 
             display: flex; 
             align-items: center; 
-            height: 44px;
+            height: 42px;
             padding: 0 14px;
-            border-radius: 12px; 
+            border-radius: 10px; 
             color: #64748b; 
             font-size: 13px; 
             font-weight: 600; 
             transition: all 0.2s ease; 
             cursor: pointer;
             text-decoration: none;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         
         .sidebar-item:hover { 
-            background-color: #f1f5f9; 
+            background: #f1f5f9; 
             color: #0f172a; 
         }
         
         .sidebar-item.active { 
-            background-color: #eef2ff; 
+            background: #eef2ff; 
             color: #4338ca; 
             font-weight: 700;
         }
 
         .icon-box {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -60,11 +60,33 @@
     </style>
 </head>
 <body class="h-screen flex overflow-hidden bg-[#f3f5f9]" x-data="{ sidebarHover: false, isPinned: false, mobileSidebarOpen: false }">
+
+    <!-- Seamless Transparent Page Loader (Logo centered inside spinning ring) -->
+    <div id="global-loader" class="fixed inset-0 z-[9999] bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300">
+        <div class="flex flex-col items-center">
+            
+            <!-- Circular Container with Spinning Ring around Logo -->
+            <div class="relative w-24 h-24 flex items-center justify-center">
+                <!-- Static background ring -->
+                <div class="absolute inset-0 rounded-full border-4 border-indigo-100"></div>
+                
+                <!-- Active spinning ring around logo -->
+                <div class="absolute inset-0 rounded-full border-4 border-[#4338ca] border-t-transparent border-r-transparent animate-spin"></div>
+                
+                <!-- Center Circular Logo -->
+                <div class="w-16 h-16 rounded-full bg-white p-2.5 flex items-center justify-center shadow-sm overflow-hidden z-10 animate-pulse">
+                    <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="w-full h-full object-contain">
+                </div>
+            </div>
+
+            <p class="text-[11px] font-bold text-gray-500 tracking-[0.25em] uppercase mt-4">Loading...</p>
+        </div>
+    </div>
     
     <!-- Mobile Overlay -->
-    <div x-show="mobileSidebarOpen" x-transition.opacity class="fixed inset-0 bg-gray-900/50 z-40 md:hidden" style="display: none;" @click="mobileSidebarOpen = false"></div>
+    <div x-show="mobileSidebarOpen" x-transition.opacity class="fixed inset-0 bg-gray-900/40 z-40 md:hidden" style="display: none;" @click="mobileSidebarOpen = false"></div>
 
-    <!-- Hover-to-Expand Left Sidebar -->
+    <!-- Left Sidebar -->
     <aside 
         @mouseenter="sidebarHover = true" 
         @mouseleave="sidebarHover = false"
@@ -75,7 +97,6 @@
         class="bg-white border-r border-gray-200 flex flex-col py-5 shrink-0 transition-all duration-300 ease-in-out"
         style="height: 100vh;">
 
-        
         <!-- Pin / Lock Sidebar Toggle Button -->
         <button 
             @click="isPinned = !isPinned" 
@@ -88,7 +109,7 @@
         <!-- Logo Section -->
         <div class="px-4 mb-6 flex items-center h-10 transition-all overflow-hidden" :class="(sidebarHover || isPinned || mobileSidebarOpen) ? 'justify-start' : 'justify-center'">
             <a href="{{ route('seller.dashboard') }}" class="flex items-center hover:scale-105 transition-transform">
-                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="object-contain rounded transition-all duration-300" :class="(sidebarHover || isPinned || mobileSidebarOpen) ? 'h-10 max-w-[140px]' : 'h-8 w-8'">
+                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="object-contain rounded-lg transition-all duration-300" :class="(sidebarHover || isPinned || mobileSidebarOpen) ? 'h-10 max-w-[140px]' : 'h-8 w-8'">
             </a>
         </div>
         
@@ -199,85 +220,48 @@
                 <button @click="mobileSidebarOpen = true" class="text-gray-500 hover:text-[#4338ca] focus:outline-none transition-colors">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
-                <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="h-8 object-contain">
+                <img src="{{ asset('images/logo.jpg') }}" alt="Logo" class="h-8 object-contain rounded">
             </div>
 
             <!-- Left: Global Search (Hidden on Mobile) -->
             <div class="hidden md:flex items-center w-full max-w-md ml-4">
-                <div class="flex items-center bg-gray-50/80 border border-gray-200 rounded-lg px-3 py-1.5 w-full focus-within:bg-white focus-within:border-[#4338ca] focus-within:ring-2 focus-within:ring-[#eef2ff] transition-all">
+                <div class="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 w-full focus-within:bg-white focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-50 transition-all">
                     <i class="fa-solid fa-magnifying-glass text-gray-400 mr-2 text-sm"></i>
                     <input type="text" class="topbar-input bg-transparent w-full border-none focus:ring-0 text-[13px] text-gray-800 placeholder-gray-400 outline-none" placeholder="Search by AWB / Order ID...">
                     <div class="ml-2 flex items-center justify-center bg-white text-gray-500 rounded px-1.5 py-0.5 text-[10px] font-bold border border-gray-200 shadow-sm whitespace-nowrap">Ctrl K</div>
                 </div>
             </div>
 
-            <!-- Right: Wallet, Activity, Profile -->
-            <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+            <!-- Right: Action Pills, Wallet, Activity, Profile -->
+            <div class="flex items-center gap-2.5 sm:gap-3.5 ml-auto">
+                <a href="{{ route('seller.wallet') }}" class="hidden sm:flex items-center bg-[#5438dc] hover:bg-[#472ecc] text-white px-3.5 py-1.5 rounded-full text-xs font-bold transition shadow-sm">
+                    <i class="fa-solid fa-bolt mr-1.5 text-yellow-300"></i> Recharge
+                </a>
+                <a href="{{ route('seller.ndr') }}" class="hidden sm:flex items-center bg-[#ea3d3d] hover:bg-[#d83535] text-white px-3.5 py-1.5 rounded-full text-xs font-bold transition shadow-sm">
+                    <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Escalation
+                </a>
                 
-                <!-- Wallet Button -->
-                <div class="flex items-center bg-[#eef2ff] border border-[#c7d2fe] rounded-lg pl-2 sm:pl-3 pr-1 py-1 h-9 sm:h-10">
-                    <i class="fa-solid fa-wallet text-[#4338ca] mr-2"></i>
-                    <div class="flex flex-col mr-2 sm:mr-3 leading-none">
-                        <span class="hidden sm:block text-[9px] font-bold text-gray-500 uppercase">Usage Balance</span>
-                        <span class="text-xs sm:text-sm font-extrabold text-gray-900">&#8377; {{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</span>
-                    </div>
-                    <!-- Trigger Recharge -->
-                    <a href="{{ route('seller.wallet') }}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-[#1e1b4b] text-white flex items-center justify-center hover:bg-black transition">
-                        <i class="fa-solid fa-plus text-[10px] sm:text-xs font-bold"></i>
-                    </a>
+                <!-- Wallet Badge -->
+                <div class="flex items-center bg-[#eef2ff] border border-[#c7d2fe] rounded-full px-3.5 py-1.5 text-xs font-bold text-[#4338ca]">
+                    <i class="fa-solid fa-wallet mr-1.5"></i> &#8377; {{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}
+                    <a href="{{ route('seller.wallet') }}" class="ml-2 text-[#4338ca] hover:text-[#312a91] transition"><i class="fa-solid fa-rotate-right"></i></a>
                 </div>
-
-                <div class="hidden sm:block w-px h-6 bg-gray-200 mx-1"></div>
-
-                <!-- Activity Bell -->
+                
+                <!-- Notification Bell -->
                 <div class="relative" x-data="{ openActivity: false }">
-                    <button @click="openActivity = !openActivity" class="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 font-semibold text-sm transition px-2 outline-none cursor-pointer">
-                        <i class="fa-regular fa-bell text-base sm:text-sm"></i> 
-                        <span class="hidden sm:inline">Activity</span> 
-                        <i class="fa-solid fa-chevron-down text-[10px] hidden sm:inline"></i>
+                    <button @click="openActivity = !openActivity" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center text-sm relative transition">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-indigo-500 rounded-full"></span>
                     </button>
-                    
-                    <div x-show="openActivity" @click.away="openActivity = false" class="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50 text-left" style="display: none;" x-transition>
-                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                            <p class="text-xs font-bold text-gray-900">Recent Activity</p>
-                        </div>
-                        <div class="max-h-64 overflow-y-auto">
-                            @php
-                                $recentActivities = \App\Models\Shipment::where('user_id', Auth::id())->latest()->take(5)->get();
-                            @endphp
-                            @forelse($recentActivities as $activity)
-                                <a href="{{ route('seller.shipments.index') }}?search={{ $activity->awb_number }}" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 text-indigo-500">
-                                            <i class="fa-solid fa-box text-xs"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-gray-800 font-medium">Order {{ $activity->awb_number }}</p>
-                                            <p class="text-[10px] text-gray-500 mt-0.5">Status: <span class="font-semibold">{{ $activity->status_name ?? 'Created' }}</span></p>
-                                            <p class="text-[9px] text-gray-400 mt-1">{{ $activity->created_at->diffForHumans() }}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            @empty
-                                <div class="px-4 py-6 text-center">
-                                    <i class="fa-regular fa-bell-slash text-gray-300 text-2xl mb-2"></i>
-                                    <p class="text-xs text-gray-500">No new activity</p>
-                                </div>
-                            @endforelse
-                        </div>
-                        <div class="px-4 py-2 border-t border-gray-100 text-center">
-                            <a href="{{ route('seller.shipments.index') }}" class="text-[11px] font-medium text-[#4338ca] hover:text-[#3730a3]">View all shipments</a>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- User Profile & Logout Dropdown -->
+                <!-- User Profile Dropdown -->
                 <div class="relative" x-data="{ openProfile: false }">
-                    <div @click="openProfile = !openProfile" class="flex items-center gap-2 ml-1 sm:ml-2 pl-2 sm:pl-4 border-l border-gray-200 cursor-pointer select-none">
-                        <div class="w-8 h-8 rounded-full bg-[#eef2ff] border border-[#c7d2fe] flex items-center justify-center text-[#4338ca] font-bold text-xs shrink-0">
+                    <div @click="openProfile = !openProfile" class="flex items-center gap-2 ml-1 pl-2 border-l border-gray-200 cursor-pointer select-none">
+                        <div class="w-8 h-8 rounded-full bg-[#4338ca] text-white font-bold text-xs flex items-center justify-center">
                             {{ strtoupper(substr(Auth::user()->company_name ?? Auth::user()->name ?? 'S', 0, 1)) }}
                         </div>
-                        <span class="text-sm font-semibold text-gray-700 hidden lg:block">{{ Auth::user()->company_name ?? Auth::user()->name ?? 'Company' }}</span>
+                        <span class="text-xs font-bold text-gray-700 hidden lg:block">{{ Auth::user()->company_name ?? Auth::user()->name ?? 'Company' }}</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 hidden lg:block"></i>
                     </div>
 
@@ -311,13 +295,13 @@
         <main class="flex-1 overflow-y-auto relative">
             <div class="p-6 md:p-8 max-w-[1600px] mx-auto">
                 @if(session('success'))
-                    <div class="mb-6 p-4 rounded-lg font-semibold bg-green-50 border border-green-200 text-green-700 flex items-center shadow-sm">
-                        <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
+                    <div class="mb-6 p-4 rounded-xl font-semibold bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center shadow-xs">
+                        <i class="fa-solid fa-circle-check mr-2 text-emerald-600"></i> {{ session('success') }}
                     </div>
                 @endif
                 @if(session('error'))
-                    <div class="mb-6 p-4 rounded-lg font-semibold bg-red-50 border border-red-200 text-red-700 flex items-center shadow-sm">
-                        <i class="fa-solid fa-circle-exclamation mr-2"></i> {{ session('error') }}
+                    <div class="mb-6 p-4 rounded-xl font-semibold bg-rose-50 border border-rose-200 text-rose-800 flex items-center shadow-xs">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-rose-600"></i> {{ session('error') }}
                     </div>
                 @endif
                 
@@ -325,6 +309,26 @@
             </div>
         </main>
     </div>
+    <script>
+        // Hide loader when page finishes loading
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('global-loader');
+            if(loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 250);
+            }
+        });
+
+        // Show loader when leaving the page (clicking a link or submitting a form)
+        window.addEventListener('beforeunload', function () {
+            const loader = document.getElementById('global-loader');
+            if(loader) {
+                loader.style.display = 'flex';
+                loader.style.opacity = '1';
+            }
+        });
+    </script>
 </body>
 </html>
-

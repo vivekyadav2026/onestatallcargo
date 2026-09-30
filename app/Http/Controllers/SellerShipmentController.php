@@ -234,42 +234,47 @@ class SellerShipmentController extends Controller
         $userId = Auth::id();
         $query = \App\Models\Shipment::where('user_id', $userId);
 
-        // Single aggregated SQL query for all status counts (high performance for 100k+ users)
-        $statusGroup = \App\Models\Shipment::where('user_id', $userId)
-            ->selectRaw("status, count(*) as total")
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
-
+        // Grouped status counts for tabs
         $counts = [
-            'new' => ($statusGroup['new'] ?? 0) + ($statusGroup['Manifested'] ?? 0) + ($statusGroup['Booked'] ?? 0) + ($statusGroup['booked'] ?? 0) + ($statusGroup['New'] ?? 0),
-            'pickups' => ($statusGroup['pickup_scheduled'] ?? 0) + ($statusGroup['Pickup Scheduled'] ?? 0) + ($statusGroup['pickups'] ?? 0),
-            'transit' => ($statusGroup['in_transit'] ?? 0) + ($statusGroup['In Transit'] ?? 0) + ($statusGroup['transit'] ?? 0),
-            'delivered' => ($statusGroup['delivered'] ?? 0) + ($statusGroup['Delivered'] ?? 0),
-            'rto' => ($statusGroup['rto'] ?? 0) + ($statusGroup['RTO'] ?? 0),
-            'cancelled' => ($statusGroup['cancelled'] ?? 0) + ($statusGroup['Cancelled'] ?? 0),
-            'all' => array_sum($statusGroup),
+            'new' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['new', 'New', 'Manifested', 'manifested', 'Booked', 'booked', 'pending', 'new order'])->count(),
+            'pickups' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['pickup_scheduled', 'Pickup Scheduled', 'pickups', 'Pickups', 'pickup_assigned'])->count(),
+            'transit' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['in_transit', 'In Transit', 'transit', 'Transit', 'In-Transit'])->count(),
+            'out_for_delivery' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['out_for_delivery', 'Out for Delivery', 'ofd', 'OFD'])->count(),
+            'delivered' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['delivered', 'Delivered', 'DELIVERED'])->count(),
+            'rto' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['rto', 'RTO', 'rto_transit', 'RTO In-Transit', 'rto_delivered', 'RTO Delivered', 'rto in-transit', 'rto delivered'])->count(),
+            'ndr' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['ndr', 'NDR', 'action_required', 'undelivered', 'Undelivered'])->count(),
+            'lost' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['lost', 'Lost', 'damaged', 'Damaged'])->count(),
+            'cancelled' => \App\Models\Shipment::where('user_id', $userId)->whereIn('status', ['cancelled', 'Cancelled', 'CANCELLED'])->count(),
+            'all' => \App\Models\Shipment::where('user_id', $userId)->count(),
         ];
 
+        // Status filter
         if ($request->filled('status') && $request->status !== 'all') {
-            $status = $request->status;
-            if ($status === 'pickups') {
-                $query->whereIn('status', ['pickup_scheduled', 'Pickup Scheduled', 'pickups']);
-            } elseif ($status === 'transit') {
-                $query->whereIn('status', ['in_transit', 'In Transit', 'transit']);
-            } elseif ($status === 'delivered') {
-                $query->whereIn('status', ['delivered', 'Delivered']);
-            } elseif ($status === 'rto') {
-                $query->whereIn('status', ['rto', 'RTO']);
-            } elseif ($status === 'new') {
-                $query->whereIn('status', ['new', 'Manifested', 'Booked', 'booked', 'New']);
-            } elseif ($status === 'cancelled') {
-                $query->whereIn('status', ['cancelled', 'Cancelled']);
+            $status = strtolower(trim($request->status));
+            if (in_array($status, ['pickups', 'pickup_scheduled', 'pickup scheduled', 'pickup_assigned'])) {
+                $query->whereIn('status', ['pickup_scheduled', 'Pickup Scheduled', 'pickups', 'Pickups', 'pickup_assigned']);
+            } elseif (in_array($status, ['transit', 'in_transit', 'in transit'])) {
+                $query->whereIn('status', ['in_transit', 'In Transit', 'transit', 'Transit', 'In-Transit']);
+            } elseif (in_array($status, ['out_for_delivery', 'ofd', 'out for delivery'])) {
+                $query->whereIn('status', ['out_for_delivery', 'Out for Delivery', 'ofd', 'OFD', 'Out For Delivery']);
+            } elseif (in_array($status, ['delivered', 'deliver'])) {
+                $query->whereIn('status', ['delivered', 'Delivered', 'DELIVERED']);
+            } elseif (in_array($status, ['rto', 'rto_transit', 'rto_delivered', 'rto in-transit', 'rto delivered'])) {
+                $query->whereIn('status', ['rto', 'RTO', 'rto_transit', 'RTO In-Transit', 'rto_delivered', 'RTO Delivered', 'rto in-transit', 'rto delivered']);
+            } elseif (in_array($status, ['ndr', 'undelivered', 'action_required'])) {
+                $query->whereIn('status', ['ndr', 'NDR', 'action_required', 'undelivered', 'Undelivered']);
+            } elseif (in_array($status, ['lost', 'damaged'])) {
+                $query->whereIn('status', ['lost', 'Lost', 'damaged', 'Damaged']);
+            } elseif (in_array($status, ['new', 'unshipped', 'manifested', 'booked', 'pending'])) {
+                $query->whereIn('status', ['new', 'New', 'Manifested', 'manifested', 'Booked', 'booked', 'pending', 'new order']);
+            } elseif (in_array($status, ['cancelled', 'cancel'])) {
+                $query->whereIn('status', ['cancelled', 'Cancelled', 'CANCELLED']);
             } else {
-                $query->where('status', $status);
+                $query->where('status', 'like', "%{$request->status}%");
             }
         }
 
+        // Payment mode filter
         if ($request->filled('payment_mode')) {
             if ($request->payment_mode === 'cod') {
                 $query->where('is_cod', 1);
@@ -278,6 +283,7 @@ class SellerShipmentController extends Controller
             }
         }
 
+        // Global search filter
         if ($request->filled('search')) {
             $search = trim($request->search);
             $query->where(function($q) use ($search) {
@@ -289,8 +295,18 @@ class SellerShipmentController extends Controller
             });
         }
 
+        // Date range filter
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->filled('start_date')) {
+            $query->where('created_at', '>=', $request->start_date . ' 00:00:00');
+        } elseif ($request->filled('end_date')) {
+            $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
+        // Courier partner filter
+        if ($request->filled('courier') && $request->courier !== 'all') {
+            $query->where('courier_partner', $request->courier);
         }
 
         $shipments = $query->orderBy('created_at', 'desc')->paginate(15);
@@ -392,6 +408,3 @@ class SellerShipmentController extends Controller
         return view('seller.invoice', compact('shipment'));
     }
 }
-
-
-

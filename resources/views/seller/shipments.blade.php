@@ -1,4 +1,4 @@
-﻿@extends('layouts.seller')
+@extends('layouts.seller')
 @section('title', 'Orders - OneStall Cargo')
 
 @section('content')
@@ -175,8 +175,8 @@
 })" class="font-bold text-[#4338ca] text-xs hover:underline block flex items-center gap-1.5">
     {{ $shipment->awb_number }} <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-gray-400"></i>
 </a>
-                                <div class="text-[10px] text-gray-500 mt-1">Synced On � {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
-                                <div class="text-[10px] text-gray-500">Created On � {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
+                                <div class="text-[10px] text-gray-500 mt-1">Synced On ? {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
+                                <div class="text-[10px] text-gray-500">Created On ? {{ $shipment->created_at->format('d Sep Y | h:i A') }}</div>
                                 <div class="text-[10px] text-gray-400 font-semibold flex items-center gap-1 mt-1.5">
                                     <i class="fa-solid fa-desktop text-[9px]"></i> Manual
                                 </div>
@@ -215,7 +215,7 @@
                             <!-- PRODUCT DETAILS -->
                             <td class="px-3 py-4 align-top max-w-[180px]">
                                 <div class="font-semibold text-gray-800 text-xs truncate">{{ $shipment->product_name ?: "Package Item" }}</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">QTY: {{ $shipment->product_qty ?? 1 }} � SKU: {{ $shipment->product_sku ?: "N/A" }}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">QTY: {{ $shipment->product_qty ?? 1 }} ? SKU: {{ $shipment->product_sku ?: "N/A" }}</div>
                             </td>
 
                             <!-- PACKAGE DETAILS -->
@@ -522,3 +522,4 @@
     });
 </script>
 @endsection
+
