@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', setting('site_name', 'OneStall Cargo') . ' | ' . setting('site_tagline', 'Premium Logistics & Courier Platform'))</title>
@@ -279,6 +280,7 @@
     </footer>
 </body>
 </html>
+
 
 
 

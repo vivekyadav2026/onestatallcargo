@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', 'Forgot Password - OneStall Cargo')
 
@@ -8,10 +8,10 @@
         
         <!-- Header -->
         <div class="text-center space-y-2">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-xl mx-auto shadow-sm bg-yellow-50 text-[var(--gold-deep)] border border-yellow-200">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-xl mx-auto shadow-sm bg-red-50 text-brand-red border border-red-200">
                 <i class="fa-solid fa-key"></i>
             </div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" style="color: #0f172a !important;">Forgot Password</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" class="text-2xl font-extrabold text-brand-navy tracking-tight">Forgot Password</h1>
             <p class="text-xs text-gray-500">Enter your registered email address to receive a password reset link</p>
         </div>
 
@@ -33,7 +33,7 @@
                 @enderror
             </div>
 
-            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-[var(--gold)] hover:bg-yellow-500 text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
+            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red hover:bg-brand-redHover text-white text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
                 Send Reset Link &rarr;
             </button>
         </form>
@@ -44,5 +44,7 @@
     </div>
 </div>
 @endsection
+
+
 
 
