@@ -49,7 +49,7 @@
             <div class="space-y-1" x-data="{ show: false }">
                 <div class="flex justify-between items-center">
                     <label class="block text-xs font-bold text-gray-700">Password</label>
-                    <a href="{{ route('password.request') }}" class="text-[11px] font-bold text-brand-red hover:underline">Forgot?</a>
+                    <a href="{{ route('password.request') }}" class="text-[11px] font-bold text-brand-red hover:underline">Forgot Password?</a>
                 </div>
                 <div class="relative">
                     <input :type="show ? 'text' : 'password'" name="password" required placeholder="••••••••" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
