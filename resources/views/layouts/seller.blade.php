@@ -230,11 +230,46 @@
                 <div class="hidden sm:block w-px h-6 bg-gray-200 mx-1"></div>
 
                 <!-- Activity Bell -->
-                <button class="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 font-semibold text-sm transition px-2 outline-none">
-                    <i class="fa-regular fa-bell text-base sm:text-sm"></i> 
-                    <span class="hidden sm:inline">Activity</span> 
-                    <i class="fa-solid fa-chevron-down text-[10px] hidden sm:inline"></i>
-                </button>
+                <div class="relative" x-data="{ openActivity: false }">
+                    <button @click="openActivity = !openActivity" class="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-900 font-semibold text-sm transition px-2 outline-none cursor-pointer">
+                        <i class="fa-regular fa-bell text-base sm:text-sm"></i> 
+                        <span class="hidden sm:inline">Activity</span> 
+                        <i class="fa-solid fa-chevron-down text-[10px] hidden sm:inline"></i>
+                    </button>
+                    
+                    <div x-show="openActivity" @click.away="openActivity = false" class="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl py-2 z-50 text-left" style="display: none;" x-transition>
+                        <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+                            <p class="text-xs font-bold text-gray-900">Recent Activity</p>
+                        </div>
+                        <div class="max-h-64 overflow-y-auto">
+                            @php
+                                $recentActivities = \App\Models\Shipment::where('user_id', Auth::id())->latest()->take(5)->get();
+                            @endphp
+                            @forelse($recentActivities as $activity)
+                                <a href="{{ route('seller.shipments.index') }}?search={{ $activity->awb_number }}" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5 text-indigo-500">
+                                            <i class="fa-solid fa-box text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-800 font-medium">Order {{ $activity->awb_number }}</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5">Status: <span class="font-semibold">{{ $activity->status_name ?? 'Created' }}</span></p>
+                                            <p class="text-[9px] text-gray-400 mt-1">{{ $activity->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="px-4 py-6 text-center">
+                                    <i class="fa-regular fa-bell-slash text-gray-300 text-2xl mb-2"></i>
+                                    <p class="text-xs text-gray-500">No new activity</p>
+                                </div>
+                            @endforelse
+                        </div>
+                        <div class="px-4 py-2 border-t border-gray-100 text-center">
+                            <a href="{{ route('seller.shipments.index') }}" class="text-[11px] font-medium text-[#4338ca] hover:text-[#3730a3]">View all shipments</a>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- User Profile & Logout Dropdown -->
                 <div class="relative" x-data="{ openProfile: false }">
