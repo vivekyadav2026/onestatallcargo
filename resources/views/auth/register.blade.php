@@ -59,15 +59,27 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="space-y-1">
+                <div class="space-y-1" x-data="{ show: false }">
                     <label class="block text-xs font-bold text-gray-700">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                    <div class="relative">
+                        <input :type="show ? 'text' : 'password'" name="password" required placeholder="••••••••" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-brand-navy focus:outline-none">
+                            <i class="fa-solid fa-eye" x-show="!show"></i>
+                            <i class="fa-solid fa-eye-slash" x-show="show" style="display: none;" x-cloak></i>
+                        </button>
+                    </div>
                     @error('password') <p class="text-xs text-red-500 mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="space-y-1">
+                <div class="space-y-1" x-data="{ show: false }">
                     <label class="block text-xs font-bold text-gray-700">Confirm Password</label>
-                    <input type="password" name="password_confirmation" required placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                    <div class="relative">
+                        <input :type="show ? 'text' : 'password'" name="password_confirmation" required placeholder="••••••••" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-brand-navy focus:ring-2 focus:ring-blue-400/20 transition-all">
+                        <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 px-4 flex items-center text-gray-400 hover:text-brand-navy focus:outline-none">
+                            <i class="fa-solid fa-eye" x-show="!show"></i>
+                            <i class="fa-solid fa-eye-slash" x-show="show" style="display: none;" x-cloak></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
