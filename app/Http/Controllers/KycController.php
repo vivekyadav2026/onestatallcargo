@@ -77,11 +77,11 @@ class KycController extends Controller
     {
         $query = Kyc::with('user');
 
-        if ($request->filled('status')) {
+        if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
-        } else {
+        } elseif (!$request->has('status')) {
             // Default to pending first
-            $query->orderByRaw("FIELD(status, 'pending', 'rejected', 'approved')");
+            $query->where('status', 'pending');
         }
 
         $kycs = $query->latest()->paginate(15)->withQueryString();

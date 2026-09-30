@@ -14,8 +14,8 @@
         
         <!-- Filter Tabs -->
         <div class="flex bg-gray-100 p-1 rounded-xl">
-            <a href="{{ route('admin.kyc.index') }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ !request('status') ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900' }}">All Requests</a>
-            <a href="{{ route('admin.kyc.index', ['status' => 'pending']) }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ request('status') === 'pending' ? 'bg-white shadow text-yellow-700' : 'text-gray-500 hover:text-gray-900' }}">Pending</a>
+            <a href="{{ route('admin.kyc.index', ['status' => 'all']) }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ request('status') === 'all' ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-900' }}">All Requests</a>
+            <a href="{{ route('admin.kyc.index', ['status' => 'pending']) }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ request('status', 'pending') === 'pending' ? 'bg-white shadow text-yellow-700' : 'text-gray-500 hover:text-gray-900' }}">Pending</a>
             <a href="{{ route('admin.kyc.index', ['status' => 'approved']) }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ request('status') === 'approved' ? 'bg-white shadow text-green-700' : 'text-gray-500 hover:text-gray-900' }}">Approved</a>
             <a href="{{ route('admin.kyc.index', ['status' => 'rejected']) }}" class="px-4 py-2 text-xs font-bold rounded-lg transition {{ request('status') === 'rejected' ? 'bg-white shadow text-red-700' : 'text-gray-500 hover:text-gray-900' }}">Rejected</a>
         </div>
@@ -173,3 +173,4 @@
 
 </div>
 @endsection
+

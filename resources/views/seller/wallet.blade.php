@@ -94,7 +94,7 @@
                 <!-- Transactions Ledger -->
                 <div x-show="view === 'transactions'">
                     @php
-                        $transactions = \App\Models\WalletTransaction::where('user_id', Auth::id())->latest()->paginate(15);
+                        $transactions = \App\Models\WalletTransaction::where('user_id', Auth::id())->where('status', 'success')->latest()->paginate(15);
                     @endphp
                     <div class="overflow-x-auto overflow-y-auto max-h-[500px]">
                         <table class="w-full text-left text-sm whitespace-nowrap">
@@ -271,6 +271,7 @@ function walletManager() {
 }
 </script>
 @endsection
+
 
 
 
