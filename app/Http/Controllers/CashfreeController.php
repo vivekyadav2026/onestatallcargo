@@ -97,8 +97,8 @@ class CashfreeController extends Controller
             ],
             'order_meta' => [
                 // If user is redirected on mobile, they come back to wallet page to verify
-                'return_url' => route('seller.wallet') . '?order_id={order_id}',
-                'notify_url' => url('/api/webhooks/cashfree') // for background verification
+                'return_url' => str_replace('http://', 'https://', route('seller.wallet') . '?order_id={order_id}'),
+                'notify_url' => str_replace('http://', 'https://', url('/api/webhooks/cashfree')) // for background verification
             ]
         ];
 
@@ -177,3 +177,4 @@ class CashfreeController extends Controller
         return response()->json(['success' => false, 'message' => 'Payment not verified']);
     }
 }
+

@@ -355,13 +355,21 @@ Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController:
 
 
 Route::get('/create-symlink', function () {
-    // Pehle agar koi purana folder hai toh usko delete karega
-    if (file_exists(public_path('storage'))) {
-        rmdir(public_path('storage'));
+    $targetFolder = storage_path('app/public');
+    $linkFolder = public_path('storage');
+    
+    if (file_exists($linkFolder)) {
+        return 'Storage link already exists! Everything is fine.';
     }
-    // Naya secure link banayega
-    Artisan::call('storage:link');
-    return 'Storage Link Created Successfully on Live Server!';
+    
+    try {
+        symlink($targetFolder, $linkFolder);
+        return 'Storage Link Created Successfully without exec()!';
+    } catch (\Exception $e) {
+        return 'Failed to create symlink: ' . $e->getMessage();
+    }
 });
+
+
 
 
