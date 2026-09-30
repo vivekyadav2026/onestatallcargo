@@ -3,15 +3,15 @@
 @section('title', 'Forgot Password - OneStall Cargo')
 
 @section('content')
-<div class="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6">
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 bg-gray-50/50">
     <div class="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-xl p-8 sm:p-10 space-y-6">
         
         <!-- Header -->
         <div class="text-center space-y-2">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-extrabold text-xl mx-auto shadow-sm bg-red-50 text-brand-red border border-red-200">
-                <i class="fa-solid fa-key"></i>
-            </div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight" class="text-2xl font-extrabold text-brand-navy tracking-tight">Forgot Password</h1>
+            <a href="/" class="inline-block mb-2">
+                <img src="{{ asset('images/logo.jpg') }}" alt="OneStall Cargo" class="h-12 w-auto mx-auto">
+            </a>
+            <h1 class="text-2xl font-extrabold text-brand-navy tracking-tight">Forgot Password</h1>
             <p class="text-xs text-gray-500">Enter your registered email address to receive a password reset link</p>
         </div>
 
@@ -33,17 +33,21 @@
                 @enderror
             </div>
 
-            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red hover:bg-brand-redHover text-white text-gray-900 font-extrabold text-sm shadow-md hover:shadow-lg transition-all duration-200 mt-2">
+            <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-brand-red hover:bg-brand-redHover text-white font-extrabold text-sm shadow-md shadow-red-500/20 transition-all duration-200 mt-2">
                 Send Reset Link &rarr;
             </button>
         </form>
 
         <p class="text-xs text-center text-gray-500 pt-2">
-            Remembered password? <a href="{{ route('login') }}" class="font-bold text-gray-900 hover:underline">Back to Sign In</a>
+            Remembered password? <a href="{{ route('login') }}" class="font-bold text-brand-navy hover:underline">Back to Sign In</a>
         </p>
     </div>
 </div>
 @endsection
+
+
+
+
 
 
 
