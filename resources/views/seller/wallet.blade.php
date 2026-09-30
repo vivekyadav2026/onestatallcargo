@@ -53,12 +53,12 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Enter Amount</label>
                         <div class="relative mb-4">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">&#8377;</span>
-                            <input type="number" x-model="amount" min="100" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#E8027D] focus:ring-1 focus:ring-[#E8027D] font-bold text-gray-900 text-lg transition" required>
+                            <input type="number" x-model="amount" min="500" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#E8027D] focus:ring-1 focus:ring-[#E8027D] font-bold text-gray-900 text-lg transition" required>
                         </div>
 
                         <!-- Quick Chips -->
                         <div class="flex flex-wrap gap-2 mb-6">
-                            <button type="button" @click="amount = 1000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;1,000</button>
+                            <button type="button" @click="amount = 500" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;500</button>
                             <button type="button" @click="amount = 5000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;5,000</button>
                             <button type="button" @click="amount = 10000" class="px-3 py-1.5 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition">+ &#8377;10,000</button>
                         </div>
@@ -177,7 +177,7 @@
 <script>
 function walletManager() {
     return {
-        amount: 1000,
+        amount: 500,
         loading: false,
         view: 'transactions',
         
@@ -191,8 +191,8 @@ function walletManager() {
         },
         
         async initiateRecharge() {
-            if(this.amount < 100) {
-                alert("Minimum recharge amount is ₹100");
+            if(this.amount < 500) {
+                alert("Minimum recharge amount is ?500");
                 return;
             }
             this.loading = true;
@@ -271,5 +271,8 @@ function walletManager() {
 }
 </script>
 @endsection
+
+
+
 
 

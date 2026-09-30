@@ -52,7 +52,7 @@ class CashfreeController extends Controller
         }
 
         $request->validate([
-            'amount' => 'required|numeric|min:1'
+            'amount' => 'required|numeric|min:500'
         ]);
 
         $user = auth()->user();
@@ -177,5 +177,6 @@ class CashfreeController extends Controller
         return response()->json(['success' => false, 'message' => 'Payment not verified']);
     }
 }
+
 
 
