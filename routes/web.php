@@ -354,6 +354,14 @@ Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
 
 
-
+Route::get('/create-symlink', function () {
+    // Pehle agar koi purana folder hai toh usko delete karega
+    if (file_exists(public_path('storage'))) {
+        rmdir(public_path('storage'));
+    }
+    // Naya secure link banayega
+    Artisan::call('storage:link');
+    return 'Storage Link Created Successfully on Live Server!';
+});
 
 
