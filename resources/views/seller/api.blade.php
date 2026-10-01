@@ -11,7 +11,17 @@
         <div>
             <h3 class="font-bold text-gray-900 border-b border-gray-100 pb-2 mb-4">Production API Token</h3>
             
-            @if($user->api_token)
+            @if(session('new_token'))
+                <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-4">
+                    <p class="text-sm font-bold text-green-800 mb-2">Here is your new API Token. Copy it now, it won't be shown again!</p>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="newToken" value="{{ session('new_token') }}" readonly class="w-full bg-white border border-green-300 rounded-lg p-2 font-mono text-sm text-gray-800 focus:outline-none">
+                        <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('newToken').value); alert('Copied!')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            @elseif($user->api_token)
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 font-mono text-sm break-all mb-4">
                     {{ substr($user->api_token, 0, 15) }}...{{ substr($user->api_token, -5) }}
                 </div>
@@ -37,12 +47,22 @@
         <p class="text-sm text-gray-300">Use your token as a Bearer Token in the Authorization header.</p>
         
         <div class="space-y-2 text-sm mt-4">
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/api/v1/external/shipment</code></div>
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>api.onestallcargo.com/api/v1/external/track/{awb}</code></div>
-            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>api.onestallcargo.com/api/v1/external/rate</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/rates') }}</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/shipments') }}</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>{{ url('api/v1/shipments') }}</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>{{ url('api/v1/shipments/{awb}') }}</code></div>
+            <div class="bg-black/30 p-3 rounded-lg"><span class="text-yellow-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/shipments/{awb}/cancel') }}</code></div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700/50">
+                <p class="text-xs text-gray-400 mb-2">External Aggregator APIs (Legacy Auth):</p>
+                <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/external/serviceability') }}</code></div>
+                <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/external/rate') }}</code></div>
+                <div class="bg-black/30 p-3 rounded-lg"><span class="text-green-400 font-bold mr-2">POST</span> <code>{{ url('api/v1/external/shipment') }}</code></div>
+                <div class="bg-black/30 p-3 rounded-lg"><span class="text-blue-400 font-bold mr-2">GET</span> <code>{{ url('api/v1/external/track/{awb}') }}</code></div>
+            </div>
         </div>
         
-        <a href="/api-docs" class="inline-block mt-4 text-[#E8027D] text-sm font-bold hover:underline">View Full Interactive Documentation &rarr;</a>
+        <a href="{{ url('api-docs') }}" class="inline-block mt-4 text-[#E8027D] text-sm font-bold hover:underline">View Full Interactive Documentation &rarr;</a>
     </div>
 </div>
 @endsection

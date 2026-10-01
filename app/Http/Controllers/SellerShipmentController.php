@@ -243,26 +243,53 @@ class SellerShipmentController extends Controller
         $request->validate([
             'bulk_file' => 'required|file|mimes:csv,txt'
         ]);
-        for ($i = 0; $i < 3; $i++) {
+
+        $file = $request->file('bulk_file');
+        $csvData = file_get_contents($file->getRealPath());
+        $rows = array_map('str_getcsv', explode("\n", trim($csvData)));
+        $header = array_shift($rows);
+        $header = array_map('trim', $header);
+
+        $successCount = 0;
+
+        foreach ($rows as $row) {
+            if (empty(implode('', $row))) continue;
+            
+            // Pad row if missing columns
+            if(count($row) < count($header)) {
+                $row = array_pad($row, count($header), '');
+            }
+            $data = array_combine($header, $row);
+
             $shipment = new Shipment();
             $shipment->user_id = $user->id;
             $shipment->awb_number = 'OSC' . strtoupper(Str::random(8));
-            $shipment->shipment_type = 'B2C';
-            $shipment->receiver_name = 'Bulk Customer ' . ($i + 1);
-            $shipment->receiver_phone = '999999999' . $i;
-            $shipment->delivery_address = 'Bulk Upload Address ' . $i;
-            $shipment->delivery_city = 'Mumbai';
-            $shipment->delivery_pincode = '400001';
-            $shipment->weight_kg = 1.0;
-            $shipment->is_cod = false;
-            $shipment->invoice_value = 500;
+            $shipment->shipment_type = $data['shipment_type'] ?? 'B2C';
+            $shipment->receiver_name = $data['receiver_name'] ?? 'Customer';
+            $shipment->receiver_phone = $data['receiver_phone'] ?? '9999999999';
+            $shipment->delivery_address = $data['delivery_address'] ?? 'N/A';
+            $shipment->delivery_city = $data['delivery_city'] ?? 'N/A';
+            $shipment->delivery_pincode = $data['delivery_pincode'] ?? '000000';
+            $shipment->weight_kg = (float) ($data['weight_kg'] ?? 1.0);
+            $shipment->length_cm = (float) ($data['length_cm'] ?? 10);
+            $shipment->width_cm = (float) ($data['width_cm'] ?? 10);
+            $shipment->height_cm = (float) ($data['height_cm'] ?? 10);
+            $shipment->is_cod = (bool) ($data['is_cod'] ?? false);
+            $shipment->invoice_value = (float) ($data['invoice_value'] ?? 0);
+            $shipment->product_name = $data['product_name'] ?? 'General Item';
+            $shipment->product_sku = $data['product_sku'] ?? '';
+            $shipment->product_qty = (int) ($data['product_qty'] ?? 1);
+            
+            // Fake calculation
             $shipment->total_amount = 55;
             $shipment->status = 'Manifested';
+            
             app(\App\Services\ShipmentService::class)->assignRouting($shipment, $shipment->delivery_pincode);
             $shipment->save();
+            $successCount++;
         }
 
-        return redirect()->route('seller.dashboard')->with('success', 'Bulk file processed! 3 shipments successfully created and pushed to Couriers.');
+        return redirect()->route('seller.dashboard')->with('success', "Bulk file processed! {$successCount} shipments successfully created.");
     }
 
     public function index(Request $request)
@@ -429,7 +456,18 @@ class SellerShipmentController extends Controller
     public function printLabel($awb)
     {
         $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
-        return view('seller.label', compact('shipment'));
+        
+        $settings = Auth::user()->label_settings ?? [
+            'label_type' => 'thermal',
+            'enable_product_name' => true,
+            'enable_consignee_contact' => true,
+            'enable_consignee_address' => true,
+            'enable_support_contact' => true,
+            'enable_support_email' => true,
+            'enable_rto_address' => true,
+        ];
+
+        return view('seller.label', compact('shipment', 'settings'));
     }
 
     public function printLR($awb)

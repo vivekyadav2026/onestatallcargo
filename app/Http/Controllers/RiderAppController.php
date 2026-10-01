@@ -153,6 +153,7 @@ class RiderAppController extends Controller
             'name'     => 'required|string|max:255',
             'phone'    => 'required|string|max:15',
             'password' => 'nullable|string|min:6',
+            'avatar'   => 'nullable|image|max:2048',
         ]);
 
         $user->name  = $validated['name'];
@@ -160,6 +161,13 @@ class RiderAppController extends Controller
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user->save();

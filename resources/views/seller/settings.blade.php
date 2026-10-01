@@ -28,7 +28,7 @@
         <!-- Category 1: Business Profile & Verification -->
         <div class="mb-8">
             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-building"></i> BUSINESS PROFILE & KYC</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button @click="openView('company', 'Company Details', 'Manage business name, GSTIN, PAN, and brand settings')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#4338ca] flex items-center justify-center mb-3 text-lg group-hover:bg-[#4338ca] group-hover:text-white transition-colors">
                         <i class="fa-solid fa-briefcase"></i>
@@ -78,7 +78,7 @@
         <!-- Category 2: Logistics & Operations -->
         <div class="mb-8">
             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-warehouse"></i> LOGISTICS & PAYOUTS</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button @click="openView('warehouses', 'Pickup Warehouses', 'Manage locations where couriers will pick up your parcels')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group">
                     <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 text-lg group-hover:bg-amber-600 group-hover:text-white transition-colors">
                         <i class="fa-solid fa-location-dot"></i>
@@ -86,6 +86,14 @@
                     <h4 class="font-bold text-gray-900 text-base mb-1 group-hover:text-[#4338ca]">Pickup Warehouses</h4>
                     <p class="text-xs text-gray-500 leading-relaxed">Add and manage pickup hub locations with auto pincode lookup</p>
                 </button>
+
+                <a href="{{ route('seller.label-settings') }}" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group">
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 text-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-print"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-900 text-base mb-1 group-hover:text-[#4338ca]">Label Setting</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Configure label format, details to show on label and default types</p>
+                </a>
 
                 <button @click="openView('bank', 'Bank Account for COD Payouts', 'Set up your bank account for COD remittances')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 text-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
@@ -100,7 +108,7 @@
         <!-- Category 3: Developer API & Security -->
         <div class="mb-8">
             <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-code"></i> INTEGRATION & SECURITY</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <button @click="openView('api_keys', 'API Keys & Developer Tokens', 'Generate Sanctum tokens for store API integration')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group">
                     <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 text-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                         <i class="fa-solid fa-key"></i>
@@ -141,7 +149,7 @@
                   <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">1</span> Basic & Brand Information
                   </h4>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div>
                           <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Contact Person Name <span class="text-red-500">*</span></label>
                           <input type="text" x-model="profile.name" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
@@ -180,7 +188,7 @@
                   <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">2</span> Tax Details
                   </h4>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <div>
                           <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">GSTIN Number (Optional)</label>
                           <input type="text" maxlength="15" x-model="profile.gstin" @input="profile.gstin = profile.gstin.toUpperCase()" placeholder="22AAAAA0000A1Z5" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono text-gray-900 uppercase focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
@@ -260,7 +268,7 @@
         @if(!$userKyc || $userKyc->status !== 'approved')
               <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm max-w-4xl mt-4">
                   <div class="mb-8">
-                      <div class="flex items-center gap-3 mb-2">
+                      <div class="mb-6 flex items-center gap-4">`n                    @if(Auth::user()->avatar)`n                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">`n                    @else`n                        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user text-2xl"></i></div>`n                    @endif`n                    <div>`n                        <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Profile Photo</label>`n                        <input type="file" id="avatar-upload" accept="image/*" class="text-xs">`n                    </div>`n                </div>`n                <div class="flex items-center gap-3 mb-2">
                           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                               <i class="fa-solid fa-file-shield"></i>
                           </div>
@@ -277,7 +285,7 @@
                           <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
                               <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">1</span> Business Details
                           </h4>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <div>
                                   <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Business Structure</label>
                                   <select name="business_type" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
@@ -299,7 +307,7 @@
                           <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
                               <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">2</span> Identity Proof
                           </h4>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <div>
                                   <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Document Type</label>
                                   <select name="document_type" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
@@ -372,7 +380,7 @@
                             <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]">4</span> Bank Details <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">(Optional)</span>
                             </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Account Holder Name</label>
                                     <input type="text" name="account_holder_name" value="{{ Auth::user()->account_holder_name ?? '' }}" placeholder="Name as per Bank" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition">
@@ -731,8 +739,8 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.profile') }}', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify(this.profile)
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: (function(p){ let f = new FormData(); for(let k in p){ f.append(k, p[k] || ''); } let img = document.getElementById('avatar-upload'); if(img && img.files[0]) f.append('avatar', img.files[0]); return f; })(this.profile)
                 });
                 let data = await res.json();
                 if(data.success) {
@@ -748,7 +756,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.bank') }}', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(this.bank)
                 });
                 let data = await res.json();
@@ -765,7 +773,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.password') }}', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(this.pwd)
                 });
                 let data = await res.json();
@@ -854,7 +862,7 @@ function settingsManager() {
 
                 let res = await fetch(url, {
                     method: method,
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(payload)
                 });
                 let data = await res.json();
@@ -906,7 +914,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.api-keys') }}', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ token_name: this.newTokenName })
                 });
                 let data = await res.json();

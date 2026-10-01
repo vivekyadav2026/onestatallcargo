@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -43,10 +43,10 @@
             <div class="address-box">
                 <strong>TO:</strong>
                 {{ $shipment->receiver_name }}<br>
-                {{ $shipment->delivery_address }}<br>
+                @if(!empty($settings['enable_consignee_address'])){{ $shipment->delivery_address }}<br>@else<i>[Address Hidden]</i><br>@endif
                 {{ $shipment->delivery_city }} - {{ $shipment->delivery_pincode }}<br>
                 {{ $shipment->destination_country }}<br>
-                Ph: {{ $shipment->receiver_phone }}
+                Ph: {{ !empty($settings['enable_consignee_contact']) ? $shipment->receiver_phone : substr($shipment->receiver_phone, 0, 4) . '******' }}
             </div>
             <div class="address-box">
                 <strong>FROM:</strong>
@@ -93,7 +93,7 @@
         @endif
         
         <div class="footer">
-            <p>Return Address: If undelivered, return to Origin Hub.</p>
+            @if(!empty($settings['enable_rto_address']))<p>Return Address: If undelivered, return to Origin Hub.</p>@endif @if(!empty($settings['enable_support_contact']) || !empty($settings['enable_support_email']))<p>@if(!empty($settings['enable_support_contact'])) Support: {{ $shipment->user->support_phone ?? '1800-XXX-XXXX' }} @endif @if(!empty($settings['enable_support_email'])) | Email: support@onestallcargo.com @endif</p>@endif
         </div>
     </div>
 </body>

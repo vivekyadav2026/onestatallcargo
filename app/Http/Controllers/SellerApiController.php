@@ -23,9 +23,9 @@ class SellerApiController extends Controller
         // Generate new Sanctum token
         $token = $user->createToken('ecommerce-api')->plainTextToken;
         
-        $user->api_token = $token; // We just store the plain token in api_token column temporarily for the UI to display once
+        $user->api_token = $token; 
         $user->save();
 
-        return back()->with('success', 'New API Key generated successfully! (Note: Keep this token secure. It will not be shown fully again.)');
+        return back()->with('success', 'New API Key generated successfully!')->with('new_token', $token);
     }
 }

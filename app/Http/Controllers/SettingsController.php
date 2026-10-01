@@ -25,6 +25,7 @@ class SettingsController extends Controller
             'website' => 'nullable|string|max:255',
             'support_phone' => 'nullable|string|max:20',
             'email' => 'required|email|max:255|unique:users,email,'.Auth::id(),
+            'avatar' => 'nullable|image|max:2048',
         ]);
 
         $user = Auth::user();
@@ -33,6 +34,14 @@ class SettingsController extends Controller
             'business_type', 'company_address', 'company_city', 'company_state',
             'company_pincode', 'website', 'support_phone', 'email'
         ]));
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
+
         $user->save();
 
         return response()->json(['success' => true, 'message' => 'Company details updated successfully']);

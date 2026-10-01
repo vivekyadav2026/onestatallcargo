@@ -37,11 +37,16 @@
             </div>
 
             <div class="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm font-bold max-w-md mx-auto text-left">
-                <i class="fa-solid fa-info-circle mr-1"></i> Ensure your CSV has the following headers:
-                <ul class="list-disc pl-5 mt-2 font-normal text-xs text-blue-700">
-                    <li>Receiver Name, Phone, Address, City, Pincode</li>
-                    <li>Weight, Length, Width, Height</li>
-                    <li>Payment Type (COD/Prepaid), Invoice Value</li>
+                <div class="flex justify-between items-start mb-2">
+                    <div><i class="fa-solid fa-info-circle mr-1"></i> Ensure your CSV has the following headers:</div>
+                    <a href="{{ asset('downloads/sample_bulk_order.csv') }}" download class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full whitespace-nowrap shadow-sm transition"><i class="fa-solid fa-download"></i> Sample CSV</a>
+                </div>
+                <ul class="list-disc pl-5 font-normal text-xs text-blue-700">
+                    <li>pickup_pincode, shipment_type</li>
+                    <li>receiver_name, receiver_phone, delivery_address, delivery_city, delivery_pincode</li>
+                    <li>weight_kg, length_cm, width_cm, height_cm</li>
+                    <li>is_cod (1 or 0), invoice_value</li>
+                    <li>product_name, product_sku, product_qty</li>
                 </ul>
             </div>
 

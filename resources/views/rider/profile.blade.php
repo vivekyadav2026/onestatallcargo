@@ -2,7 +2,7 @@
 @section('content')
 <div class="space-y-4">
     <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 text-center">
-        <div class="w-20 h-20 bg-[var(--theme-active)] text-white text-3xl font-black rounded-full flex items-center justify-center mx-auto shadow-md mb-4">{{ substr($user->name, 0, 1) }}</div>
+        @if($user->avatar)<img src="{{ asset('storage/' . $user->avatar) }}" class="w-20 h-20 rounded-full object-cover mx-auto shadow-md mb-4">@else<div class="w-20 h-20 bg-[var(--theme-active)] text-white text-3xl font-black rounded-full flex items-center justify-center mx-auto shadow-md mb-4">{{ substr($user->name, 0, 1) }}</div>@endif
         <h2 class="text-xl font-bold text-gray-900">{{ $user->name }}</h2>
         <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">{{ str_replace('_', ' ', $user->role) }}</p>
         <p class="text-sm text-gray-600 mt-2"><i class="fa-solid fa-phone mr-1"></i> {{ $user->phone ?? 'No Phone' }}</p>

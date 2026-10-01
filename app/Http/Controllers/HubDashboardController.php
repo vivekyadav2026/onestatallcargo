@@ -100,19 +100,80 @@ class HubDashboardController extends Controller
     public function bagging()
     {
         if ($error = $this->checkAccess()) return back()->with('error', $error);
-        return view('hub.bagging');
+        
+        $user = Auth::user();
+        $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
+        $hub = \App\Models\Hub::where('manager_id', $user->id)->first();
+
+        $bags = \App\Models\Bag::query();
+        if ($franchise) {
+            $bags->where('franchise_id', $franchise->id);
+        } else if ($hub) {
+            $bags->where('hub_id', $hub->id);
+        }
+
+        $bags = $bags->orderBy('created_at', 'desc')->take(20)->get();
+
+        return view('hub.bagging', compact('bags'));
     }
 
     public function createBag(Request $request)
     {
         if ($error = $this->checkAccess()) return back()->with('error', $error);
-        return back()->with('success', 'Bag created successfully.');
+        
+        $user = Auth::user();
+        $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
+        $hub = \App\Models\Hub::where('manager_id', $user->id)->first();
+
+        $bag = new \App\Models\Bag();
+        $bag->bag_number = 'BAG-' . strtoupper(Str::random(8));
+        $bag->status = 'Open';
+        
+        if ($franchise) {
+            $bag->franchise_id = $franchise->id;
+        } else if ($hub) {
+            $bag->hub_id = $hub->id;
+        }
+        $bag->save();
+
+        return back()->with('success', 'Bag ' . $bag->bag_number . ' created successfully.');
     }
 
     public function scanToBag(Request $request)
     {
         if ($error = $this->checkAccess()) return back()->with('error', $error);
-        return back()->with('success', 'Scanned to bag successfully.');
+
+        $request->validate([
+            'bag_id' => 'required|exists:bags,id',
+            'awb_number' => 'required|string',
+        ]);
+
+        $bag = \App\Models\Bag::findOrFail($request->bag_id);
+        if ($bag->status !== 'Open') {
+            return back()->with('error', 'Bag is not open for adding parcels.');
+        }
+
+        $shipment = Shipment::where('awb_number', $request->awb_number)->first();
+        if (!$shipment) {
+            return back()->with('error', 'Shipment not found for AWB: ' . $request->awb_number);
+        }
+
+        if ($shipment->bag_id) {
+            return back()->with('error', 'Shipment is already in a bag!');
+        }
+
+        $shipment->bag_id = $bag->id;
+        $shipment->status = 'Bagged';
+        $shipment->save();
+
+        \App\Models\ShipmentEvent::create([
+            'shipment_id' => $shipment->id,
+            'status' => 'Bagged',
+            'location' => 'Hub/Franchise',
+            'remarks' => 'Scanned into Bag: ' . $bag->bag_number
+        ]);
+
+        return back()->with('success', 'Parcel ' . $request->awb_number . ' successfully scanned to bag ' . $bag->bag_number);
     }
 
     public function profile()
@@ -132,6 +193,7 @@ class HubDashboardController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'password' => 'nullable|string|min:6',
+            'avatar' => 'nullable|image|max:2048',
         ]);
 
         $userData = [
@@ -141,6 +203,13 @@ class HubDashboardController extends Controller
 
         if (!empty($validated['password'])) {
             $userData['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $userData['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user->update($userData);

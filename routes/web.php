@@ -291,6 +291,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipment/{awb}/lr', [\App\Http\Controllers\SellerShipmentController::class, 'printLR'])->name('seller.lr');
         Route::get('/shipment/{awb}/invoice', [\App\Http\Controllers\SellerShipmentController::class, 'printInvoice'])->name('seller.invoice');
         Route::get('/api-keys', [\App\Http\Controllers\SellerApiController::class, 'index'])->name('seller.api-keys');
+        Route::get('/label-settings', [\App\Http\Controllers\SellerLabelSettingController::class, 'index'])->name('seller.label-settings');
+        Route::post('/label-settings', [\App\Http\Controllers\SellerLabelSettingController::class, 'store'])->name('seller.label-settings.store');
         Route::get('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'index'])->name('seller.integrations');
         Route::post('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'save'])->name('seller.integrations.save');
         Route::post('/api-keys/generate', [\App\Http\Controllers\SellerApiController::class, 'generate'])->name('seller.api-keys.generate');

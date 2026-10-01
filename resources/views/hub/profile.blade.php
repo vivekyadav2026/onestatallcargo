@@ -27,7 +27,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                 <h3 class="font-bold text-gray-800 mb-6 border-b border-gray-100 pb-2">Personal Details</h3>
                 
-                <form action="{{ route('hub.profile.update') }}" method="POST" class="space-y-5">
+                <form action="{{ route('hub.profile.update') }}" method="POST" class="space-y-5" enctype="multipart/form-data">`n                    <div class="flex items-center gap-4 mb-4">`n                        @if($user->avatar)`n                            <img src="{{ asset('storage/' . $user->avatar) }}" class="w-16 h-16 rounded-full object-cover">`n                        @else`n                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user text-2xl"></i></div>`n                        @endif`n                        <div>`n                            <label class="block text-xs font-bold text-gray-700 mb-1">Profile Photo</label>`n                            <input type="file" name="avatar" accept="image/*" class="text-xs">`n                        </div>`n                    </div>
                     @csrf
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Full Name</label>

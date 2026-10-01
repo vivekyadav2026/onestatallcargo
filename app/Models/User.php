@@ -15,6 +15,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
         'role',
         'phone',
         'company_name',
@@ -40,10 +41,12 @@ class User extends Authenticatable
         'status',
         'early_cod_plan',
         'early_cod_fee',
+        'label_settings',
     ];
 
     protected $hidden = [
         'password',
+        'avatar',
         'remember_token',
     ];
 
@@ -53,6 +56,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'permissions' => 'array',
+            'label_settings' => 'array',
         ];
     }
 

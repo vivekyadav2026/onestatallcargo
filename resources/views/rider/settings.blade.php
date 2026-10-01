@@ -6,7 +6,7 @@
         <a href="{{ route('rider.profile') }}" class="text-xs font-bold text-gray-500 hover:text-gray-900">&larr; Back</a>
     </div>
 
-    <form action="{{ route('rider.profile.update') }}" method="POST" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 space-y-4">
+    <form action="{{ route('rider.profile.update') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200 space-y-4">`n        <div class="flex items-center gap-4 mb-4">`n            @if($user->avatar)`n                <img src="{{ asset('storage/' . $user->avatar) }}" class="w-16 h-16 rounded-full object-cover">`n            @else`n                <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-user"></i></div>`n            @endif`n            <div>`n                <label class="block text-xs font-bold text-gray-700 mb-1">Profile Photo</label>`n                <input type="file" name="avatar" accept="image/*" class="text-xs">`n            </div>`n        </div>
         @csrf
         
         <div>
