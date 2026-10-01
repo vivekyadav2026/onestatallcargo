@@ -65,12 +65,14 @@ class AdminSellerController extends Controller
             'company_city' => 'nullable|string|max:255',
             'company_state' => 'nullable|string|max:255',
             'company_pincode' => 'nullable|string|max:6',
+            'early_cod_plan' => 'nullable|in:standard,early_t1,early_t2,early_t3,early_t4',
+            'early_cod_fee' => 'nullable|numeric|min:0|max:100',
             'wallet_adjustment' => 'nullable|numeric'
         ]);
 
         $seller->fill($request->only([
             'name', 'phone', 'company_name', 'brand_name', 'gstin', 'pan_number',
-            'business_type', 'company_address', 'company_city', 'company_state', 'company_pincode'
+            'business_type', 'company_address', 'company_city', 'company_state', 'company_pincode', 'early_cod_plan', 'early_cod_fee'
         ]));
         
         if (!empty($validated['wallet_adjustment']) && $validated['wallet_adjustment'] != 0) {

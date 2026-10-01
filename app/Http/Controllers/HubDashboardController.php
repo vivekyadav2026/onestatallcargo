@@ -28,10 +28,26 @@ class HubDashboardController extends Controller
 
     public function index()
     {
-        $recentScans = Shipment::orderBy('updated_at', 'desc')->take(10)->get();
-        $riders = \App\Models\User::where('role', 'rider')->get();
         $kyc = \App\Models\Kyc::where('user_id', Auth::id())->first();
         $franchise = \App\Models\Franchise::where('user_id', Auth::id())->first();
+        $hubs = \App\Models\Hub::where('manager_id', Auth::id())->get();
+        
+        $shipmentsQuery = Shipment::query();
+        if ($franchise) {
+            $shipmentsQuery->where('franchise_id', $franchise->id);
+        } else {
+            $shipmentsQuery->whereNull('franchise_id');
+        }
+        $recentScans = $shipmentsQuery->orderBy('updated_at', 'desc')->take(10)->get();
+
+        $riders = \App\Models\User::where('role', 'rider')
+            ->whereHas('rider', function($query) use ($franchise, $hubs) {
+                if ($franchise) {
+                    $query->where('franchise_id', $franchise->id);
+                } else {
+                    $query->whereNull('franchise_id')->whereIn('hub_id', $hubs->pluck('id'));
+                }
+            })->get();
         
         return view('hub.dashboard', compact('recentScans', 'riders', 'kyc', 'franchise'));
     }
@@ -50,6 +66,17 @@ class HubDashboardController extends Controller
 
         if (!$shipment) {
             return back()->with('error', 'Shipment not found for AWB: ' . $validated['awb_number']);
+        }
+
+        $franchise = \App\Models\Franchise::where('user_id', Auth::id())->first();
+        if ($franchise) {
+            if ($shipment->franchise_id !== $franchise->id) {
+                return back()->with('error', 'UNAUTHORIZED: Shipment does not belong to your franchise.');
+            }
+        } else {
+            if ($shipment->franchise_id !== null) {
+                return back()->with('error', 'UNAUTHORIZED: Shipment belongs to a franchise.');
+            }
         }
 
         $shipment->status = $validated['action'];

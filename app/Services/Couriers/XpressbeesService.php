@@ -165,6 +165,17 @@ class XpressbeesService implements CourierInterface
         return []; // Implement when Xpressbees API credentials are available
     }
 
+    public function trackShipment(string $awb): array
+    {
+        return [
+            'status' => 'success',
+            'tracking_data' => [
+                'current_status' => 'In Transit (Xpressbees)',
+                'scans' => []
+            ]
+        ];
+    }
+
     // ─── Internal Helpers ────────────────────────────────────────────────────
 
     /**

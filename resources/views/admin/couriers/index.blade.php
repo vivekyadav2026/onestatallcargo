@@ -121,16 +121,95 @@
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-gray-100 text-right">
+            <div class="pt-4 border-t border-gray-100 flex justify-end gap-2">
+                <button type="button" onclick="openEditModal({{ $courier->id }}, '{{ addslashes($courier->name) }}', '{{ $courier->mode }}', '{{ addslashes($courier->api_credentials['api_url'] ?? '') }}', '{{ $courier->markup_type ?? 'percentage' }}', '{{ $courier->markup_value ?? 0 }}')" class="text-xs font-bold px-4 py-2 rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors shadow-sm">
+                    <i class="fa-solid fa-pen mr-1"></i> Edit Settings
+                </button>
                 <form action="{{ route('admin.couriers.toggle', $courier->id) }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="text-xs font-bold px-4 py-2 rounded-xl border {{ $courier->is_active ? 'border-red-200 text-red-600 hover:bg-red-50' : 'border-green-200 text-green-600 hover:bg-green-50' }} transition-colors shadow-sm">
-                        <i class="fa-solid fa-power-off"></i> {{ $courier->is_active ? 'Disable Service' : 'Enable Service' }}
+                        <i class="fa-solid fa-power-off"></i> {{ $courier->is_active ? 'Disable' : 'Enable' }}
                     </button>
                 </form>
             </div>
         </div>
         @endforeach
     </div>
+
+    <!-- Edit Courier Modal -->
+    <div id="editCourierModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="font-bold text-gray-900 text-lg flex items-center"><i class="fa-solid fa-pen-to-square mr-2 text-blue-600"></i> Edit Courier Configuration</h3>
+                <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <form id="editCourierForm" method="POST" class="space-y-4">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Courier Name</label>
+                        <input type="text" id="edit_name" name="name" required class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Environment Mode</label>
+                        <select id="edit_mode" name="mode" required class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                            <option value="sandbox">Sandbox (Testing)</option>
+                            <option value="production">Production (Live)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Base API URL</label>
+                        <input type="url" id="edit_api_url" name="api_url" required class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">API Key / Token (Leave blank to keep current)</label>
+                        <input type="password" name="api_key" placeholder="Enter new token or keep blank" class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Markup Type</label>
+                        <select id="edit_markup_type" name="markup_type" class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="flat">Flat Amount (₹)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Markup Value</label>
+                        <input type="number" step="0.01" id="edit_markup_value" name="markup_value" required class="w-full px-4 py-2 border border-gray-200 rounded-xl text-sm focus:border-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-gray-100">
+                    <button type="button" onclick="closeEditModal()" class="px-5 py-2 border border-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-50 transition text-sm">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold shadow-md hover:bg-blue-700 transition text-sm">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(id, name, mode, apiUrl, markupType, markupValue) {
+            document.getElementById('editCourierForm').action = '/admin/couriers/' + id + '/update';
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_mode').value = mode;
+            document.getElementById('edit_api_url').value = apiUrl;
+            document.getElementById('edit_markup_type').value = markupType;
+            document.getElementById('edit_markup_value').value = markupValue;
+            const modal = document.getElementById('editCourierModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editCourierModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
 </div>
 @endsection

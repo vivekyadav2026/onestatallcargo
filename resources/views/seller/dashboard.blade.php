@@ -1,4 +1,4 @@
-@extends('layouts.seller')
+﻿@extends('layouts.seller')
 @section('title', 'Dashboard - OneStall Cargo')
 
 @section('content')

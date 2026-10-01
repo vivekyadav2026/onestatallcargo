@@ -403,86 +403,134 @@
     </div>
 
     <!-- VIEW 3: Pickup Warehouses (Complete Management) -->
-    <div x-show="view === 'warehouses'" style="display: none;">
+    <div x-show="view === 'warehouses'" class="w-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden" style="display: none;">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 p-6 md:p-8">
         
-        <!-- Add Warehouse Drawer/Modal -->
-        <div x-show="showAddWarehouse" class="bg-white p-6 rounded-2xl border border-gray-200 shadow-lg mb-8" x-transition style="display: none;">
-            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                <h3 class="font-bold text-gray-900 text-lg flex items-center gap-2"><i class="fa-solid fa-plus text-[#4338ca]"></i> Add New Pickup Warehouse</h3>
-                <button type="button" @click="showAddWarehouse = false" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form @submit.prevent="saveWarehouse" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label class="text-xs font-bold text-gray-700">Warehouse Name / Label</label><input type="text" placeholder="e.g. Primary Delhi Hub" x-model="newWh.name" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                <div><label class="text-xs font-bold text-gray-700">Contact Person Name</label><input type="text" placeholder="Full Name" x-model="newWh.contact_person" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                <div><label class="text-xs font-bold text-gray-700">Mobile Phone</label><input type="text" maxlength="10" placeholder="10-digit Phone" x-model="newWh.phone" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                <div><label class="text-xs font-bold text-gray-700">Pincode (Auto-Detect City/State)</label><input type="text" maxlength="6" placeholder="6-digit PIN" x-model="newWh.pincode" @input="fetchCityForWarehouse(newWh.pincode)" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                <div class="md:col-span-2"><label class="text-xs font-bold text-gray-700">Complete Address</label><textarea x-model="newWh.address" placeholder="Building, Street, Landmark details" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" rows="2" required></textarea></div>
-                <div><label class="text-xs font-bold text-gray-700">City</label><input type="text" x-model="newWh.city" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                <div><label class="text-xs font-bold text-gray-700">State</label><input type="text" x-model="newWh.state" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 mt-1 text-sm outline-none focus:border-[#4338ca]" required></div>
-                
-                <div class="md:col-span-2 flex justify-end gap-3 mt-2 pt-3 border-t border-gray-100">
-                    <button type="button" @click="showAddWarehouse = false" class="px-5 py-2.5 border border-gray-300 text-gray-700 font-bold rounded-lg text-xs">Cancel</button>
-                    <button type="submit" class="px-6 py-2.5 bg-[#4338ca] text-white font-bold rounded-lg hover:bg-[#3730a3] transition text-xs shadow-md" :disabled="loading">
-                        <span x-show="!loading">Save Pickup Location</span>
-                        <span x-show="loading"><i class="fa-solid fa-spinner fa-spin"></i> Saving...</span>
+        <!-- Left Side: Form -->
+        <div class="xl:col-span-6 space-y-5 border-r border-gray-100 pr-0 xl:pr-8">
+            <p class="text-[13px] text-gray-400 font-bold mb-6">
+                <span class="text-red-500 font-bold">*</span>All Fields Required
+            </p>
+            
+            <form @submit.prevent="saveWarehouse" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Pickup Pincode <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.pincode" @input="fetchCityForWarehouse(newWh.pincode)" maxlength="6" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                        <p class="text-[10px] text-red-500 mt-1">*This field is Required</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Warehouse Name <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.name" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-end mb-1.5">
+                        <label class="block text-xs font-bold text-gray-700">Address 1 <span class="text-red-500">*</span></label>
+                        <span class="text-[10px] font-bold text-green-600">(House No./ Ward Number)</span>
+                    </div>
+                    <input type="text" x-model="newWh.address_1" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-end mb-1.5">
+                        <label class="block text-xs font-bold text-gray-700">Address 2</label>
+                        <span class="text-[10px] font-bold text-green-600">(Building Name)</span>
+                    </div>
+                    <input type="text" x-model="newWh.address_2" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Landmark <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.landmark" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">State <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.state" class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm outline-none font-semibold text-gray-600 cursor-not-allowed" readonly required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">City <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.city" class="w-full border border-gray-200 bg-gray-100 rounded-lg px-3 py-2 text-sm outline-none font-semibold text-gray-600 cursor-not-allowed" readonly required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Contact Name <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.contact_person" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Mobile Number <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="newWh.phone" maxlength="10" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-[#4c1d95] font-semibold text-left py-1.5 mt-2">
+                    " ?? Add your accessible mobile number for Smooth communication at Pickup! ?? "
+                </p>
+
+                <div class="flex gap-4 mt-6">
+                    <button type="button" @click="resetWhForm" class="px-6 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold rounded shadow-sm text-sm transition w-32">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-[#0ea5e9] hover:bg-[#0284c7] text-white font-bold rounded shadow-sm text-sm transition w-44 flex justify-center" :disabled="loading">
+                        <span x-show="!loading" x-text="newWh.id ? 'Update Warehouse' : 'Add Warehouse'"></span>
+                        <span x-show="loading"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...</span>
                     </button>
                 </div>
             </form>
         </div>
 
-        @php $warehouses = \App\Models\Warehouse::where('user_id', Auth::id())->get(); @endphp
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            @forelse($warehouses as $wh)
-                <div class="bg-white p-6 rounded-2xl border {{ $wh->is_default ? 'border-[#4338ca] ring-1 ring-[#4338ca]' : 'border-gray-200' }} shadow-sm relative flex flex-col justify-between" id="wh-card-{{ $wh->id }}">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <h4 class="font-bold text-gray-900 text-base flex items-center gap-2">
-                                <i class="fa-solid fa-warehouse text-[#4338ca]"></i> {{ $wh->name }}
-                            </h4>
-                            @if($wh->is_default)
-                                <span class="bg-green-100 text-green-800 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full"><i class="fa-solid fa-star"></i> Default Location</span>
-                            @endif
+        <!-- Right Side: List -->
+        <div class="xl:col-span-6">
+            <h2 class="text-[20px] font-bold text-center text-gray-900 mb-6 tracking-tight mt-4 xl:mt-0">Add Warehouse Addresses for Pickup</h2>
+            
+            <div class="bg-[#3b0764] rounded-2xl p-4 shadow-lg min-h-[450px]">
+                <div class="flex items-center px-4 pb-3 mb-4 border-b border-purple-800">
+                    <div class="w-1/4 shrink-0 text-white font-semibold text-xs tracking-wide">Contact Person</div>
+                    <div class="flex-1 min-w-0 text-white font-semibold text-xs tracking-wide text-center">Warehouse Details</div>
+                    <div class="w-[110px] shrink-0 text-white font-semibold text-xs tracking-wide text-right pr-2">Action</div>
+                </div>
+
+                <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1">@php $warehouses = \App\Models\Warehouse::where('user_id', Auth::id())->get(); @endphp
+                    @forelse($warehouses as $wh)
+                    <div class="bg-white rounded-[14px] p-4 flex items-center shadow-sm" id="wh-card-{{$wh->id}}">
+                        <!-- Contact Person -->
+                        <div class="w-1/4 shrink-0 pr-2">
+                            <div class="font-extrabold text-gray-900 text-[13px] truncate">{{ $wh->contact_person }}</div>
+                            <div class="text-gray-600 text-[11px] font-semibold mt-0.5">{{ $wh->phone }}</div>
                         </div>
-                        <p class="text-xs text-gray-600 font-semibold mb-1"><i class="fa-regular fa-user w-4 text-gray-400"></i> {{ $wh->contact_person }} ({{ $wh->phone }})</p>
-                        <p class="text-xs text-gray-500 leading-relaxed"><i class="fa-solid fa-location-dot w-4 text-gray-400"></i> {{ $wh->address }}, {{ $wh->city }}, {{ $wh->state }} - <span class="font-bold text-gray-800 font-mono">{{ $wh->pincode }}</span></p>
-                    </div>
 
-                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
-                        @if(!$wh->is_default)
-                            <button @click="setDefaultWarehouse({{ $wh->id }})" class="text-[#4338ca] hover:underline font-bold text-xs"><i class="fa-regular fa-star"></i> Set as Default</button>
-                        @else
-                            <span class="text-xs text-gray-400 font-bold">Primary Location</span>
-                        @endif
-
-                        <button @click="deleteWarehouse({{ $wh->id }})" class="text-red-500 hover:text-red-700 font-bold text-xs"><i class="fa-solid fa-trash mr-1"></i> Delete</button>
-                    </div>
-                </div>
-            @empty
-                <div class="md:col-span-2 bg-white p-12 text-center rounded-2xl border border-gray-200">
-                    <div class="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4 border border-gray-100">
-                        <i class="fa-solid fa-warehouse text-2xl"></i>
-                    </div>
-                    <h3 class="text-base font-bold text-gray-900 mb-1">No Pickup Warehouses Found</h3>
-                    <p class="text-sm text-gray-500 font-medium mb-4">Add a pickup location so couriers know where to collect your packages.</p>
-                    <button @click="showAddWarehouse = true" class="px-5 py-2.5 bg-[#4338ca] text-white font-bold text-xs rounded-xl shadow-md"><i class="fa-solid fa-plus mr-1"></i> Add Your First Warehouse</button>
-                </div>
-            @endforelse
-
-            <template x-for="wh in addedWarehouses" :key="wh.id">
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <h4 class="font-bold text-gray-900 text-base flex items-center gap-2"><i class="fa-solid fa-warehouse text-[#4338ca]"></i> <span x-text="wh.name"></span></h4>
-                            <span x-show="wh.is_default" class="bg-green-100 text-green-800 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full"><i class="fa-solid fa-star"></i> Default</span>
+                        <!-- Warehouse Details -->
+                        <div class="flex-1 min-w-0 text-center px-3">
+                            <div class="font-bold text-gray-900 text-[13px] mb-1 leading-tight truncate">{{ $wh->name }}</div>
+                            <div class="text-gray-600 text-[10px] leading-snug break-words">{{ $wh->address }}, {{ $wh->city }}, {{ $wh->state }}, {{ $wh->pincode }}</div>
                         </div>
-                        <p class="text-xs text-gray-600 font-semibold mb-1"><i class="fa-regular fa-user w-4 text-gray-400"></i> <span x-text="wh.contact_person"></span> (<span x-text="wh.phone"></span>)</p>
-                        <p class="text-xs text-gray-500 leading-relaxed"><i class="fa-solid fa-location-dot w-4 text-gray-400"></i> <span x-text="wh.address"></span>, <span x-text="wh.city"></span>, <span x-text="wh.state"></span> - <span class="font-bold text-gray-800 font-mono" x-text="wh.pincode"></span></p>
+
+                        <!-- Action -->
+                        <div class="shrink-0 flex items-center justify-end gap-2 pr-1" style="min-width: 110px;">
+                            <!-- Toggle (is_default) -->
+                            <button @click="setDefaultWarehouse({{ $wh->id }})" class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus:outline-none" :class="'{{ $wh->is_default }}' == '1' ? 'bg-[#0ea5e9]' : 'bg-gray-300'">
+                                <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm" :class="'{{ $wh->is_default }}' == '1' ? 'translate-x-4' : 'translate-x-0.5'"></span>
+                            </button>
+                            
+                            <!-- Edit -->
+                            <button @click="editWarehouse(JSON.parse($el.dataset.wh))" data-wh="{!! htmlspecialchars(json_encode($wh), ENT_QUOTES, 'UTF-8') !!}" class="w-7 h-7 shrink-0 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition shadow-sm"><i class="fa-solid fa-pencil text-[10px]"></i></button>
+
+                            <!-- Delete -->
+                            <button @click="deleteWarehouse({{ $wh->id }})" class="w-7 h-7 shrink-0 rounded-full bg-gray-500 text-white flex items-center justify-center hover:bg-red-500 transition shadow-sm"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                        </div>
                     </div>
+                    @empty
+                    <div class="text-center py-12">
+                        <div class="text-white/60 text-xs font-semibold">No pickup addresses found.</div>
+                    </div>
+                    @endforelse
                 </div>
-            </template>
+            </div>
         </div>
     </div>
+</div>
 
     <!-- VIEW 4: Bank Account for COD Remittance -->
     <div x-show="view === 'bank'" style="display: none;" class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm max-w-2xl">
@@ -660,7 +708,7 @@ function settingsManager() {
         // Warehouses
         showAddWarehouse: false,
         addedWarehouses: [],
-        newWh: { name: '', contact_person: '', phone: '', address: '', city: '', state: '', pincode: '' },
+        newWh: { name: '', contact_person: '', phone: '', address_1: '', address_2: '', landmark: '', city: '', state: '', pincode: '' },
 
         // API Keys
         newTokenName: '',
@@ -755,21 +803,71 @@ function settingsManager() {
             } catch(e) {}
         },
 
+        editWarehouse(wh) {
+            let addr1 = wh.address || '';
+            let addr2 = '';
+            let lmark = '-';
+            
+            // Try to extract landmark if present
+            if (addr1.includes('(Landmark: ')) {
+                let parts = addr1.split('(Landmark: ');
+                addr1 = parts[0].trim();
+                if (addr1.endsWith(',')) addr1 = addr1.slice(0, -1);
+                lmark = parts[1].replace(')', '').trim();
+            }
+
+            this.newWh = { 
+                id: wh.id,
+                name: wh.name, 
+                contact_person: wh.contact_person, 
+                phone: wh.phone, 
+                address_1: addr1, 
+                address_2: addr2, 
+                landmark: lmark, 
+                city: wh.city, 
+                state: wh.state, 
+                pincode: wh.pincode 
+            };
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
         async saveWarehouse() {
             this.loading = true;
+            
+            let fullAddress = this.newWh.address_1;
+            if (this.newWh.address_2) fullAddress += ", " + this.newWh.address_2;
+            if (this.newWh.landmark) fullAddress += " (Landmark: " + this.newWh.landmark + ")";
+            
+            let payload = {
+                name: this.newWh.name,
+                contact_person: this.newWh.contact_person,
+                phone: this.newWh.phone,
+                pincode: this.newWh.pincode,
+                city: this.newWh.city,
+                state: this.newWh.state,
+                address: fullAddress
+            };
+
             try {
-                let res = await fetch('{{ route('seller.settings.warehouses') }}', {
-                    method: 'POST',
+                let url = this.newWh.id ? `/seller/settings/warehouses/${this.newWh.id}` : '{{ route('seller.settings.warehouses') }}';
+                let method = this.newWh.id ? 'PUT' : 'POST';
+
+                let res = await fetch(url, {
+                    method: method,
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify(this.newWh)
+                    body: JSON.stringify(payload)
                 });
                 let data = await res.json();
                 if(data.success) {
-                    this.addedWarehouses.push(data.warehouse);
-                    this.showAddWarehouse = false;
-                    this.newWh = { name: '', contact_person: '', phone: '', address: '', city: '', state: '', pincode: '' };
-                } else { alert(data.message || "Failed to save warehouse"); }
-            } catch(e) { alert("Error saving warehouse"); }
+                    this.resetWhForm(); window.location.reload();
+                } else { 
+                    let errorMsg = data.message || "Failed to save warehouse";
+                    if(data.errors) {
+                        errorMsg += "\n" + Object.values(data.errors).flat().join("\n");
+                    }
+                    alert(errorMsg);
+                }
+            } catch(e) { alert("Error saving warehouse: " + e.message); }
             this.loading = false;
         },
 
@@ -778,7 +876,7 @@ function settingsManager() {
             try {
                 let res = await fetch(`/seller/settings/warehouses/${id}`, {
                     method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
                 });
                 let data = await res.json();
                 if(data.success) {
@@ -793,7 +891,7 @@ function settingsManager() {
             try {
                 let res = await fetch(`/seller/settings/warehouses/${id}/default`, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
                 });
                 let data = await res.json();
                 if(data.success) {
@@ -826,7 +924,7 @@ function settingsManager() {
             try {
                 await fetch(`/settings/api-keys/${id}`, {
                     method: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
                 });
                 document.getElementById('token-row-'+id).style.display = 'none';
             } catch(e) { alert("Error deleting token"); }

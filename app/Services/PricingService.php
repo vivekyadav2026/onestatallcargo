@@ -165,7 +165,11 @@ class PricingService
             throw new \Exception("Courier not found");
         }
 
-        $serviceClass = "App\\Services\\Couriers\\" . str_replace(' ', '', ucwords(strtolower($courier->name))) . "Service";
+        if (stripos($courier->name, 'OneStall') !== false) {
+            return $this->calculateOneStallRate($pickup_pin, $delivery_pin, $weight, 10, 10, 10, $is_cod, $invoice_value);
+        }
+
+        $serviceClass = "App\\Services\\Couriers\\" . str_replace([' ', '-'], '', ucwords(strtolower($courier->name))) . "Service";
         if (class_exists($serviceClass)) {
             $service = new $serviceClass($courier->api_credentials ?? []);
             // Pass is_cod and invoice_value so each courier can compute its own COD surcharge

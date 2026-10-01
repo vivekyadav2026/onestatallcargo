@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
@@ -52,7 +52,7 @@
                         <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                         <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                         <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
-                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
+                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Reconciliation</span></a>
                         <a href="{{ route('admin.weight.freeze') }}" class="sidebar-item {{ request()->routeIs('admin.weight.freeze') ? 'active' : '' }}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                         <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 
@@ -103,7 +103,7 @@
                 <a href="{{ route('admin.shipments.index') }}" class="sidebar-item {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}"><i class="fa-solid fa-box w-4 text-center"></i> <span>Shipments</span></a>
                 <a href="{{ route('admin.pickups.index') }}" class="sidebar-item {{ request()->routeIs('admin.pickups.*') ? 'active' : '' }}"><i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>Pickups</span></a>
                 <a href="{{ route('admin.ndr.index') }}" class="sidebar-item {{ request()->routeIs('admin.ndr.*') ? 'active' : '' }}"><i class="fa-solid fa-triangle-exclamation w-4 text-center"></i> <span>NDR & RTO</span></a>
-                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Mgmt</span></a>
+                        <a href="{{ route('admin.weight') }}" class="sidebar-item {{ request()->routeIs('admin.weight') ? 'active' : '' }}"><i class="fa-solid fa-scale-balanced w-4 text-center"></i> <span>Weight Reconciliation</span></a>
                         <a href="{{ route('admin.weight.freeze') }}" class="sidebar-item {{ request()->routeIs('admin.weight.freeze') ? 'active' : '' }}"><i class="fa-solid fa-snowflake w-4 text-center"></i> <span>Weight Freeze</span></a>
                 <a href="{{ route('admin.evidence.index') }}" class="sidebar-item {{ request()->routeIs('admin.evidence.*') ? 'active' : '' }}"><i class="fa-solid fa-video w-4 text-center"></i> <span>Evidence DB</span></a>                        <a href="{{ route('admin.riders.index') }}" class="sidebar-item {{ request()->routeIs('admin.riders.*') ? 'active' : '' }}"><i class="fa-solid fa-motorcycle w-4 text-center"></i> <span>Fleet (Riders)</span></a>
 

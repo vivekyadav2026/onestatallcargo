@@ -97,7 +97,7 @@
                                     company_address: '{{ addslashes($seller->company_address ?? '') }}',
                                     company_city: '{{ addslashes($seller->company_city ?? '') }}',
                                     company_state: '{{ addslashes($seller->company_state ?? '') }}',
-                                    company_pincode: '{{ addslashes($seller->company_pincode ?? '') }}'
+                                    company_pincode: '{{ addslashes($seller->company_pincode ?? '') }}', early_cod_plan: '{{ $seller->early_cod_plan ?? 'standard' }}', early_cod_fee: '{{ $seller->early_cod_fee ?? '0.00' }}'
                                 }; showEditModal = true" class="text-gray-500 hover:text-gray-900 font-bold text-xs" title="Edit Profile"><i class="fa-solid fa-pen"></i></button>
                                 
                                 <a href="{{ route('admin.billing.index') }}" class="text-[var(--gold-deep)] hover:text-yellow-600 font-bold text-xs" title="COD Ledger"><i class="fa-solid fa-file-invoice"></i></a>
@@ -257,6 +257,27 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-700 mb-1">Pincode</label>
                                     <input type="text" name="company_pincode" x-model="editData.company_pincode" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[var(--gold)] outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                                                <div class="p-4 bg-purple-50 border border-purple-100 rounded-xl mt-4">
+                            <h4 class="text-xs font-bold text-purple-900 mb-3"><i class="fa-solid fa-bolt text-yellow-500 mr-1"></i> Early COD Settings</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">COD Remittance Plan</label>
+                                    <select name="early_cod_plan" x-model="editData.early_cod_plan" class="w-full px-3 py-2 bg-white border border-purple-200 rounded-xl text-sm focus:border-purple-500 outline-none">
+                                        <option value="standard">Standard (T+8)</option>
+                                        <option value="early_t1">Delivered + 1 Day</option>
+                                        <option value="early_t2">Delivered + 2 Days</option>
+                                        <option value="early_t3">Delivered + 3 Days</option>
+                                        <option value="early_t4">Delivered + 4 Days</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-purple-900 mb-1">Early COD Fee (%)</label>
+                                    <input type="number" step="0.01" name="early_cod_fee" x-model="editData.early_cod_fee" placeholder="e.g. 1.5" class="w-full px-3 py-2 bg-white border border-purple-200 rounded-xl text-sm focus:border-purple-500 outline-none">
+                                    <p class="text-[9px] text-purple-600 mt-1">Deducted automatically from COD remittance</p>
                                 </div>
                             </div>
                         </div>

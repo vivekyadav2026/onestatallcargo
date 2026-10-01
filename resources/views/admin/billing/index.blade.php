@@ -88,12 +88,24 @@
                             &#8377; {{ number_format($ledger->total_cod, 2) }}
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <form action="{{ route('admin.billing.remit', $ledger->user_id) }}" method="POST" onsubmit="return confirm('Confirm you have manually remitted &#8377; {{ number_format($ledger->total_cod, 2) }} to this seller via bank transfer? This action cannot be undone.');">
-                                @csrf
-                                <button type="submit" class="px-5 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-deep)] text-gray-900 font-extrabold text-xs rounded-xl shadow-sm transition">
-                                    <i class="fa-solid fa-money-bill-transfer mr-1"></i> Mark as Remitted
-                                </button>
-                            </form>
+                            @if(optional($ledger->user)->early_cod_plan && optional($ledger->user)->early_cod_plan !== 'standard')
+                                <div class="mb-2 text-[10px] font-bold text-purple-600 bg-purple-50 inline-block px-2 py-1 rounded">
+                                    <i class="fa-solid fa-bolt text-yellow-500"></i> Early COD Active ({{ optional($ledger->user)->early_cod_fee }}% Fee)
+                                </div>
+                                <form action="{{ route('admin.billing.remit-early', $ledger->user_id) }}" method="POST" onsubmit="return confirm('Process Early COD? This will deduct the {{ optional($ledger->user)->early_cod_fee }}% fee and instantly credit the net amount to the seller\'s wallet.');">
+                                    @csrf
+                                    <button type="submit" class="w-full px-5 py-2.5 bg-[#5d16c5] hover:bg-[#4b11a3] text-white font-extrabold text-xs rounded-xl shadow-sm transition">
+                                        <i class="fa-solid fa-bolt mr-1"></i> Payout to Wallet
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.billing.remit', $ledger->user_id) }}" method="POST" onsubmit="return confirm('Confirm you have manually remitted &#8377; {{ number_format($ledger->total_cod, 2) }} to this seller via bank transfer? This action cannot be undone.');">
+                                    @csrf
+                                    <button type="submit" class="w-full px-5 py-2.5 bg-[var(--gold)] hover:bg-[var(--gold-deep)] text-gray-900 font-extrabold text-xs rounded-xl shadow-sm transition">
+                                        <i class="fa-solid fa-money-bill-transfer mr-1"></i> Mark as Remitted
+                                    </button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                     @empty

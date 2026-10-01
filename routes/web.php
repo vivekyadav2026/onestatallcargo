@@ -190,6 +190,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
         Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
         Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
+        Route::post('/couriers/{id}/update', [\App\Http\Controllers\AdminCourierController::class, 'update'])->name('admin.couriers.update');
         Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
         
         Route::get('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'index'])->name('admin.sellers.index');
@@ -209,6 +210,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/riders/{id}/delete', [\App\Http\Controllers\AdminRiderController::class, 'destroy'])->name('admin.riders.destroy');
         Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
+        Route::post('/billing/remit-early/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remitEarlyCod'])->name('admin.billing.remit-early');
         
                         Route::get('/roles', [\App\Http\Controllers\AdminRoleController::class, 'index'])->name('admin.roles.index');
         Route::get('/roles/create', [\App\Http\Controllers\AdminRoleController::class, 'create'])->name('admin.roles.create');
@@ -244,7 +246,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('seller.kyc.submit');
         
         // Premium Views
-        Route::view('/tools', 'seller.tools')->name('seller.tools');
+        Route::get('/tools', [\App\Http\Controllers\SellerDashboardController::class, 'tools'])->name('seller.tools');
+        Route::get('/early-cod', [\App\Http\Controllers\SellerDashboardController::class, 'earlyCod'])->name('seller.early-cod');
+        Route::post('/early-cod/activate', [\App\Http\Controllers\SellerDashboardController::class, 'activateEarlyCod'])->name('seller.early-cod.activate');
+        Route::post('/tools/pincodes/export', [\App\Http\Controllers\SellerDashboardController::class, 'exportPincodes'])->name('seller.tools.pincodes.export');
         Route::view('/settings', 'seller.settings')->name('seller.settings');
         
         // Settings API

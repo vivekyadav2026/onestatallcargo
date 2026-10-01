@@ -38,6 +38,8 @@ class User extends Authenticatable
         'longitude',
         'last_location_at',
         'status',
+        'early_cod_plan',
+        'early_cod_fee',
     ];
 
     protected $hidden = [

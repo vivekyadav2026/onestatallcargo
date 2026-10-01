@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Couriers;
 
-class BluedartService implements CourierInterface
+class ShadowfaxService implements CourierInterface
 {
     protected array $credentials;
 
@@ -17,20 +17,20 @@ class BluedartService implements CourierInterface
 
     public function calculateRate(string $pickup_pincode, string $delivery_pincode, float $weight, bool $is_cod = false, float $invoice_value = 0): array
     {
-        $baseFreight = 55.00 + (max(0, $weight - 0.5) * 40.00);
-        $fsc = round($baseFreight * 0.12, 2); // 12% Fuel Surcharge
+        $baseFreight = 42.00 + (max(0, $weight - 0.5) * 32.00);
+        $fsc = round($baseFreight * 0.10, 2);
         
         $codCharge = 0;
         if ($is_cod && $invoice_value > 0) {
-            $codCharge = max(40.00, round($invoice_value * 0.02, 2)); // Rs. 40 or 2%
+            $codCharge = max(30.00, round($invoice_value * 0.015, 2));
         }
 
         $total = $baseFreight + $fsc + $codCharge;
 
         return [
             'status'         => 'success',
-            'provider'       => 'Blue Dart',
-            'zone'           => 'Air Express / Surface',
+            'provider'       => 'Shadowfax',
+            'zone'           => 'Surface',
             'weight_charged' => $weight,
             'base_freight'   => $baseFreight,
             'fsc'            => $fsc,
@@ -39,7 +39,7 @@ class BluedartService implements CourierInterface
             'total'          => $total,
             'breakdown'      => [
                 'Base Freight' => "₹{$baseFreight}",
-                'FSC (12%)'    => "₹{$fsc}",
+                'FSC (10%)'    => "₹{$fsc}",
                 'COD Charge'   => $is_cod ? "₹{$codCharge}" : 'N/A',
                 'Total'        => "₹{$total}"
             ]
@@ -56,7 +56,7 @@ class BluedartService implements CourierInterface
         return [
             'status' => 'success',
             'tracking_data' => [
-                'current_status' => 'In Transit (Blue Dart)',
+                'current_status' => 'In Transit (Shadowfax)',
                 'scans' => []
             ]
         ];

@@ -61,4 +61,51 @@ class AdminBillingController extends Controller
 
         return back()->with('success', 'COD Remittance settled successfully, and any pending wallet dues were adjusted automatically.');
     }
+
+    public function remitEarlyCod(Request $request, $userId)
+    {
+        DB::transaction(function () use ($userId) {
+            $user = User::findOrFail($userId);
+
+            // Get all pending COD shipments
+            $shipments = Shipment::where('user_id', $userId)
+                ->where('is_cod', true)
+                ->where('status', 'Delivered')
+                ->where('cod_remitted', false)
+                ->get();
+
+            if ($shipments->isEmpty()) return;
+
+            $totalCod = $shipments->sum('invoice_value');
+            
+            // Calculate fee
+            $feePercent = $user->early_cod_fee ?? 0;
+            $feeAmount = ($totalCod * $feePercent) / 100;
+            $netPayout = $totalCod - $feeAmount;
+
+            // Credit the seller's wallet
+            $user->wallet_balance += $netPayout;
+            $user->save();
+
+            // Record transaction
+            \App\Models\WalletTransaction::create([
+                'user_id' => $userId,
+                'type' => 'credit',
+                'amount' => $netPayout,
+                'balance_after' => $user->wallet_balance,
+                'reference_id' => 'EARLY_COD_' . time(),
+                'description' => 'Early COD Payout (' . $shipments->count() . ' parcels). Fee deducted: ' . $feePercent . '%'
+            ]);
+
+            // Mark COD as remitted and record fee
+            foreach($shipments as $shipment) {
+                $shipment->cod_remittance_status = 'processed';
+                $shipment->early_cod_fee_deducted = ($shipment->invoice_value * $feePercent) / 100;
+                $shipment->cod_remitted = true;
+                $shipment->save();
+            }
+        });
+
+        return back()->with('success', 'Early COD successfully processed and credited to seller wallet!');
+    }
 }

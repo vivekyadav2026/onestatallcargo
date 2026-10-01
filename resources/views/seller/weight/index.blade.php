@@ -1,5 +1,5 @@
-@extends('layouts.seller')
-@section('title', 'Weight Discrepancy - OneStall Cargo')
+﻿@extends('layouts.seller')
+@section('title', 'Weight Reconciliation - OneStall Cargo')
 
 @section('content')
 <div class="space-y-6" x-data="{ activeTab: '{{ $tab ?? 'all' }}', showDisputeModal: false, selectedDiscId: null, selectedAwb: '' }">
@@ -7,8 +7,8 @@
     <!-- Top Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Weight Discrepancy</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Review weight discrepancies raised by couriers.</p>
+            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Weight Reconciliation</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Review Weight Reconciliation raised by couriers.</p>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
                         <tr>
                             <td colspan="8" class="px-6 py-20 text-center">
                                 <i class="fa-solid fa-scale-balanced text-4xl text-gray-200 mb-4 block"></i>
-                                <p class="text-sm font-bold text-gray-400">No weight discrepancies found.</p>
+                                <p class="text-sm font-bold text-gray-400">No Weight Reconciliation found.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -128,7 +128,7 @@
                     <div class="bg-white px-6 pt-6 pb-6">
                         <div class="flex justify-between items-start mb-5">
                             <div>
-                                <h3 class="text-[17px] font-extrabold text-gray-900">Dispute Weight Discrepancy</h3>
+                                <h3 class="text-[17px] font-extrabold text-gray-900">Dispute Weight Reconciliation</h3>
                                 <p class="text-[13px] text-gray-500 mt-0.5">Submit proof for AWB <span x-text="selectedAwb" class="font-bold text-blue-600"></span></p>
                             </div>
                             <button type="button" @click="showDisputeModal = false" class="text-gray-400 hover:text-gray-600 transition bg-gray-50 hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center">

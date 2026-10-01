@@ -36,14 +36,34 @@ class DelhiveryService implements CourierInterface
         return false;
     }
 
-    public function calculateRate(string $pickup_pincode, string $delivery_pincode, float $weight): array
+    public function calculateRate(string $pickup_pincode, string $delivery_pincode, float $weight, bool $is_cod = false, float $invoice_value = 0): array
     {
-        // Simulate a rate fetch for now as exact Delhivery rate API needs specific client ID
-        // In real world, use the actual endpoint
+        $baseWeightRate = 45.00 + (max(0, $weight - 0.5) * 35.00);
+        $fsc = round($baseWeightRate * 0.10, 2); // 10% FSC
+        
+        $codCharge = 0;
+        if ($is_cod && $invoice_value > 0) {
+            $codCharge = max(35.00, round($invoice_value * 0.015, 2)); // Max of Rs.35 or 1.5%
+        }
+
+        $total = $baseWeightRate + $fsc + $codCharge;
+
         return [
-            'status' => 'success',
-            'base_rate' => 45.00 + ($weight * 10), // dummy logic
-            'provider' => 'Delhivery'
+            'status'         => 'success',
+            'provider'       => 'Delhivery',
+            'zone'           => 'Zone 4',
+            'weight_charged' => $weight,
+            'base_freight'   => $baseWeightRate,
+            'fsc'            => $fsc,
+            'cod_charge'     => $codCharge,
+            'base_rate'      => $total,
+            'total'          => $total,
+            'breakdown'      => [
+                'Base Freight' => "₹{$baseWeightRate}",
+                'FSC (10%)'    => "₹{$fsc}",
+                'COD Charge'   => $is_cod ? "₹{$codCharge}" : 'N/A',
+                'Total'        => "₹{$total}"
+            ]
         ];
     }
 

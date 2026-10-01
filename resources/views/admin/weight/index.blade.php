@@ -1,11 +1,11 @@
-@extends('layouts.admin')
-@section('title', 'Weight Discrepancy - Admin')
+﻿@extends('layouts.admin')
+@section('title', 'Weight Reconciliation - Admin')
 
 @section('content')
 <div class="space-y-6" x-data="{ showModal: false, selectedImg: '' }">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Weight Discrepancies (Admin)</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Weight Reconciliation (Admin)</h1>
             <p class="text-sm text-gray-500 mt-1">Manage and resolve weight disputes across all sellers.</p>
         </div>
         
@@ -88,7 +88,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 font-medium">No weight discrepancies found.</td>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 font-medium">No Weight Reconciliation found.</td>
                 </tr>
                 @endforelse
             </tbody>

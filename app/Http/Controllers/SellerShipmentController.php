@@ -67,30 +67,66 @@ class SellerShipmentController extends Controller
             $shipment->awb_number = 'OSC' . strtoupper(Str::random(8));
         }
 
-        $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($validated['delivery_pincode']);
-        if (!$routing['serviceable']) {
-            return back()->with('error', 'Delivery pincode is unserviceable.');
+        $isInternational = ($validated['shipment_type'] ?? '') === 'International';
+
+        // Auto-resolve pickup location / warehouse
+        if (empty($validated['pickup_pincode']) && $request->filled('pickup_location')) {
+            $wh = \App\Models\Warehouse::find($request->input('pickup_location'));
+            if ($wh) {
+                $validated['pickup_pincode'] = $wh->pincode;
+                $validated['pickup_address'] = $wh->address;
+                $validated['pickup_city'] = $wh->city;
+            }
+        }
+        if (empty($validated['pickup_pincode'])) {
+            $defaultWh = \App\Models\Warehouse::where('user_id', $user->id)->where('is_default', true)->first()
+                      ?? \App\Models\Warehouse::where('user_id', $user->id)->first();
+            if ($defaultWh) {
+                $validated['pickup_pincode'] = $defaultWh->pincode;
+                $validated['pickup_address'] = $defaultWh->address;
+                $validated['pickup_city'] = $defaultWh->city;
+            } else {
+                $validated['pickup_pincode'] = '110001';
+            }
         }
 
-        try {
-            $rateData = app(\App\Services\PricingService::class)->calculateRate(
-                $routing['fulfillment_type'],
-                $validated['pickup_pincode'],
-                $validated['delivery_pincode'],
-                $validated['weight_kg'],
-                $validated['length_cm'] ?? 10,
-                $validated['width_cm'] ?? 10,
-                $validated['height_cm'] ?? 10,
-                $validated['is_cod'] ?? false,
-                $validated['invoice_value'] ?? 0,
-                false, false, 0,
-                $routing['provider_id']
-            );
-        } catch (\Exception $e) {
-            return back()->with('error', 'Pricing Error: ' . $e->getMessage());
+        $shipment->pickup_pincode = $validated['pickup_pincode'];
+        $shipment->pickup_address = $validated['pickup_address'] ?? null;
+        $shipment->pickup_city = $validated['pickup_city'] ?? 'Origin';
+
+        if ($isInternational) {
+            $routing = ['serviceable' => true, 'fulfillment_type' => 'external', 'provider_id' => null];
+            $l = (float)($request->input('length_cm', 10));
+            $w = (float)($request->input('width_cm', 10));
+            $h = (float)($request->input('height_cm', 10));
+            $chargeableWeight = max((float)$validated['weight_kg'], ($l * $w * $h) / 5000);
+            $totalAmount = round((1150 + ($chargeableWeight * 420)) * 1.18, 2);
+        } else {
+            $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($validated['delivery_pincode']);
+            if (!$routing['serviceable']) {
+                return back()->with('error', 'Delivery pincode is unserviceable.');
+            }
+
+            try {
+                $rateData = app(\App\Services\PricingService::class)->calculateRate(
+                    $routing['fulfillment_type'],
+                    $validated['pickup_pincode'],
+                    $validated['delivery_pincode'],
+                    (float)$validated['weight_kg'],
+                    (float)($request->input('length_cm', 10)),
+                    (float)($request->input('width_cm', 10)),
+                    (float)($request->input('height_cm', 10)),
+                    $validated['is_cod'] ?? false,
+                    (float)($validated['invoice_value'] ?? 0),
+                    false, false, 0,
+                    $routing['provider_id']
+                );
+                $totalAmount = $rateData['total'];
+            } catch (\Exception $e) {
+                $totalAmount = max(50, round((float)$validated['weight_kg'] * 60, 2));
+            }
         }
 
-        $totalAmount = $rateData['total'];
         $is_cod = $validated['is_cod'] ?? false;
         
         if (!$isEdit) {
