@@ -31,7 +31,7 @@
                 <option value="NDR" {{ request('status') == 'NDR' ? 'selected' : '' }}>NDR</option>
             </select>
         </div>
-        <button type="submit" class="px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
+        <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
             Filter
         </button>
     </form>

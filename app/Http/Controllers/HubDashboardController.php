@@ -34,22 +34,62 @@ class HubDashboardController extends Controller
         
         $shipmentsQuery = Shipment::query();
         if ($franchise) {
-            $shipmentsQuery->where('franchise_id', $franchise->id);
+            $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+            if (!is_array($pincodes)) {
+                $pincodes = $pincodes ? [$pincodes] : [];
+            }
+            $shipmentsQuery->where(function($q) use ($franchise, $pincodes) {
+                $q->where('franchise_id', $franchise->id)
+                  ->orWhere('user_id', Auth::id());
+                if (!empty($pincodes)) {
+                    $q->orWhereIn('pickup_pincode', $pincodes)
+                      ->orWhereIn('delivery_pincode', $pincodes);
+                }
+            });
         } else {
-            $shipmentsQuery->whereNull('franchise_id');
+            $shipmentsQuery->where('user_id', Auth::id());
         }
-        $recentScans = $shipmentsQuery->orderBy('updated_at', 'desc')->take(10)->get();
+
+        // --- DASHBOARD METRICS ---
+        $totalBookings = (clone $shipmentsQuery)->count();
+        $pendingPickup = (clone $shipmentsQuery)->where('status', 'Pending')->count();
+        $outForDelivery = (clone $shipmentsQuery)->where('status', 'Out for Delivery')->count();
+        $delivered = (clone $shipmentsQuery)->where('status', 'Delivered')->count();
+        $ndr = (clone $shipmentsQuery)->where('status', 'NDR')->count();
+        $rto = (clone $shipmentsQuery)->where('status', 'RTO')->count();
+        
+        // Mock COD Pending and Earnings for now, update with Wallet/COD logics later
+        $codPending = (clone $shipmentsQuery)->where('payment_type', 'COD')->where('status', 'Delivered')->sum('invoice_value') ?? 0;
+        $todayEarnings = (clone $shipmentsQuery)->whereDate('created_at', today())->count() * 45; // Mock 45rs per booking
+        
+        // Graph Data (Last 7 days)
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = today()->subDays($i);
+            $chartLabels[] = $date->format('M d');
+            $chartData[] = (clone $shipmentsQuery)->whereDate('created_at', $date)->count() * 45; // Mock earnings
+        }
+        
+        $recentScans = (clone $shipmentsQuery)->orderBy('updated_at', 'desc')->take(10)->get();
 
         $riders = \App\Models\User::where('role', 'rider')
             ->whereHas('rider', function($query) use ($franchise, $hubs) {
                 if ($franchise) {
                     $query->where('franchise_id', $franchise->id);
+                } else if ($hubs->count() > 0) {
+                    $query->whereIn('hub_id', $hubs->pluck('id'));
                 } else {
-                    $query->whereNull('franchise_id')->whereIn('hub_id', $hubs->pluck('id'));
+                    $query->where('id', 0); // empty
                 }
             })->get();
         
-        return view('hub.dashboard', compact('recentScans', 'riders', 'kyc', 'franchise'));
+        return view('hub.dashboard', compact(
+            'recentScans', 'riders', 'kyc', 'franchise', 
+            'totalBookings', 'pendingPickup', 'outForDelivery', 'delivered', 
+            'ndr', 'rto', 'codPending', 'todayEarnings', 
+            'chartLabels', 'chartData'
+        ));
     }
 
     public function scan(Request $request)
@@ -70,12 +110,17 @@ class HubDashboardController extends Controller
 
         $franchise = \App\Models\Franchise::where('user_id', Auth::id())->first();
         if ($franchise) {
-            if ($shipment->franchise_id !== $franchise->id) {
-                return back()->with('error', 'UNAUTHORIZED: Shipment does not belong to your franchise.');
+            $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+            if (!is_array($pincodes)) {
+                $pincodes = $pincodes ? [$pincodes] : [];
+            }
+            $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
+            if ($shipment->franchise_id !== $franchise->id && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
+                return back()->with('error', 'UNAUTHORIZED: Shipment does not belong to your franchise area.');
             }
         } else {
-            if ($shipment->franchise_id !== null) {
-                return back()->with('error', 'UNAUTHORIZED: Shipment belongs to a franchise.');
+            if ($shipment->user_id !== Auth::id()) {
+                return back()->with('error', 'UNAUTHORIZED: Shipment does not belong to your account.');
             }
         }
 

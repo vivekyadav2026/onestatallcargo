@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AdminRoleController extends Controller {
+
     
     public function index(Request $request) {
         $query = User::query();
@@ -39,7 +40,7 @@ class AdminRoleController extends Controller {
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
+            'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,customer,user,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
             'company_name' => 'nullable|string|max:255',
             'permissions' => 'nullable|array'
         ]);
@@ -64,7 +65,7 @@ class AdminRoleController extends Controller {
 
     public function update(Request $request, $id) {
         $validated = $request->validate([
-            'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
+            'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,customer,user,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
             'company_name' => 'nullable|string|max:255',
             'permissions' => 'nullable|array',
             'wallet_balance' => 'required|numeric|min:0',

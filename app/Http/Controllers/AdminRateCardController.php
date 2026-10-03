@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\PricingService;
 
-class AdminRateCardController extends Controller
-{
+class AdminRateCardController extends Controller {
+
     public function index(Request $request)
     {
         $query = RateCard::withCount('zones')->orderBy('created_at', 'desc');

@@ -30,10 +30,24 @@ class HubAssignmentController extends Controller
     private function filterByScope($query, $scope)
     {
         if ($scope['franchise_id']) {
-            return $query->where('franchise_id', $scope['franchise_id']);
+            $franchise = \App\Models\Franchise::find($scope['franchise_id']);
+            $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+            if (!is_array($pincodes)) {
+                $pincodes = $pincodes ? [$pincodes] : [];
+            }
+            return $query->where(function($q) use ($scope, $pincodes) {
+                $q->where('franchise_id', $scope['franchise_id'])
+                  ->orWhere('user_id', Auth::id());
+                if (!empty($pincodes)) {
+                    $q->orWhereIn('pickup_pincode', $pincodes)
+                      ->orWhereIn('delivery_pincode', $pincodes);
+                }
+            });
         } else {
-            // Wait, shipments don't have hub_id by default, they have destination_hub_id or are just global without franchise_id
-            return $query->whereNull('franchise_id'); // Internal shipments
+            // Internal Hub Manager - filter by Hub's city to prevent seeing the entire country's shipments
+            return $query->whereNull('franchise_id')->where(function($q) use ($scope) {
+                $q->where('pickup_city', $scope['city'])->orWhere('delivery_city', $scope['city']);
+            });
         }
     }
 
@@ -103,9 +117,17 @@ class HubAssignmentController extends Controller
                 $shipment = Shipment::lockForUpdate()->find($shipmentId);
                 
                 if ($scope['franchise_id']) {
-                    if ($shipment->franchise_id !== $scope['franchise_id']) continue;
+                    $franchise = \App\Models\Franchise::find($scope['franchise_id']);
+                    $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+                    if (!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
+                    $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
+                    if ($shipment->franchise_id !== $scope['franchise_id'] && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
+                        continue;
+                    }
                 } else {
-                    if ($shipment->franchise_id !== null) continue;
+                    if ($shipment->pickup_city !== $scope['city'] && $shipment->delivery_city !== $scope['city']) {
+                        continue;
+                    }
                 }
 
                 if ($validated['type'] === 'pickup' && !in_array($shipment->status, ['Pending', 'Manifested', 'Pickup Scheduled'])) continue;

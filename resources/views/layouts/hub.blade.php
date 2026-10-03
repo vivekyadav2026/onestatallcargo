@@ -33,39 +33,73 @@
         </div>
         
         <div class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-4">Operations</div>
+            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-4">Core</div>
             
+            <a href="{{ route('hub.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.dashboard') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-house w-5"></i> Dashboard
+            </a>
+            <a href="{{ route('hub.shipments') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.shipments') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-box w-5"></i> Shipments
+            </a>
+            <a href="{{ route('hub.shipments.create') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.shipments.create') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-pen-to-square w-5"></i> New Booking
+            </a>
+
+            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">Operations</div>
+
+            <a href="{{ route('hub.assignments.pickups') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.assignments.pickups') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-truck-pickup w-5"></i> Pickup
+            </a>
+            <a href="{{ route('hub.assignments.deliveries') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.assignments.deliveries') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-motorcycle w-5"></i> Delivery
+            </a>
+            <a href="{{ route('hub.ndr.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.ndr.index') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-rotate-left w-5"></i> NDR / RTO
+            </a>
+
+            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">Network</div>
             
-            <a href="{{ route('hub.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-qrcode w-5"></i> Scanner Desk
+            <a href="{{ route('hub.fleet.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.fleet.*') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-users-gear w-5"></i> Staff / Delivery Partners
             </a>
             <a href="{{ route('hub.bagging.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-boxes-packing w-5"></i> Dispatch & Bagging
+                <i class="fa-solid fa-warehouse w-5"></i> Warehouse
             </a>
-            <a href="{{ route('hub.fleet.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-motorcycle w-5"></i> Fleet Management
-            </a>
-            <a href="{{ route('hub.assignments.pickups') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-truck-pickup w-5"></i> Pickup Assignments
-            </a>
-            <a href="{{ route('hub.assignments.deliveries') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-box-open w-5"></i> Delivery Assignments
-            </a>
-            <a href="{{ route('hub.ndr.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-rotate-left w-5"></i> NDR & RTO
-            </a>
-            
-            <!-- <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-8">Business</div>
-            
-            <a href="{{ route('hub.wallet.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-wallet w-5"></i> Wallet & Payout
-            </a> -->
 
+            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">Finance & Network</div>
+
+            <a href="{{ route('hub.wallet.index') ?? '#' }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-wallet w-5"></i> Earnings & COD
+            </a>
+            <a href="{{ route('hub.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-users w-5"></i> Customers
+            </a>
+            <a href="{{ route('hub.sellers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-store w-5"></i> Sellers
+            </a>
+            <a href="{{ route('hub.service_areas.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-map-location-dot w-5"></i> Service Areas
+            </a>
+
+            <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">System</div>
+
+            <a href="{{ route('hub.reports.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.reports.*') ? 'bg-gray-800 text-white' : '' }}">
+                <i class="fa-solid fa-chart-line w-5"></i> Reports
+            </a>
+            <a href="{{ route('hub.whatsapp.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('hub.whatsapp.*') ? 'bg-gray-800 text-green-400' : 'text-green-500' }} hover:bg-gray-800 hover:text-green-400 font-bold transition">
+                <i class="fa-brands fa-whatsapp w-5 text-lg"></i> WhatsApp
+            </a>
+            <a href="{{ route('hub.support.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('hub.support.*') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-headset w-5"></i> Support
+            </a>
+            <a href="{{ route('hub.notifications.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('hub.notifications.*') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-bell w-5"></i> Notifications
+            </a>
         </div>
         
-        <div class="px-4 pb-2">
+        <div class="px-4 pb-2 pt-2 border-t border-gray-700/50">
             <a href="{{ route('hub.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
-                <i class="fa-solid fa-user-gear w-5"></i> Profile & Settings
+                <i class="fa-solid fa-gear w-5"></i> Settings
             </a>
         </div>
         

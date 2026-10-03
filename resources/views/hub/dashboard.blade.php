@@ -58,6 +58,81 @@
     </div>
     @endif
 
+    <!-- Top Metrics Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-box"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Bookings</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $totalBookings }}</h4>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-truck-pickup"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Pending Pickup</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $pendingPickup }}</h4>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-motorcycle"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Out for Delivery</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $outForDelivery }}</h4>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-check-double"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Delivered</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $delivered }}</h4>
+            </div>
+        </div>
+        
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-rotate-left"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">NDR</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $ndr }}</h4>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gray-50 text-gray-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-arrow-rotate-left"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">RTO</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">{{ $rto }}</h4>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-coins"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">COD Pending</p>
+                <h4 class="text-2xl font-black text-gray-900 leading-none mt-1">₹{{ number_format($codPending, 2) }}</h4>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-gray-900 to-black p-5 rounded-2xl shadow-lg border border-gray-800 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-gray-800/50 text-[#FFD700] flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-wallet"></i></div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Today's Earnings</p>
+                <h4 class="text-2xl font-black text-white leading-none mt-1">₹{{ number_format($todayEarnings, 2) }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Graph -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-extrabold text-gray-800"><i class="fa-solid fa-chart-line mr-2"></i> 7 Days Revenue</h2>
+            <select class="text-xs font-bold border border-gray-200 rounded-lg px-2 py-1 outline-none text-gray-600">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+            </select>
+        </div>
+        <div class="h-64">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
     
     <!-- Left Column: Scanner Tool -->
@@ -208,4 +283,40 @@
 
 <!-- Add AlpineJS -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode(array_reverse($chartLabels)) !!},
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: {!! json_encode(array_reverse($chartData)) !!},
+                    borderColor: '#4338ca',
+                    backgroundColor: 'rgba(67, 56, 202, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#4338ca',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
 @endsection

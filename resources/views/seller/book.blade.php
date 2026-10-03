@@ -112,7 +112,7 @@
                 <h3 class="text-[15px] font-bold text-[#1e1b4b]">Order Information</h3>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-10 mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-2 md:pl-10 mb-10">
                 <div class="relative">
                     <div class="flex justify-between items-end mb-1">
                         <label class="text-[11px] font-semibold text-gray-500">Order ID / Invoice No<span class="text-red-500">*</span></label>
@@ -136,7 +136,7 @@
                 <h3 class="text-[15px] font-bold text-[#1e1b4b]">Receiver Information</h3>
             </div>
             
-            <div class="pl-10 mb-10">
+            <div class="pl-2 md:pl-10 mb-10">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
                         <label class="block text-[11px] font-semibold text-gray-500 mb-1">Email Id</label>
@@ -190,7 +190,7 @@
                         </datalist>
                     </div>
                     <div x-show="shipmentType === 'International'" class="pt-2 transition">
-                        <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Customs Value (INR) <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Customs Value (₹) <span class="text-red-500">*</span></label>
                         <input type="number" step="0.01" name="customs_value" placeholder="Total Value" :required="shipmentType === 'International'" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
                     </div>
                     <div x-show="shipmentType === 'International'" class="pt-2 transition">
@@ -206,7 +206,7 @@
                 <h3 class="text-[15px] font-bold text-[#1e1b4b]">Box Dimension Detail</h3>
             </div>
             
-            <div class="pl-10 mb-10">
+            <div class="pl-2 md:pl-10 mb-10">
                 <div class="flex items-center gap-2 mb-4">
                     <input type="checkbox" class="w-3.5 h-3.5 text-[#4338ca] rounded border-gray-300">
                     <label class="text-[11px] italic font-semibold text-gray-600">Multi Box Shipment</label>
@@ -224,99 +224,106 @@
                     Box Details
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">Box Weight <span class="text-red-500">*</span></label>
-                        <div class="flex shadow-sm rounded">
-                            <span class="px-2 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l text-[10px] text-gray-500 font-bold">KG</span>
-                            <input type="number" step="0.01" name="weight_kg" x-model.number="deadWeight" class="w-full px-2 py-2 border border-gray-200 rounded-r text-xs outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">Length<span class="text-red-500">*</span></label>
-                        <div class="flex shadow-sm rounded">
-                            <span class="px-2 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l text-[10px] text-gray-500 font-bold">CM</span>
-                            <input type="number" name="length_cm" x-model.number="lengthCm" class="w-full px-2 py-2 border border-gray-200 rounded-r text-xs outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">Breadth<span class="text-red-500">*</span></label>
-                        <div class="flex shadow-sm rounded">
-                            <span class="px-2 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l text-[10px] text-gray-500 font-bold">CM</span>
-                            <input type="number" name="width_cm" x-model.number="widthCm" class="w-full px-2 py-2 border border-gray-200 rounded-r text-xs outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-gray-500 mb-1">Height<span class="text-red-500">*</span></label>
-                        <div class="flex shadow-sm rounded">
-                            <span class="px-2 py-2 bg-gray-100 border border-r-0 border-gray-200 rounded-l text-[10px] text-gray-500 font-bold">CM</span>
-                            <input type="number" name="height_cm" x-model.number="heightCm" class="w-full px-2 py-2 border border-gray-200 rounded-r text-xs outline-none focus:border-indigo-500">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Products Table Headers (Hidden on Mobile) -->
-                <div class="hidden md:grid gap-3 mb-1" :class="paymentMode === 'COD' ? 'grid-cols-7' : 'grid-cols-6'">
-                    <div class="col-span-2 text-[10px] font-bold text-gray-500">Product Name <span class="text-red-500">*</span></div>
-                    <div class="text-[10px] font-bold text-gray-500">Category <span class="text-red-500">*</span></div>
-                    <div class="text-[10px] font-bold text-gray-500">HSN Code</div>
-                    <div class="text-[10px] font-bold text-gray-500">Quantity <span class="text-red-500">*</span></div>
-                    <div class="text-[10px] font-bold text-gray-500">Amount <span class="text-red-500">*</span></div>
-                    <div class="text-[10px] font-bold text-gray-500" x-show="paymentMode === 'COD'">Collectable Amount <span class="text-red-500">*</span></div>
-                </div>
-
-                <template x-for="(product, index) in products" :key="index">
-                    <div class="grid gap-3 mb-3 items-center" :class="paymentMode === 'COD' ? 'grid-cols-1 md:grid-cols-7' : 'grid-cols-1 md:grid-cols-6'">
-                        <div class="md:col-span-2">
-                            <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">Product Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="product_name[]" x-model="product.name" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">Category <span class="text-red-500">*</span></label>
-                            <select class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none text-gray-600 focus:border-indigo-500">
-                                <option>Select Category</option>
-                                <option>Apparel</option>
-                                <option>Electronics</option>
-                                <option>Health & Beauty</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">HSN Code</label>
-                            <input type="text" x-model="product.hsn" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">Quantity <span class="text-red-500">*</span></label>
-                            <input type="number" min="1" name="product_qty[]" x-model.number="product.qty" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500">
-                        </div>
-                        <div>
-                            <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">Amount <span class="text-red-500">*</span></label>
-                            <input type="number" step="0.01" name="product_price[]" x-model.number="product.price" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1" x-show="paymentMode === 'COD'">
-                                <label class="block md:hidden text-[10px] font-bold text-gray-500 mb-1">Collectable Amount <span class="text-red-500">*</span></label>
-                                <input type="number" step="0.01" :value="product.price * product.qty" readonly class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded text-xs outline-none text-gray-500">
+                <div class="w-full overflow-x-auto pb-2 mb-5">
+                    <div class="flex items-start gap-2 sm:gap-4 min-w-[320px]">
+                        <!-- Weight -->
+                        <div class="flex-1 min-w-[70px]">
+                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Box Weight <span class="text-red-500">*</span></span>
+                            <div class="relative">
+                                <input type="number" step="0.01" name="weight_kg" x-model.number="deadWeight" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">KG</span>
                             </div>
-                            <button type="button" @click="addProduct" x-show="index === products.length - 1" class="w-8 h-8 rounded bg-[#8bc34a] hover:bg-[#7cb342] text-white flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-plus text-sm"></i>
-                            </button>
-                            <button type="button" @click="removeProduct(index)" x-show="products.length > 1" class="w-8 h-8 rounded bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-minus text-sm"></i>
-                            </button>
+                        </div>
+
+                        <!-- Length -->
+                        <div class="flex-1 min-w-[70px]">
+                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Length <span class="text-red-500">*</span></span>
+                            <div class="relative">
+                                <input type="number" name="length_cm" x-model.number="lengthCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
+                            </div>
+                        </div>
+
+                        <!-- Breadth / Width -->
+                        <div class="flex-1 min-w-[70px]">
+                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Breadth <span class="text-red-500">*</span></span>
+                            <div class="relative">
+                                <input type="number" name="width_cm" x-model.number="widthCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
+                            </div>
+                        </div>
+
+                        <!-- Height -->
+                        <div class="flex-1 min-w-[70px]">
+                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Height <span class="text-red-500">*</span></span>
+                            <div class="relative">
+                                <input type="number" name="height_cm" x-model.number="heightCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
+                            </div>
                         </div>
                     </div>
-                </template>
+                </div>
+
+                <div class="w-full overflow-x-auto pb-2">
+                    <div class="min-w-[800px]">
+                        <!-- Products Table Headers -->
+                        <div class="grid gap-3 mb-1" :class="paymentMode === 'COD' ? 'grid-cols-7' : 'grid-cols-6'">
+                            <div class="col-span-2 text-[10px] font-bold text-gray-500">Product Name <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-500">Category <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-500">HSN Code</div>
+                            <div class="text-[10px] font-bold text-gray-500">Quantity <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-500">Amount <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-500" x-show="paymentMode === 'COD'">Collectable Amount <span class="text-red-500">*</span></div>
+                        </div>
+
+                        <template x-for="(product, index) in products" :key="index">
+                            <div class="grid gap-3 mb-3 items-center" :class="paymentMode === 'COD' ? 'grid-cols-7' : 'grid-cols-6'">
+                                <div class="col-span-2">
+                                    <input type="text" name="product_name[]" x-model="product.name" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <select class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none text-gray-600 focus:border-indigo-500 shadow-sm">
+                                        <option>Select Category</option>
+                                        <option>Apparel</option>
+                                        <option>Electronics</option>
+                                        <option>Health & Beauty</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <input type="text" x-model="product.hsn" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <input type="number" min="1" name="product_qty[]" x-model.number="product.qty" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
+                                </div>
+                                <div>
+                                    <input type="number" step="0.01" name="product_price[]" x-model.number="product.price" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1" x-show="paymentMode === 'COD'">
+                                        <input type="number" step="0.01" :value="product.price * product.qty" readonly class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none text-gray-500 shadow-sm">
+                                    </div>
+                                    <button type="button" @click="addProduct" x-show="index === products.length - 1" class="w-8 h-8 rounded-lg bg-[#8bc34a] hover:bg-[#7cb342] text-white flex items-center justify-center shrink-0 shadow-sm transition">
+                                        <i class="fa-solid fa-plus text-sm"></i>
+                                    </button>
+                                    <button type="button" @click="removeProduct(index)" x-show="products.length > 1" class="w-8 h-8 rounded-lg bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shrink-0 shadow-sm transition">
+                                        <i class="fa-solid fa-minus text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <!-- SECTION 4: Pickup Location -->
-            <div class="flex items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
                     <div class="w-7 h-7 rounded-full bg-[#1e1b4b] text-white flex items-center justify-center font-bold text-sm">4</div>
                     <h3 class="text-[15px] font-bold text-[#1e1b4b]">Pickup Location</h3>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
                     <span class="text-[11px] font-semibold text-gray-600">Search Pickup Location</span>
-                    <div class="relative w-64">
+                    <div class="relative w-full sm:w-64">
                         <div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-100 border border-gray-200 rounded-l flex items-center justify-center text-gray-500">
                             <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
                         </div>
@@ -328,7 +335,7 @@
                 </div>
             </div>
             
-            <div class="pl-10">
+            <div class="pl-2 md:pl-10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[250px] overflow-y-auto pr-2 mb-4">
                     @forelse($warehouses as $wh)
                         <label x-show="'{{ strtolower($wh->name . $wh->city . $wh->pincode) }}'.includes(warehouseSearch.toLowerCase())" class="border rounded p-4 cursor-pointer transition hover:border-[#1e1b4b] flex items-center gap-4" :class="selectedWarehouse == {{ $wh->id }} ? 'border-[#1e1b4b] bg-[#f8f9ff]' : 'border-gray-200'">
@@ -337,7 +344,7 @@
                                 <div class="w-2 h-2 bg-[#1e1b4b] rounded-full" x-show="selectedWarehouse == {{ $wh->id }}"></div>
                             </div>
                             <div class="flex flex-col w-full text-[11px]">
-                                <div class="grid grid-cols-3 gap-2 items-center">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start sm:items-center">
                                     <div class="font-bold text-gray-900 text-center flex items-center justify-center">{{ $wh->name }}</div>
                                     <div class="text-center text-gray-600 border-l border-r border-gray-200 flex flex-col justify-center">
                                         <span class="block text-gray-400">Contact Person</span>

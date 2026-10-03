@@ -135,7 +135,7 @@
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Multi-Currency Billing</h3>
-                <p class="text-sm text-gray-600">Clear rate breakdowns in INR, USD, EUR, and GBP with no hidden fuel surcharge surprises.</p>
+                <p class="text-sm text-gray-600">Clear rate breakdowns in ₹, ₹, EUR, and GBP with no hidden fuel surcharge surprises.</p>
             </div>
         </div>
     </div>

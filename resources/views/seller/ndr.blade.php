@@ -25,32 +25,29 @@
 
         <!-- Filters Row (Matches Screenshot 2) -->
         <div class="p-4 bg-[#f8fafc] border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap items-center gap-2">
-                <div class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 flex items-center gap-2">
-                    <span>19/08/2026 ~ 25/09/2026</span>
-                    <i class="fa-solid fa-xmark text-gray-400 cursor-pointer"></i>
-                </div>
-
-                <select class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
-                    <option>NDR Reasons</option>
-                    <option>Customer Unavailable</option>
-                    <option>Incorrect Address</option>
-                    <option>COD Cash Not Ready</option>
+            <form method="GET" action="{{ route('seller.ndr') }}" class="flex flex-wrap items-center gap-2">
+                <input type="hidden" name="tab" value="{{ $tab }}">
+                
+                <input type="date" name="date" value="{{ request('date') }}" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
+                
+                <select name="reason" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
+                    <option value="">All NDR Reasons</option>
+                    <option value="Customer Unavailable" {{ request('reason') == 'Customer Unavailable' ? 'selected' : '' }}>Customer Unavailable</option>
+                    <option value="Incorrect Address" {{ request('reason') == 'Incorrect Address' ? 'selected' : '' }}>Incorrect Address</option>
+                    <option value="COD Cash Not Ready" {{ request('reason') == 'COD Cash Not Ready' ? 'selected' : '' }}>COD Cash Not Ready</option>
                 </select>
 
-                <select class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
-                    <option>Attempts</option>
-                    <option>1st Attempt</option>
-                    <option>2nd Attempt</option>
-                    <option>3rd Attempt</option>
-                </select>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by AWB..." class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none w-44">
 
-                <input type="text" placeholder="AWB number" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none w-44">
-
-                <button class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 flex items-center gap-1.5 hover:bg-gray-50">
-                    <i class="fa-solid fa-sliders text-gray-400"></i> More Filters
+                <button type="submit" class="px-3 py-2 bg-[#4338ca] text-white rounded-xl text-xs font-bold hover:bg-indigo-700">
+                    Search
                 </button>
-            </div>
+                @if(request('search') || request('date') || request('reason'))
+                    <a href="{{ route('seller.ndr', ['tab' => $tab]) }}" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-200">
+                        Clear
+                    </a>
+                @endif
+            </form>
 
             <div class="flex items-center gap-2">
                 <button class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center gap-1.5 hover:bg-gray-50">

@@ -198,15 +198,15 @@
                     <i class="fa-solid fa-users text-blue-400"></i>
                 </div>
                 <div class="space-y-4 pt-2 relative z-10">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <span class="text-xs font-bold text-gray-300">Active Sellers</span>
                         <span class="text-lg font-black text-white">{{ number_format($activeSellers ?? 0) }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <span class="text-xs font-bold text-gray-300">Franchise Hubs</span>
                         <span class="text-lg font-black text-white">{{ number_format($activeHubs ?? 0) }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <span class="text-xs font-bold text-gray-300">Total Riders</span>
                         <span class="text-lg font-black text-white">{{ number_format($totalRiders ?? 0) }}</span>
                     </div>

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 use App\Models\Courier;
 use Illuminate\Http\Request;
 
-class AdminCourierController extends Controller
-{
+class AdminCourierController extends Controller {
+
     public function index()
     {
         $couriers = Courier::orderBy('created_at', 'desc')->get();

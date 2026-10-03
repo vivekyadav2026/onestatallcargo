@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 
-class AdminIntegrationController extends Controller
-{
+class AdminIntegrationController extends Controller {
+
     public function index()
     {
         $settings = Cache::rememberForever('global_settings', function () {

@@ -2,7 +2,7 @@
 @section('title', 'Pickup Management - OneStall Cargo')
 @section('content')
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Pickup Management</h1>
             <p class="text-sm text-gray-500 mt-1">Assign pickup tasks to your on-ground fleet.</p>
@@ -18,17 +18,17 @@
     <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6">
         <form action="{{ route('admin.pickups.assign') }}" method="POST">
             @csrf
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                 <h2 class="font-bold text-gray-800"><i class="fa-solid fa-boxes-packing mr-2 text-[var(--gold-deep)]"></i> Pending Pickups (Manifested)</h2>
                 
-                <div class="flex items-center gap-3">
-                    <select name="rider_id" required class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-bold focus:outline-none focus:border-[var(--gold)]">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                    <select name="rider_id" required class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm font-bold focus:outline-none focus:border-[var(--gold)]">
                         <option value="">Select Rider to Assign</option>
                         @foreach($riders as $rider)
                             <option value="{{ $rider->id }}">{{ $rider->name }} ({{ ucfirst(str_replace('_', ' ', $rider->role)) }})</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-black transition">
+                    <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-black transition">
                         Assign Pickups
                     </button>
                 </div>

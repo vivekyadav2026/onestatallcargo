@@ -68,7 +68,10 @@
                         <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 
                         <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Business</div></div>
-                        <a href="{{ route('admin.sellers.index') }}" class="sidebar-item {{ request()->routeIs('admin.sellers.*') ? 'active' : '' }}"><i class="fa-solid fa-users w-4 text-center"></i> <span>Sellers Directory</span></a>
+                        <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors {{ request()->routeIs('admin.customers.*') ? 'bg-gray-800 text-white font-bold' : '' }}">
+                    <i class="fa-solid fa-user-tag w-5"></i> B2C Customers
+                </a>
+                <a href="{{ route('admin.sellers.index') }}" class="sidebar-item {{ request()->routeIs('admin.sellers.*') ? 'active' : '' }}"><i class="fa-solid fa-users w-4 text-center"></i> <span>Sellers Directory</span></a>
                         <a href="{{ route('admin.ratecards.index') }}" class="sidebar-item {{ request()->routeIs('admin.ratecards.*') ? 'active' : '' }}"><i class="fa-solid fa-indian-rupee-sign w-4 text-center"></i> <span>Rate Engine</span></a>
                         <a href="{{ route('admin.billing.index') }}" class="sidebar-item {{ request()->routeIs('admin.billing.*') ? 'active' : '' }}"><i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i> <span>Billing & COD</span></a>
 
@@ -123,6 +126,9 @@
                 <a href="{{ route('admin.couriers.index') }}" class="sidebar-item {{ request()->routeIs('admin.couriers.*') ? 'active' : '' }}"><i class="fa-solid fa-network-wired w-4 text-center"></i> <span>Couriers API</span></a>
 
                 <div class="px-2 mt-6 mb-2"><div class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Business</div></div>
+                <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors {{ request()->routeIs('admin.customers.*') ? 'bg-gray-800 text-white font-bold' : '' }}">
+                    <i class="fa-solid fa-user-tag w-5"></i> B2C Customers
+                </a>
                 <a href="{{ route('admin.sellers.index') }}" class="sidebar-item {{ request()->routeIs('admin.sellers.*') ? 'active' : '' }}"><i class="fa-solid fa-users w-4 text-center"></i> <span>Sellers Directory</span></a>
                 <a href="{{ route('admin.kyc.index') }}" class="sidebar-item {{ request()->routeIs('admin.kyc.*') ? 'active' : '' }}"><i class="fa-solid fa-id-card w-4 text-center"></i> <span>KYC Approvals</span></a>
                 <a href="{{ route('admin.ratecards.index') }}" class="sidebar-item {{ request()->routeIs('admin.ratecards.*') ? 'active' : '' }}"><i class="fa-solid fa-indian-rupee-sign w-4 text-center"></i> <span>Rate Engine</span></a>

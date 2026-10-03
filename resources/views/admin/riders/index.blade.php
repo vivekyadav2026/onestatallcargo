@@ -2,7 +2,7 @@
 @section('title', 'Fleet & Rider Management - OneStall Cargo')
 @section('content')
 <div class="space-y-6" x-data="{ showEditModal: false, editRider: null }">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Fleet Management</h1>
             <p class="text-sm text-gray-500 mt-1">Manage global Pickup and Delivery Riders.</p>
@@ -142,7 +142,7 @@
                                         <form action="{{ route('admin.riders.update', $rider->id) }}" method="POST">
                                             @csrf
                                             <div class="px-6 py-5">
-                                                <div class="flex justify-between items-center mb-4">
+                                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                                                     <h3 class="text-lg font-bold text-gray-900">Edit Rider: {{ optional($rider->user)->name ?? 'Deleted User' }}</h3>
                                                     <button type="button" @click="editRider = null; showEditModal = false" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-times"></i></button>
                                                 </div>

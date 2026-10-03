@@ -6,8 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AdminBillingController extends Controller
-{
+class AdminBillingController extends Controller {
+
     public function index()
     {
         // Calculate COD pending remittance grouped by Seller

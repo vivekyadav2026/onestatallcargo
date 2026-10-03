@@ -13,19 +13,25 @@
                 <i class="fa-solid fa-wallet"></i>
             </div>
             <h3 class="text-gray-400 font-bold text-sm mb-1 uppercase tracking-wider">Current Balance</h3>
-            <div class="text-4xl font-black text-[var(--gold)]">?{{ number_format($user->wallet_balance ?? 0, 2) }}</div>
+            <div class="text-4xl font-black text-[var(--gold)]">₹{{ number_format($user->wallet_balance ?? 0, 2) }}</div>
             <div class="mt-4 text-xs text-gray-400">Available for withdrawal</div>
         </div>
         
         <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-center">
             <h3 class="text-gray-500 font-bold text-sm mb-1 uppercase tracking-wider">Total Earnings</h3>
-            <div class="text-2xl font-black text-gray-900">?0.00 <span class="text-xs text-gray-400 font-medium">(This Month)</span></div>
+            <div class="text-2xl font-black text-gray-900">₹{{ number_format($totalEarnings ?? 0, 2) }} <span class="text-xs text-gray-400 font-medium">(All Time)</span></div>
         </div>
 
         <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col justify-center">
             <h3 class="text-gray-500 font-bold text-sm mb-1 uppercase tracking-wider">Pending COD Remittance</h3>
-            <div class="text-2xl font-black text-red-600">?0.00</div>
+            <div class="text-2xl font-black text-red-600">₹{{ number_format($pendingCod ?? 0, 2) }}</div>
             <div class="text-xs text-gray-400 font-medium mt-1">To be collected by Admin</div>
+            @if(isset($pendingCod) && $pendingCod > 0)
+            <form action="{{ route('hub.wallet.remit') }}" method="POST" class="mt-4">
+                @csrf
+                <button type="submit" class="w-full py-2 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition">Remit COD to Admin</button>
+            </form>
+            @endif
         </div>
     </div>
 
@@ -60,9 +66,9 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-right font-bold {{ $txn->type === 'credit' ? 'text-green-600' : 'text-red-600' }}">
-                                {{ $txn->type === 'credit' ? '+' : '-' }}?{{ number_format($txn->amount, 2) }}
+                                {{ $txn->type === 'credit' ? '+' : '-' }}₹{{ number_format($txn->amount, 2) }}
                             </td>
-                            <td class="px-4 py-3 text-right font-bold text-gray-900">?{{ number_format($txn->balance_after, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-bold text-gray-900">₹{{ number_format($txn->balance_after, 2) }}</td>
                         </tr>
                         @endforeach
                     @else

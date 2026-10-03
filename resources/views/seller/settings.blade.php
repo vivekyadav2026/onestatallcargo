@@ -6,7 +6,7 @@
     
     <!-- Dynamic Header -->
     <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <button x-show="view !== 'grid'" @click="view = 'grid'" class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:shadow-sm transition" style="display: none;">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -37,40 +37,25 @@
                     <p class="text-xs text-gray-500 leading-relaxed">Update your GSTIN, PAN, brand name, and registered address</p>
                 </button>
 
-                <button @click="openView('kyc', 'KYC Verification', 'Upload identity & tax documents for compliance')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group relative">
+                <button @click="openView('kyc', 'KYC Verification', 'Upload identity & tax documents for compliance')" class="block text-left bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#4338ca] transition group relative flex flex-col h-full">
                     @php $userKyc = Auth::user()->kyc; @endphp
-                    @if($userKyc && $userKyc->status === 'approved')
-              <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
-                  <div class="flex items-center gap-4">
-                      <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
-                          <i class="fa-solid fa-shield"></i>
-                      </div>
-                      <div>
-                          <h2 class="text-sm font-bold text-gray-900">KYC Verified & Active</h2>
-                          <p class="text-[11px] text-gray-500 mt-1">Your identity documents are verified. Shipping and COD payouts are fully unlocked.</p>
-                      </div>
-                  </div>
-                  <span class="hidden sm:inline-block px-3 py-1 bg-green-100 text-green-700 border border-green-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-circle-check mr-1"></i> Verified</span>
-              </div>
-          @elseif($userKyc && $userKyc->status === 'pending')
-              <div class="bg-yellow-50/60 border border-yellow-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
-                  <div class="flex items-center gap-4">
-                      <div class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-yellow-200">
-                          <i class="fa-solid fa-clock-rotate-left"></i>
-                      </div>
-                      <div>
-                          <h2 class="text-sm font-bold text-gray-900">Verification Under Review</h2>
-                          <p class="text-[11px] text-gray-500 mt-1">Our compliance team is verifying your uploaded documents.</p>
-                      </div>
-                  </div>
-                  <span class="hidden sm:inline-block px-3 py-1 bg-yellow-100 text-yellow-700 border border-yellow-200 rounded-lg text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-hourglass-half mr-1"></i> Under Review</span>
-              </div>
-          @endif
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 text-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                        <i class="fa-solid fa-id-card"></i>
+                    
+                    <div class="flex items-start justify-between mb-3 w-full">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        
+                        @if($userKyc && $userKyc->status === 'approved')
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-md text-[10px] font-bold uppercase tracking-wide border border-green-200"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                        @elseif($userKyc && $userKyc->status === 'pending')
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-md text-[10px] font-bold uppercase tracking-wide border border-yellow-200"><i class="fa-solid fa-hourglass-half"></i> Pending</span>
+                        @else
+                            <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-[10px] font-bold uppercase tracking-wide border border-gray-200"><i class="fa-solid fa-circle-exclamation"></i> Required</span>
+                        @endif
                     </div>
+                    
                     <h4 class="font-bold text-gray-900 text-base mb-1 group-hover:text-[#4338ca]">KYC Verification</h4>
-                    <p class="text-xs text-gray-500 leading-relaxed">Submit Aadhaar, PAN, and GST documents for shipping activation</p>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1">Submit Aadhaar, PAN, and GST documents for shipping activation</p>
                 </button>
             </div>
         </div>
@@ -239,7 +224,7 @@
     <div x-show="view === 'kyc'" style="display: none;" class="max-w-4xl">
         @if($userKyc && $userKyc->status === 'approved')
               <div class="bg-green-50/60 border border-green-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
-                  <div class="flex items-center gap-4">
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                       <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
                           <i class="fa-solid fa-shield"></i>
                       </div>
@@ -252,7 +237,7 @@
               </div>
           @elseif($userKyc && $userKyc->status === 'pending')
               <div class="bg-yellow-50/60 border border-yellow-200 rounded-2xl p-6 mb-8 flex items-start sm:items-center justify-between shadow-sm max-w-4xl mt-4">
-                  <div class="flex items-center gap-4">
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
                       <div class="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-yellow-200">
                           <i class="fa-solid fa-clock-rotate-left"></i>
                       </div>
@@ -412,16 +397,16 @@
 
     <!-- VIEW 3: Pickup Warehouses (Complete Management) -->
     <div x-show="view === 'warehouses'" class="w-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden" style="display: none;">
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 p-6 md:p-8">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 p-4 sm:p-6 md:p-8">
         
         <!-- Left Side: Form -->
-        <div class="xl:col-span-6 space-y-5 border-r border-gray-100 pr-0 xl:pr-8">
+        <div class="xl:col-span-6 space-y-5 xl:border-r border-gray-100 pr-0 xl:pr-8">
             <p class="text-[13px] text-gray-400 font-bold mb-6">
                 <span class="text-red-500 font-bold">*</span>All Fields Required
             </p>
             
             <form @submit.prevent="saveWarehouse" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">Pickup Pincode <span class="text-red-500">*</span></label>
                         <input type="text" x-model="newWh.pincode" @input="fetchCityForWarehouse(newWh.pincode)" maxlength="6" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
@@ -449,7 +434,7 @@
                     <input type="text" x-model="newWh.address_2" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors">
                 </div>
 
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">Landmark <span class="text-red-500">*</span></label>
                         <input type="text" x-model="newWh.landmark" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
@@ -464,7 +449,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-1.5">Contact Name <span class="text-red-500">*</span></label>
                         <input type="text" x-model="newWh.contact_person" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition-colors" required>
@@ -479,9 +464,9 @@
                     " ?? Add your accessible mobile number for Smooth communication at Pickup! ?? "
                 </p>
 
-                <div class="flex gap-4 mt-6">
-                    <button type="button" @click="resetWhForm" class="px-6 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold rounded shadow-sm text-sm transition w-32">Cancel</button>
-                    <button type="submit" class="px-6 py-2.5 bg-[#0ea5e9] hover:bg-[#0284c7] text-white font-bold rounded shadow-sm text-sm transition w-44 flex justify-center" :disabled="loading">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                    <button type="button" @click="resetWhForm" class="px-6 py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-800 font-bold rounded shadow-sm text-sm transition w-full sm:w-32">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-[#0ea5e9] hover:bg-[#0284c7] text-white font-bold rounded shadow-sm text-sm transition w-full sm:w-44 flex justify-center" :disabled="loading">
                         <span x-show="!loading" x-text="newWh.id ? 'Update Warehouse' : 'Add Warehouse'"></span>
                         <span x-show="loading"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...</span>
                     </button>
@@ -494,7 +479,7 @@
             <h2 class="text-[20px] font-bold text-center text-gray-900 mb-6 tracking-tight mt-4 xl:mt-0">Add Warehouse Addresses for Pickup</h2>
             
             <div class="bg-[#3b0764] rounded-2xl p-4 shadow-lg min-h-[450px]">
-                <div class="flex items-center px-4 pb-3 mb-4 border-b border-purple-800">
+                <div class="hidden sm:flex items-center px-4 pb-3 mb-4 border-b border-purple-800">
                     <div class="w-1/4 shrink-0 text-white font-semibold text-xs tracking-wide">Contact Person</div>
                     <div class="flex-1 min-w-0 text-white font-semibold text-xs tracking-wide text-center">Warehouse Details</div>
                     <div class="w-[110px] shrink-0 text-white font-semibold text-xs tracking-wide text-right pr-2">Action</div>
@@ -502,21 +487,21 @@
 
                 <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1">@php $warehouses = \App\Models\Warehouse::where('user_id', Auth::id())->get(); @endphp
                     @forelse($warehouses as $wh)
-                    <div class="bg-white rounded-[14px] p-4 flex items-center shadow-sm" id="wh-card-{{$wh->id}}">
+                    <div class="bg-white rounded-[14px] p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 shadow-sm" id="wh-card-{{$wh->id}}">
                         <!-- Contact Person -->
-                        <div class="w-1/4 shrink-0 pr-2">
+                        <div class="w-full sm:w-1/4 shrink-0 sm:pr-2">
                             <div class="font-extrabold text-gray-900 text-[13px] truncate">{{ $wh->contact_person }}</div>
                             <div class="text-gray-600 text-[11px] font-semibold mt-0.5">{{ $wh->phone }}</div>
                         </div>
 
                         <!-- Warehouse Details -->
-                        <div class="flex-1 min-w-0 text-center px-3">
+                        <div class="w-full sm:flex-1 min-w-0 text-left sm:text-center sm:px-3">
                             <div class="font-bold text-gray-900 text-[13px] mb-1 leading-tight truncate">{{ $wh->name }}</div>
                             <div class="text-gray-600 text-[10px] leading-snug break-words">{{ $wh->address }}, {{ $wh->city }}, {{ $wh->state }}, {{ $wh->pincode }}</div>
                         </div>
 
                         <!-- Action -->
-                        <div class="shrink-0 flex items-center justify-end gap-2 pr-1" style="min-width: 110px;">
+                        <div class="w-full sm:w-[110px] shrink-0 flex items-center justify-start sm:justify-end gap-2 pr-1 pt-2 sm:pt-0 border-t sm:border-0 border-gray-100">
                             <!-- Toggle (is_default) -->
                             <button @click="setDefaultWarehouse({{ $wh->id }})" class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus:outline-none" :class="'{{ $wh->is_default }}' == '1' ? 'bg-[#0ea5e9]' : 'bg-gray-300'">
                                 <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm" :class="'{{ $wh->is_default }}' == '1' ? 'translate-x-4' : 'translate-x-0.5'"></span>
@@ -541,7 +526,7 @@
 </div>
 
     <!-- VIEW 4: Bank Account for COD Remittance -->
-    <div x-show="view === 'bank'" style="display: none;" class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm max-w-2xl">
+    <div x-show="view === 'bank'" style="display: none;" class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm max-w-2xl">
         <form @submit.prevent="updateBank">
             <h3 class="font-bold text-gray-900 text-lg mb-2">COD Remittance Bank Account</h3>
             <p class="text-xs text-gray-500 mb-6">Enter your bank account details where Cash on Delivery (COD) collected amounts will be transferred.</p>
@@ -577,13 +562,13 @@
 
     <!-- VIEW 5: API Keys -->
     <div x-show="view === 'api_keys'" style="display: none;">
-        <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm max-w-3xl mb-8">
+        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm max-w-3xl mb-8">
             <h3 class="font-bold text-gray-900 text-lg mb-2">Generate API Token</h3>
             <p class="text-xs text-gray-500 mb-4">Use this token to authenticate API requests from your custom e-commerce store or ERP.</p>
             
-            <form @submit.prevent="generateToken" class="flex items-center gap-4">
-                <input type="text" x-model="newTokenName" placeholder="e.g. Shopify Store Token" class="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
-                <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white font-bold rounded-lg hover:bg-black transition" :disabled="loading">
+            <form @submit.prevent="generateToken" class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <input type="text" x-model="newTokenName" placeholder="e.g. Shopify Store Token" class="w-full sm:flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#4338ca]" required>
+                <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 text-white font-bold rounded-lg hover:bg-black transition" :disabled="loading">
                     <span x-show="!loading">Generate Key</span>
                     <span x-show="loading"><i class="fa-solid fa-spinner fa-spin"></i></span>
                 </button>
@@ -630,7 +615,7 @@
     </div>
 
     <!-- VIEW 6: Change Password -->
-    <div x-show="view === 'password'" style="display: none;" class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm max-w-xl">
+    <div x-show="view === 'password'" style="display: none;" class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm max-w-xl">
         <form @submit.prevent="changePassword">
             <h3 class="font-bold text-gray-900 text-lg mb-2">Change Password</h3>
             <p class="text-xs text-gray-500 mb-6">Enter your current password and choose a strong new password.</p>

@@ -43,6 +43,8 @@ class CheckRole
             case 'rider':
                 return redirect()->route('rider.dashboard');
             case 'b2c_customer':
+            case 'customer':
+            case 'user':
             case 'courier_partner':
                 return redirect()->route('track');
             default: 

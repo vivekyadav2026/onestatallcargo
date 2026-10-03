@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Manage User Permissions</h1>
             <p class="text-sm text-gray-500 mt-1">Assign system roles and update wallet balance for {{ $user->name }}.</p>
@@ -49,7 +49,7 @@
                             <option value="seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller (Online/Offline)</option>
                             <option value="aggregator" {{ $user->role == 'aggregator' ? 'selected' : '' }}>Aggregator (Other Shipping Cos)</option>
                             <option value="b2b_customer" {{ $user->role == 'b2b_customer' ? 'selected' : '' }}>B2B Customer (Heavy/Cargo)</option>
-                            <option value="b2c_customer" {{ $user->role == 'b2c_customer' ? 'selected' : '' }}>B2C Customer (Individual)</option>
+                            <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>B2C Customer (Individual)</option>
                             <option value="franchise" {{ $user->role == 'franchise' ? 'selected' : '' }}>Franchise / Hub Partner</option>
                             <option value="pickup_rider" {{ $user->role == 'pickup_rider' ? 'selected' : '' }}>Pickup Rider</option>
                             <option value="delivery_rider" {{ $user->role == 'delivery_rider' ? 'selected' : '' }}>Delivery Rider</option>

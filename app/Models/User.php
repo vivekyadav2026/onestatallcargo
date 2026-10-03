@@ -89,4 +89,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Rider::class, 'user_id');
     }
+
+    public function shipments()
+    {
+        return $this->hasMany(Shipment::class, 'user_id');
+    }
 }

@@ -28,6 +28,16 @@ class SellerNdrController extends Controller
             });
         }
 
+        if ($request->filled('search')) {
+            $query->where('awb_number', 'like', '%' . $request->search . '%');
+        }
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+        if ($request->filled('reason')) {
+            $query->where('ndr_reason', $request->reason);
+        }
+
         $ndrShipments = $query->orderBy('updated_at', 'desc')->paginate(15)->appends($request->all());
             
         return view('seller.ndr', compact('ndrShipments', 'tab'));

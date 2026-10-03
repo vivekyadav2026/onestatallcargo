@@ -37,7 +37,7 @@
                 <div class="space-y-3 text-sm">
                     <div>
                         <div class="text-gray-500 text-xs">Destination</div>
-                        <div class="font-bold text-gray-900">{{ $bag->destination }}</div>
+                        <div class="font-bold text-gray-900">{{ optional($bag->destinationHub)->name ?? 'Unknown' }} ({{ optional($bag->destinationHub)->city ?? '' }})</div>
                     </div>
                     <div>
                         <div class="text-gray-500 text-xs">Shipment Count</div>

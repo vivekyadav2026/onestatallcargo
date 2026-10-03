@@ -80,32 +80,32 @@
         </div>
 
         <!-- Single Line Compact Filters Row -->
-        <form action="{{ route('seller.shipments.index') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-nowrap items-center justify-between gap-2 overflow-x-auto">
+        <form action="{{ route('seller.shipments.index') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 overflow-x-auto md:overflow-visible">
             <input type="hidden" name="status" value="{{ request('status', 'new') }}">
             
-            <div class="flex items-center gap-2 shrink-0">
-                <select name="date_filter" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+                <select name="date_filter" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-auto">
                     <option value="created">Created Date</option>
                     <option value="synced">Synced Date</option>
                 </select>
 
-                <div class="relative flex items-center">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Order ID / AWB / Mobile" class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-48 focus:border-[#4338ca]">
+                <div class="relative flex items-center w-full sm:w-auto">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Order ID / AWB / Mobile" class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-48 focus:border-[#4338ca]">
                     <button type="submit" class="absolute right-2 text-gray-400 hover:text-[#4338ca]"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></button>
                 </div>
 
-                <select name="payment_mode" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                <select name="payment_mode" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-auto">
                     <option value="">Payment Mode (All)</option>
                     <option value="prepaid" {{ request('payment_mode') === 'prepaid' ? 'selected' : '' }}>Prepaid</option>
                     <option value="cod" {{ request('payment_mode') === 'cod' ? 'selected' : '' }}>COD</option>
                 </select>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
-                <a href="{{ route('seller.shipments.index') }}" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center gap-1.5 hover:bg-gray-50 shadow-sm">
+            <div class="flex items-center gap-2 w-full md:w-auto shrink-0 justify-start md:justify-end mt-2 md:mt-0 flex-1 md:flex-none">
+                <a href="{{ route('seller.shipments.index') }}" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-50 shadow-sm flex-1 md:flex-none">
                     <i class="fa-solid fa-rotate-right text-gray-400"></i> Reset Filters
                 </a>
-                <button type="button" onclick="window.print()" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center gap-1.5 hover:bg-gray-50 shadow-sm">
+                <button type="button" onclick="window.print()" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-50 shadow-sm flex-1 md:flex-none">
                     <i class="fa-solid fa-download text-gray-400"></i> Export
                 </button>
             </div>
@@ -115,12 +115,12 @@
         <div class="overflow-x-auto min-h-[300px] pb-28 relative">
             
             <!-- Floating Bulk Selection Bar -->
-            <div x-show="selectedIds.length > 0" x-transition class="sticky top-0 z-30 bg-[#1e1b4b] text-white px-4 py-2.5 flex items-center justify-between text-xs font-bold shadow-lg">
-                <div class="flex items-center gap-3">
+            <div x-show="selectedIds.length > 0" x-transition class="sticky top-0 z-30 bg-[#1e1b4b] text-white px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between text-xs font-bold shadow-lg gap-2 sm:gap-0">
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                     <span class="bg-[#4338ca] px-2.5 py-0.5 rounded-full text-[11px]" x-text="selectedIds.length + ' selected'"></span>
                     <span>Selected Orders Actions</span>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                     <form action="{{ route('seller.shipments.bulk-cancel') }}" method="POST" onsubmit="return confirm('Cancel selected orders?');" class="inline">
                         @csrf
                         <input type="hidden" name="ids" :value="selectedIds.join(',')">
@@ -246,9 +246,18 @@
                             <td class="px-3 py-4 align-top text-right sticky right-0 bg-white group-hover:bg-gray-50 shadow-[-3px_0_6px_rgba(0,0,0,0.04)]" :class="openMenu ? 'z-[999]' : 'z-10'" x-data="{ openMenu: false }">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($isKycApproved)
-                                        <a href="{{ route('seller.label', $shipment->awb_number) }}" target="_blank" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition">
-                                            Ship Now
-                                        </a>
+                                        @if(in_array(strtolower($shipment->status), ['new', 'manifested', 'booked']))
+                                            <form action="{{ route('seller.shipments.shipNow', $shipment->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition">
+                                                    Ship Now
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" disabled class="px-3 py-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg shadow-sm cursor-not-allowed border border-emerald-200">
+                                                <i class="fa-solid fa-check mr-1"></i> Shipped
+                                            </button>
+                                        @endif
                                     @else
                                         <a href="{{ route('seller.settings') }}?view=kyc" onclick="alert('KYC Verification Required!\n\nPlease complete and get your KYC approved before shipping orders.');" class="px-3 py-1.5 bg-gray-400 hover:bg-gray-600 text-white text-xs font-bold rounded-lg shadow-sm transition">
                                             Ship Now
@@ -315,7 +324,7 @@
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-4">
                     <div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
                             <h3 class="text-xl font-black text-gray-900 tracking-tight" x-text="activeOrder.awb_number || 'Order Details'"></h3>
                             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase"
                                   :class="{
@@ -416,15 +425,19 @@
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
-                <div class="mb-4">
-                    <p class="text-xs text-gray-500 mb-3">Updating E-Way Bill for AWB: <span class="font-bold text-[#4338ca]" x-text="currentAwb"></span></p>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">E-Way Bill Number <span class="text-red-500">*</span></label>
-                    <input type="text" x-model="ewayNumber" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca]" placeholder="e.g., 123456789012">
-                </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button @click="showEwayModal = false" class="px-4 py-2 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
-                    <button @click="submitEway()" class="px-4 py-2 text-xs font-bold text-white bg-[#4338ca] rounded-lg hover:bg-indigo-700 transition">Save E-Way Bill</button>
-                </div>
+                <form action="{{ route('seller.shipments.eway') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="awb_number" :value="currentAwb">
+                    <div class="mb-4">
+                        <p class="text-xs text-gray-500 mb-3">Updating E-Way Bill for AWB: <span class="font-bold text-[#4338ca]" x-text="currentAwb"></span></p>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">E-Way Bill Number <span class="text-red-500">*</span></label>
+                        <input type="text" name="eway_bill_number" x-model="ewayNumber" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca]" placeholder="e.g., 123456789012">
+                    </div>
+                    <div class="flex justify-end gap-2 mt-6">
+                        <button type="button" @click="showEwayModal = false" class="px-4 py-2 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-[#4338ca] rounded-lg hover:bg-indigo-700 transition">Save E-Way Bill</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

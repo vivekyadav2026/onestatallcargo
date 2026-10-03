@@ -132,8 +132,19 @@ class HubBaggingController extends Controller
             }
 
             // STRICT CUSTODY CHECK
-            if ($scope['franchise_id'] && $shipment->franchise_id !== $scope['franchise_id']) {
-                return back()->with('error', 'UNAUTHORIZED: Shipment is not received by your Franchise/Hub.');
+            if ($scope['franchise_id']) {
+                $franchise = \App\Models\Franchise::find($scope['franchise_id']);
+                $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+                if (!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
+                $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
+                
+                if ($shipment->franchise_id !== $scope['franchise_id'] && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
+                    return back()->with('error', 'UNAUTHORIZED: Shipment is not mapped to your Franchise.');
+                }
+            } else {
+                 if ($shipment->pickup_city !== $scope['city'] && $shipment->delivery_city !== $scope['city']) {
+                     return back()->with('error', 'UNAUTHORIZED: Shipment is not mapped to your Hub.');
+                 }
             }
 
             // STATE MACHINE CHECK
@@ -312,7 +323,7 @@ class HubBaggingController extends Controller
                     throw new \Exception('Shipment ' . $shipment->awb_number . ' is in an invalid state for dispatch: ' . $shipment->status);
                 }
                 
-                $shipment->status = 'Dispatch'; // Using the existing vocabulary
+                $shipment->status = 'In Transit'; // Using the existing vocabulary
                 $shipment->save();
 
                 ShipmentEvent::create([

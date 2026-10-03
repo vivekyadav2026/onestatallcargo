@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="max-w-3xl space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Create User & Assign Role</h1>
             <p class="text-sm text-gray-500 mt-1">Add a new admin, manager, or rider to the system.</p>
@@ -58,7 +58,7 @@
                             <option value="seller">Seller (Online/Offline)</option>
                             <option value="aggregator">Aggregator (Other Shipping Cos)</option>
                             <option value="b2b_customer">B2B Customer (Heavy/Cargo)</option>
-                            <option value="b2c_customer">B2C Customer (Individual)</option>
+                            <option value="customer">B2C Customer (Individual)</option>
                             <option value="franchise">Franchise / Hub Partner</option>
                             <option value="pickup_rider">Pickup Rider</option>
                             <option value="delivery_rider">Delivery Rider</option>

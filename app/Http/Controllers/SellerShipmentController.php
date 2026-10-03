@@ -378,6 +378,40 @@ class SellerShipmentController extends Controller
         return view('seller.shipments', compact('shipments', 'counts'));
     }
 
+    public function updateEwayBill(Request $request)
+    {
+        $request->validate([
+            'awb_number' => 'required|string',
+            'eway_bill_number' => 'required|string|max:50'
+        ]);
+
+        $shipment = \App\Models\Shipment::where('user_id', Auth::id())
+            ->where('awb_number', $request->awb_number)
+            ->firstOrFail();
+
+        $shipment->eway_bill_number = $request->eway_bill_number;
+        $shipment->save();
+
+        return back()->with('success', 'E-Way Bill ' . $shipment->eway_bill_number . ' successfully updated for ' . $shipment->awb_number);
+    }
+
+    public function shipNowAction($id)
+    {
+        $shipment = \App\Models\Shipment::where('user_id', Auth::id())->where('id', $id)->firstOrFail();
+        
+        if (in_array(strtolower($shipment->status), ['new', 'manifested', 'booked'])) {
+            $shipment->status = 'Pickup Scheduled';
+            $shipment->save();
+
+            // Optionally create an event tracking entry here if ShipmentEvent model exists,
+            // but we'll stick to basic state change to keep it simple.
+
+            return back()->with('success', 'Shipment successfully marked as Pickup Scheduled.');
+        }
+
+        return back()->with('error', 'Shipment cannot be shipped at this stage.');
+    }
+
     public function cancel($id)
     {
         $shipment = \App\Models\Shipment::where('user_id', Auth::id())->where('id', $id)->firstOrFail();

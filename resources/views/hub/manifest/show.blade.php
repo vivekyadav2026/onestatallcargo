@@ -30,7 +30,7 @@
         <div class="p-6 border-b border-gray-200 flex justify-between items-start">
             <div>
                 <h4 class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Destination</h4>
-                <div class="text-xl font-bold text-gray-900">{{ $manifest->destination }}</div>
+                <div class="text-xl font-bold text-gray-900">{{ optional($manifest->destinationHub)->name ?? 'Unknown' }} ({{ optional($manifest->destinationHub)->city ?? '' }})</div>
                 <div class="text-sm text-gray-500 mt-1">Bag: {{ $manifest->bag->bag_number }}</div>
             </div>
             <div class="text-right">

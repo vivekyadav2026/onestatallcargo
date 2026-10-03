@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 class="text-2xl font-extrabold text-gray-900">FAQs</h1>
         <a href="{{ route('admin.faqs.create') }}" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[var(--gold)] text-gray-900 shadow-md hover:bg-[var(--gold-deep)]">Add FAQ</a>
     </div>

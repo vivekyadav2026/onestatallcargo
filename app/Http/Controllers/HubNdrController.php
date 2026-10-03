@@ -33,9 +33,23 @@ class HubNdrController extends Controller
         
         $shipmentsQuery = Shipment::where('status', 'NDR');
         if ($scope['franchise_id']) {
-            $shipmentsQuery->where('franchise_id', $scope['franchise_id']);
+            $franchise = \App\Models\Franchise::find($scope['franchise_id']);
+            $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+            if (!is_array($pincodes)) {
+                $pincodes = $pincodes ? [$pincodes] : [];
+            }
+            $shipmentsQuery->where(function($q) use ($scope, $pincodes) {
+                $q->where('franchise_id', $scope['franchise_id'])
+                  ->orWhere('user_id', Auth::id());
+                if (!empty($pincodes)) {
+                    $q->orWhereIn('pickup_pincode', $pincodes)
+                      ->orWhereIn('delivery_pincode', $pincodes);
+                }
+            });
         } else {
-            $shipmentsQuery->whereNull('franchise_id');
+            $shipmentsQuery->whereNull('franchise_id')->where(function($q) use ($scope) {
+                $q->where('pickup_city', $scope['city'])->orWhere('delivery_city', $scope['city']);
+            });
         }
         $shipments = $shipmentsQuery->orderBy('updated_at', 'desc')->paginate(15);
             
@@ -64,9 +78,17 @@ class HubNdrController extends Controller
             $shipment = Shipment::lockForUpdate()->findOrFail($id);
             
             if ($scope['franchise_id']) {
-                if ($shipment->franchise_id !== $scope['franchise_id']) abort(403, 'Unauthorized');
+                $franchise = \App\Models\Franchise::find($scope['franchise_id']);
+                $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+                if (!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
+                $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
+                if ($shipment->franchise_id !== $scope['franchise_id'] && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
+                    abort(403, 'Unauthorized');
+                }
             } else {
-                if ($shipment->franchise_id !== null) abort(403, 'Unauthorized');
+                if ($shipment->pickup_city !== $scope['city'] && $shipment->delivery_city !== $scope['city']) {
+                    abort(403, 'Unauthorized');
+                }
             }
 
             if ($shipment->status !== 'NDR') {

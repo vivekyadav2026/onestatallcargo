@@ -2,7 +2,7 @@
 @section('title', 'Couriers API - OneStall Cargo')
 @section('content')
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Couriers API Configuration</h1>
             <p class="text-sm text-gray-500 mt-1">Manage secure API credentials for 3rd-party logistics partners (Delhivery, XpressBees, etc).</p>

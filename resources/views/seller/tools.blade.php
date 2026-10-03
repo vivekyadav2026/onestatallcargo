@@ -26,7 +26,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full items-start">
                 
                 <!-- Left Column: Form Card -->
-                <div class="lg:col-span-6 bg-white rounded-3xl p-6 md:p-8 border border-gray-200 shadow-sm space-y-6">
+                <div class="lg:col-span-6 bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-gray-200 shadow-sm space-y-6">
                     
                     <!-- Domestic / International Tabs -->
                     <div class="flex items-center gap-6 border-b border-gray-100 pb-3">
@@ -187,9 +187,10 @@
                         <div class="space-y-2 pt-1">
                             <label class="block text-xs font-bold text-gray-800">Boxes and Dimensions <span class="text-red-500">*</span></label>
                             
-                            <div class="space-y-3">
-                                <template x-for="(box, idx) in calc.boxes" :key="idx">
-                                    <div class="flex items-start gap-2 sm:gap-2.5">
+                            <div class="w-full overflow-x-auto pb-2">
+                                <div class="space-y-3 min-w-[450px]">
+                                    <template x-for="(box, idx) in calc.boxes" :key="idx">
+                                        <div class="flex items-start gap-2 sm:gap-2.5">
                                         <!-- No of Box -->
                                         <div class="w-16 sm:w-20 flex-shrink-0">
                                             <span class="block text-[11px] font-semibold text-gray-700 mb-1 whitespace-nowrap">No of Box <span class="text-red-500">*</span></span>
@@ -248,6 +249,7 @@
                                         </div>
                                     </div>
                                 </template>
+                                </div>
                             </div>
 
                             <p class="text-[11px] text-gray-500 font-normal pt-1">
@@ -289,7 +291,7 @@
                 </div>
 
                 <!-- Right Column: Results Area (Matches Reference Indigo Design with Digital Scale Graphic) -->
-                <div class="lg:col-span-6 bg-[#312e81] rounded-3xl p-6 md:p-8 shadow-xl flex flex-col justify-start text-white min-h-[520px]">
+                <div class="lg:col-span-6 bg-[#312e81] rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl flex flex-col justify-start text-white min-h-[520px]">
                     
                     <!-- Dynamic Header -->
                     <div class="text-center mb-6">
@@ -575,7 +577,7 @@
         </div>
 
         <!-- TAB 2: Rate Chart -->
-        <div x-show="activeTab === 'chart'" class="p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
+        <div x-show="activeTab === 'chart'" class="p-4 sm:p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
             <div class="max-w-5xl mx-auto">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Standard Rate Chart</h2>
                 <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto shadow-sm">
@@ -612,7 +614,7 @@
         </div>
 
         <!-- TAB 3: Serviceable Pincodes -->
-        <div x-show="activeTab === 'serviceability'" class="p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
+        <div x-show="activeTab === 'serviceability'" class="p-4 sm:p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl mx-auto">
                 
                 <!-- Left Box: Download Serviceable Pincodes List -->
@@ -677,7 +679,7 @@
         </div>
 
         <!-- TAB 4: Activity Logs -->
-        <div x-show="activeTab === 'logs'" class="p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
+        <div x-show="activeTab === 'logs'" class="p-4 sm:p-6 md:p-8 bg-white rounded-3xl border border-gray-200 shadow-sm min-h-[500px]" style="display: none;">
             <div class="max-w-5xl mx-auto">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">System Activity Logs</h2>
                 <div class="bg-white border border-gray-200 rounded-2xl overflow-x-auto shadow-sm">

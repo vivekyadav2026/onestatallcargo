@@ -2,7 +2,7 @@
 @section('title', 'NDR & RTO - OneStall Cargo')
 @section('content')
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">NDR & RTO Management</h1>
             <p class="text-sm text-gray-500 mt-1">Resolve Non-Delivery Reports and process Returns to Origin.</p>

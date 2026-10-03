@@ -61,7 +61,7 @@
                         @forelse($bags as $bag)
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 font-bold text-gray-900">{{ $bag->bag_number }}</td>
-                            <td class="px-4 py-3">{{ $bag->destination }}</td>
+                            <td class="px-4 py-3">{{ optional($bag->destinationHub)->name ?? 'Unknown' }} ({{ optional($bag->destinationHub)->city ?? '' }})</td>
                             <td class="px-4 py-3">{{ $bag->shipments_count }} items</td>
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 rounded-md text-[10px] font-bold tracking-wider {{ $bag->status === 'OPEN' ? 'bg-blue-50 text-blue-700' : ($bag->status === 'SEALED' ? 'bg-yellow-50 text-yellow-700' : 'bg-green-50 text-green-700') }}">
@@ -100,7 +100,7 @@
                         @forelse($manifests as $manifest)
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3 font-bold text-gray-900">{{ $manifest->manifest_number }}</td>
-                            <td class="px-4 py-3">{{ $manifest->destination }}</td>
+                            <td class="px-4 py-3">{{ optional($manifest->destinationHub)->name ?? 'Unknown' }} ({{ optional($manifest->destinationHub)->city ?? '' }})</td>
                             <td class="px-4 py-3">
                                 <span class="px-2 py-1 rounded-md text-[10px] font-bold tracking-wider {{ $manifest->status === 'CREATED' ? 'bg-yellow-50 text-yellow-700' : 'bg-green-50 text-green-700' }}">
                                     {{ $manifest->status }}

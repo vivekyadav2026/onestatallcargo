@@ -84,7 +84,7 @@
         
         @if($shipment->is_cod)
         <div class="cod-box">
-            COD TO COLLECT: Rs {{  number_format($shipment->total_amount, 2) }}
+            COD TO COLLECT: ₹{{  number_format($shipment->total_amount, 2) }}
         </div>
         @else
         <div class="cod-box" style="border-color: #4CAF50; color: #4CAF50;">

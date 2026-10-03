@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
-class AdminSettingController extends Controller
-{
+class AdminSettingController extends Controller {
+
     public function index()
     {
         $settings = Setting::all();

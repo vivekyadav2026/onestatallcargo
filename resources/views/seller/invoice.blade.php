@@ -12,9 +12,9 @@
     </style>
 </head>
 <body class="bg-gray-100 py-10">
-    <div class="max-w-4xl mx-auto bg-white border border-gray-300 p-10 shadow-lg relative">
+    <div class="max-w-4xl mx-auto bg-white border border-gray-300 p-4 sm:p-10 shadow-lg relative">
         <!-- Print Button -->
-        <button onclick="window.print()" class="no-print absolute top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded font-bold shadow hover:bg-purple-700">
+        <button onclick="window.print()" class="no-print absolute top-2 right-2 sm:top-4 sm:right-4 text-xs sm:text-base bg-purple-600 text-white px-4 py-2 rounded font-bold shadow hover:bg-purple-700">
             <i class="fa-solid fa-print"></i> Print Invoice
         </button>
 
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Addresses -->
-        <div class="grid grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 mb-8">
             <!-- Shipper -->
             <div class="border border-gray-300 p-4 rounded-lg">
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-2">Shipper (Exporter)</h3>
@@ -73,14 +73,14 @@
                         <td class="px-4 py-4 font-bold text-gray-700">General Export Goods</td>
                         <td class="px-4 py-4 font-mono text-gray-500">{{ $shipment->hs_code ?? '9999.99' }}</td>
                         <td class="px-4 py-4">{{ $shipment->weight_kg }} KG</td>
-                        <td class="px-4 py-4 text-right">USD {{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
-                        <td class="px-4 py-4 text-right font-bold text-gray-900">USD {{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
+                        <td class="px-4 py-4 text-right">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
+                        <td class="px-4 py-4 text-right font-bold text-gray-900">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr class="bg-gray-50 border-t-2 border-gray-800">
                         <td colspan="5" class="px-4 py-3 text-right font-bold uppercase tracking-widest text-xs text-gray-600">Total Declared Value:</td>
-                        <td class="px-4 py-3 text-right font-black text-lg text-gray-900">USD {{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
+                        <td class="px-4 py-3 text-right font-black text-lg text-gray-900">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -93,7 +93,7 @@
         </div>
 
         <!-- Footer / Signatures -->
-        <div class="grid grid-cols-2 gap-8 text-sm pt-8 border-t border-gray-300">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 text-sm pt-8 border-t border-gray-300">
             <div>
                 <p class="font-bold text-gray-600 uppercase text-xs tracking-wider mb-8">Authorized Signature (Shipper)</p>
                 <div class="border-b border-gray-400 w-3/4 mb-2"></div>

@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Sellers Directory</h1>
             <p class="text-sm text-gray-500 mt-1">Manage all registered B2B & B2C sellers, GSTIN, PAN, and wallet balances</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
             <form action="{{ route('admin.sellers.index') }}" method="GET" class="flex items-center gap-2">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, GST, company..." class="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--gold)] w-64">
                 <button type="submit" class="px-4 py-2 bg-gray-900 text-white font-bold rounded-xl text-sm hover:bg-black transition"><i class="fa-solid fa-search"></i></button>

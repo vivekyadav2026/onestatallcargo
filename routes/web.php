@@ -188,11 +188,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hubs/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggle'])->name('admin.hubs.toggle');
         Route::post('/hubs/franchise/{id}/approve', [\App\Http\Controllers\AdminHubController::class, 'approveFranchise'])->name('admin.hubs.approve_franchise');
         Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
-        Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
-        Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
+        
+        
         Route::post('/couriers/{id}/update', [\App\Http\Controllers\AdminCourierController::class, 'update'])->name('admin.couriers.update');
         Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
         
+                Route::get('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'index'])->name('admin.customers.index');
+        Route::post('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'store'])->name('admin.customers.store');
+        Route::post('/customers/{id}', [\App\Http\Controllers\AdminCustomerController::class, 'update'])->name('admin.customers.update');
+        Route::delete('/customers/{id}', [\App\Http\Controllers\AdminCustomerController::class, 'destroy'])->name('admin.customers.destroy');
+        Route::post('/customers/{id}/toggle', [\App\Http\Controllers\AdminCustomerController::class, 'toggleStatus'])->name('admin.customers.toggle');
         Route::get('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'index'])->name('admin.sellers.index');
         Route::post('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'store'])->name('admin.sellers.store');
         Route::post('/sellers/{id}', [\App\Http\Controllers\AdminSellerController::class, 'update'])->name('admin.sellers.update');
@@ -202,8 +207,8 @@ Route::middleware(['auth'])->group(function () {
         
         
         
-        Route::get('/billing', [\App\Http\Controllers\AdminBillingController::class, 'index'])->name('admin.billing.index');
-        Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
+        
+        
         Route::get('/riders', [\App\Http\Controllers\AdminRiderController::class, 'index'])->name('admin.riders.index');
         Route::post('/riders', [\App\Http\Controllers\AdminRiderController::class, 'store'])->name('admin.riders.store');
         Route::post('/riders/{id}/update', [\App\Http\Controllers\AdminRiderController::class, 'update'])->name('admin.riders.update');
@@ -212,11 +217,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
         Route::post('/billing/remit-early/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remitEarlyCod'])->name('admin.billing.remit-early');
         
-                        Route::get('/roles', [\App\Http\Controllers\AdminRoleController::class, 'index'])->name('admin.roles.index');
-        Route::get('/roles/create', [\App\Http\Controllers\AdminRoleController::class, 'create'])->name('admin.roles.create');
-        Route::post('/roles', [\App\Http\Controllers\AdminRoleController::class, 'store'])->name('admin.roles.store');
-        Route::get('/roles/{id}/edit', [\App\Http\Controllers\AdminRoleController::class, 'edit'])->name('admin.roles.edit');
-        Route::put('/roles/{id}', [\App\Http\Controllers\AdminRoleController::class, 'update'])->name('admin.roles.update');
+                        
+        
+        
+        
+        
         Route::get('/reports', [\App\Http\Controllers\AdminReportController::class, 'index'])->name('admin.reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\AdminReportController::class, 'exportCsv'])->name('admin.reports.export');
         Route::get('/weight-discrepancies', [\App\Http\Controllers\AdminWeightController::class, 'index'])->name('admin.weight');
@@ -232,10 +237,32 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('faqs', \App\Http\Controllers\AdminFaqController::class)->names('admin.faqs');
         Route::resource('services', \App\Http\Controllers\AdminServiceController::class)->names('admin.services');
         Route::resource('testimonials', \App\Http\Controllers\AdminTestimonialController::class)->names('admin.testimonials');
-        Route::resource('settings', \App\Http\Controllers\AdminSettingController::class)->names('admin.settings');
+        
         Route::get('/kyc', [\App\Http\Controllers\KycController::class, 'adminIndex'])->name('admin.kyc.index');
         Route::post('/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'adminApprove'])->name('admin.kyc.approve');
         Route::post('/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'adminReject'])->name('admin.kyc.reject');
+        // Strictly Super Admin Only Routes
+        Route::middleware(['role:admin'])->group(function() {
+            Route::resource('settings', \App\Http\Controllers\AdminSettingController::class)->names('admin.settings');
+            Route::get('/roles', [\App\Http\Controllers\AdminRoleController::class, 'index'])->name('admin.roles.index');
+            Route::get('/roles/create', [\App\Http\Controllers\AdminRoleController::class, 'create'])->name('admin.roles.create');
+            Route::post('/roles', [\App\Http\Controllers\AdminRoleController::class, 'store'])->name('admin.roles.store');
+            Route::get('/roles/{id}/edit', [\App\Http\Controllers\AdminRoleController::class, 'edit'])->name('admin.roles.edit');
+            Route::put('/roles/{id}', [\App\Http\Controllers\AdminRoleController::class, 'update'])->name('admin.roles.update');
+            Route::get('/billing', [\App\Http\Controllers\AdminBillingController::class, 'index'])->name('admin.billing.index');
+            Route::post('/billing/{id}/pay', [\App\Http\Controllers\AdminBillingController::class, 'recordPayment'])->name('admin.billing.pay');
+            Route::get('/billing/invoices', [\App\Http\Controllers\AdminBillingController::class, 'invoices'])->name('admin.billing.invoices');
+            Route::get('/ratecards', [\App\Http\Controllers\AdminRateCardController::class, 'index'])->name('admin.ratecards.index');
+            Route::post('/ratecards', [\App\Http\Controllers\AdminRateCardController::class, 'store'])->name('admin.ratecards.store');
+            Route::get('/ratecards/create', [\App\Http\Controllers\AdminRateCardController::class, 'create'])->name('admin.ratecards.create');
+            Route::get('/ratecards/{id}/edit', [\App\Http\Controllers\AdminRateCardController::class, 'edit'])->name('admin.ratecards.edit');
+            Route::put('/ratecards/{id}', [\App\Http\Controllers\AdminRateCardController::class, 'update'])->name('admin.ratecards.update');
+            Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
+            Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
+            Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggleStatus'])->name('admin.couriers.toggle');
+            Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
+        });
+
     });
 
     // SELLER PORTAL (Requires Seller Role)
@@ -273,6 +300,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipments', [\App\Http\Controllers\SellerShipmentController::class, 'index'])->name('seller.shipments.index');
         Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('seller.shipments.evidence');
         Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\SellerShipmentController::class, 'bulkCancel'])->name('seller.shipments.bulk-cancel');
+        Route::post('/shipments/eway-bill', [\App\Http\Controllers\SellerShipmentController::class, 'updateEwayBill'])->name('seller.shipments.eway');
+        Route::post('/shipments/{id}/ship-now', [\App\Http\Controllers\SellerShipmentController::class, 'shipNowAction'])->name('seller.shipments.shipNow');
         Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\SellerShipmentController::class, 'cancel'])->name('seller.shipments.cancel');
         Route::get('/book', [\App\Http\Controllers\SellerShipmentController::class, 'create'])->name('seller.book');
         Route::post('/book', [\App\Http\Controllers\SellerShipmentController::class, 'store'])->name('seller.book.post');
@@ -301,6 +330,22 @@ Route::middleware(['auth'])->group(function () {
         // HUB PORTAL (Requires Franchise Role)
     Route::middleware(['role:franchise'])->prefix('hub')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\HubDashboardController::class, 'index'])->name('hub.dashboard');
+        
+        // Hub Bookings and Shipments
+        Route::get('/shipments', [\App\Http\Controllers\HubShipmentController::class, 'index'])->name('hub.shipments');
+                Route::get('/shipments/bulk', [\App\Http\Controllers\HubShipmentController::class, 'bulkCreate'])->name('hub.bulk');
+        Route::post('/shipments/bulk', [\App\Http\Controllers\HubShipmentController::class, 'bulkStore'])->name('hub.bulk.store');
+        Route::get('/shipments/book', [\App\Http\Controllers\HubShipmentController::class, 'create'])->name('hub.shipments.create');
+        Route::post('/shipments/book', [\App\Http\Controllers\HubShipmentController::class, 'store'])->name('hub.shipments.store');
+        Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\HubShipmentController::class, 'bulkCancel'])->name('hub.shipments.bulk-cancel');
+        Route::post('/shipments/eway-bill', [\App\Http\Controllers\HubShipmentController::class, 'updateEwayBill'])->name('hub.shipments.eway');
+        Route::post('/shipments/{id}/ship-now', [\App\Http\Controllers\HubShipmentController::class, 'shipNowAction'])->name('hub.shipments.shipNow');
+        Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\HubShipmentController::class, 'cancel'])->name('hub.shipments.cancel');
+        Route::get('/shipments/label/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printLabel'])->name('hub.label');
+        Route::get('/shipments/invoice/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printInvoice'])->name('hub.invoice');
+        
+        // Evidence mock for hub just in case
+        Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('hub.shipments.evidence');
         Route::get('/profile', [\App\Http\Controllers\HubDashboardController::class, 'profile'])->name('hub.profile');
         Route::post('/profile', [\App\Http\Controllers\HubDashboardController::class, 'updateProfile'])->name('hub.profile.update');
         
@@ -325,7 +370,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/ndr/{id}/action', [\App\Http\Controllers\HubNdrController::class, 'action'])->name('hub.ndr.action');
 
         // Hub Wallet / Commissions
-        Route::get('/wallet', [\App\Http\Controllers\HubWalletController::class, 'index'])->name('hub.wallet.index');
+                        Route::get('/wallet', [\App\Http\Controllers\HubWalletController::class, 'index'])->name('hub.wallet.index');
+        Route::get('/customers', [\App\Http\Controllers\HubCustomerController::class, 'index'])->name('hub.customers.index');
+                Route::post('/customers', [\App\Http\Controllers\HubCustomerController::class, 'store'])->name('hub.customers.store');
+                Route::get('/sellers', [\App\Http\Controllers\HubSellerController::class, 'index'])->name('hub.sellers.index');
+                Route::get('/service-areas', [\App\Http\Controllers\HubServiceAreaController::class, 'index'])->name('hub.service_areas.index');
+        Route::get('/reports', [\App\Http\Controllers\HubReportController::class, 'index'])->name('hub.reports.index');
+                Route::get('/reports/export', [\App\Http\Controllers\HubReportController::class, 'exportCsv'])->name('hub.reports.export');
+        
+        // System / Others
+        Route::get('/whatsapp', [\App\Http\Controllers\HubSystemController::class, 'whatsapp'])->name('hub.whatsapp.index');
+        Route::get('/support', [\App\Http\Controllers\HubSystemController::class, 'support'])->name('hub.support.index');
+        Route::get('/notifications', [\App\Http\Controllers\HubSystemController::class, 'notifications'])->name('hub.notifications.index');
+        Route::post('/wallet/remit', [\App\Http\Controllers\HubWalletController::class, 'remitCod'])->name('hub.wallet.remit');
 
         // Hub Bagging & Manifests
         Route::get('/bagging', [\App\Http\Controllers\HubBaggingController::class, 'index'])->name('hub.bagging.index');
