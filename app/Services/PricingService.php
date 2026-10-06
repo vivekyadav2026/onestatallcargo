@@ -31,7 +31,7 @@ class PricingService
         if ($rateCardId) {
             $rateCard = RateCard::find($rateCardId);
         } else {
-            $rateCard = RateCard::where('is_active', true)->latest()->first();
+            $rateCard = RateCard::whereNull('courier_id')->where('is_active', true)->latest()->first();
         }
         if (!$rateCard) {
             throw new \Exception("No active rate card found");

@@ -173,11 +173,14 @@ class AdminRateCardController extends Controller {
     {
         try {
             DB::transaction(function () use ($id) {
-                // Deactivate all others
-                RateCard::where('is_active', true)->update(['is_active' => false]);
+                $rateCard = RateCard::findOrFail($id);
+                
+                // Deactivate all others for the same courier (or null)
+                RateCard::where('courier_id', $rateCard->courier_id)
+                    ->where('is_active', true)
+                    ->update(['is_active' => false]);
                 
                 // Activate selected
-                $rateCard = RateCard::findOrFail($id);
                 $rateCard->is_active = true;
                 $rateCard->save();
             });

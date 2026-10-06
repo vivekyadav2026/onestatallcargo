@@ -107,7 +107,7 @@
             </div>
             <div class="hidden md:block w-px h-4 bg-gray-600"></div>
             <div class="flex-1 min-w-[120px]">
-                <div class="text-white font-medium text-xs md:text-sm">15+ Courier Partners</div>
+                <div class="text-white font-medium text-xs md:text-sm">Trusted Delivery Partners</div>
             </div>
             <div class="hidden md:block w-px h-4 bg-gray-600"></div>
             <div class="flex-1 min-w-[120px]">
