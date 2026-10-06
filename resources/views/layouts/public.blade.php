@@ -68,8 +68,8 @@
                             <a href="{{ route('solutions.b2c') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-box text-brand-blue w-5"></i> B2C Shipping</a>
                             <a href="{{ route('solutions.b2b') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-truck-moving text-brand-blue w-5"></i> B2B & Cargo</a>
                             <a href="{{ route('solutions.international') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-plane text-brand-blue w-5"></i> International Shipping</a>
-                            <a href="{{ route('solutions.quick') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-bolt text-brand-blue w-5"></i> Quick Delivery</a>
-                            <a href="{{ route('solutions.aggregation') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50 border-b border-gray-100"><i class="fa-solid fa-network-wired text-brand-blue w-5"></i> Courier Aggregation</a>
+
+
                             <a href="{{ route('solutions.ecommerce') }}" class="block px-5 py-3 text-sm font-medium hover:bg-gray-50"><i class="fa-solid fa-store text-brand-blue w-5"></i> E-commerce Integration</a>
                         </div>
                     </div>
@@ -158,8 +158,8 @@
                         <a href="{{ route('solutions.b2c') }}" class="block py-2 text-sm text-gray-300">B2C Shipping</a>
                         <a href="{{ route('solutions.b2b') }}" class="block py-2 text-sm text-gray-300">B2B & Cargo</a>
                         <a href="{{ route('solutions.international') }}" class="block py-2 text-sm text-gray-300">International Shipping</a>
-                        <a href="{{ route('solutions.quick') }}" class="block py-2 text-sm text-gray-300">Quick Delivery</a>
-                        <a href="{{ route('solutions.aggregation') }}" class="block py-2 text-sm text-gray-300">Courier Aggregation</a>
+
+
                         <a href="{{ route('solutions.ecommerce') }}" class="block py-2 text-sm text-gray-300">E-commerce Integration</a>
                     </div>
                 </div>
@@ -222,8 +222,8 @@
                         <li><a href="{{ route('solutions.b2c') }}" class="hover:text-white transition">B2C Shipping</a></li>
                         <li><a href="{{ route('solutions.b2b') }}" class="hover:text-white transition">B2B & Cargo</a></li>
                         <li><a href="{{ route('solutions.international') }}" class="hover:text-white transition">International Shipping</a></li>
-                        <li><a href="{{ route('solutions.quick') }}" class="hover:text-white transition">Quick Delivery</a></li>
-                        <li><a href="{{ route('solutions.aggregation') }}" class="hover:text-white transition">Courier Aggregation</a></li>
+
+
                         <li><a href="{{ route('solutions.ecommerce') }}" class="hover:text-white transition">E-commerce Integration</a></li>
                     </ul>
                 </div>

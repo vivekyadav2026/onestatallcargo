@@ -302,31 +302,6 @@
         </div>
     </div>
 
-    <!-- Carriers Row (Grey Text) - Scrolling Right -->
-    <div class="relative w-full overflow-hidden marquee-container mt-6">
-        <!-- Fading Edges -->
-        <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
-        
-        <div class="animate-marquee-right pt-2 pb-4">
-            @php
-                $carriers = ['Delhivery', 'BlueDart', 'XpressBees', 'EcomExpress', 'Shadowfax', 'DTDC', 'India Post', 'Amazon Shipping', 'Smartr', 'Gati'];
-            @endphp
-            
-            <!-- First Set -->
-            <div class="flex items-center space-x-12 px-6">
-                @foreach($carriers as $carrier)
-                <span class="text-2xl md:text-3xl font-black text-gray-400 uppercase tracking-widest hover:text-brand-navy transition-colors duration-300 cursor-pointer">{{ $carrier }}</span>
-                @endforeach
-            </div>
-            <!-- Second Set (Duplicate for seamless loop) -->
-            <div class="flex items-center space-x-12 px-6">
-                @foreach($carriers as $carrier)
-                <span class="text-2xl md:text-3xl font-black text-gray-400 uppercase tracking-widest hover:text-brand-navy transition-colors duration-300 cursor-pointer">{{ $carrier }}</span>
-                @endforeach
-            </div>
-        </div>
-    </div>
 </section>
 
 
