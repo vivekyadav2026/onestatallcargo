@@ -266,7 +266,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // SELLER PORTAL (Requires Seller Role)
-    Route::middleware(['role:seller,aggregator,b2b_customer,corporate'])->prefix('seller')->group(function () {
+    Route::middleware(['role:seller,aggregator,b2b_customer,corporate', 'check.kyc'])->prefix('seller')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\SellerDashboardController::class, 'index'])->name('seller.dashboard');
         
         // KYC Submission
