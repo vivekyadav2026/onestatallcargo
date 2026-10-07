@@ -253,7 +253,18 @@
         @if(!$userKyc || $userKyc->status !== 'approved')
               <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm max-w-4xl mt-4">
                   <div class="mb-8">
-                      <div class="mb-6 flex items-center gap-4">`n                    @if(Auth::user()->avatar)`n                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">`n                    @else`n                        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user text-2xl"></i></div>`n                    @endif`n                    <div>`n                        <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Profile Photo</label>`n                        <input type="file" id="avatar-upload" accept="image/*" class="text-xs">`n                    </div>`n                </div>`n                <div class="flex items-center gap-3 mb-2">
+                      <div class="mb-6 flex items-center gap-4">
+                    @if(Auth::user()->avatar)
+                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-200">
+                    @else
+                        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400"><i class="fa-solid fa-user text-2xl"></i></div>
+                    @endif
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Profile Photo</label>
+                        <input type="file" id="avatar-upload" accept="image/*" class="text-xs">
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 mb-2">
                           <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                               <i class="fa-solid fa-file-shield"></i>
                           </div>

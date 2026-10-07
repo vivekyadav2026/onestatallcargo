@@ -54,7 +54,7 @@
 </section>
 
 <!-- 2. Integrated Carriers Grid -->
-<section class="py-12 bg-white border-y border-gray-100">
+<!-- <section class="py-12 bg-white border-y border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 class="text-2xl font-bold text-brand-navy mb-8">Our Integrated Logistics Partners</h2>
         <div class="grid grid-cols-2 md:grid-cols-6 gap-6 items-center opacity-80">
@@ -66,7 +66,7 @@
             <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 font-black text-gray-700 text-lg">DTDC</div>
         </div>
     </div>
-</section>
+</section> -->
 
 <!-- 3. Why Partner With Us Grid -->
 <section class="py-12 md:py-16 bg-white">
