@@ -174,24 +174,24 @@ class RateCalculatorController extends Controller
                     $rateRes = $this->pricingService->calculateOneStallRate(
                         $pickupPin, $deliveryPin, $totalChargeableWeight, 10, 10, 10, $isCod, ($isCod && $codAmount > 0 ? $codAmount : $invoiceAmount)
                     );
-                    $baseCharge = $rateRes['base_freight'] ?? 45.00;
-                    $fscAmount = $rateRes['fsc_amount'] ?? round($baseCharge * 0.10, 2);
+                    $baseCharge = $rateRes['base_freight'] ?? 0.00;
+                    
                 } else {
                     $rateRes = $this->pricingService->calculateExternalRate(
                         $courier->id, $pickupPin, $deliveryPin, $totalChargeableWeight, $isCod, $invoiceAmount
                     );
-                    $baseCharge = $rateRes['base_freight'] ?? 50.00;
-                    $fscAmount = $rateRes['fsc_amount'] ?? round($baseCharge * 0.12, 2);
+                    $baseCharge = $rateRes['base_freight'] ?? 0.00;
+                    
                 }
 
                 // Add-on components (Dynamic + Calculated)
-                $waraiCharge = $fscAmount; // Warai / FSC Fuel Surcharge
+                $waraiCharge = $rateRes['fsc_amount'] ?? 0.00;
                 $toPayCharge = $isToPay ? 50.00 : 0.00;
                 
                 // COD charge
                 $codCharge = 0.00;
                 if ($isCod) {
-                    $codCharge = max(40.00, round($codAmount * 0.02, 2));
+                    $codCharge = $rateRes['cod_charge'] ?? 0.00;
                 }
 
                 // Insurance (Only if selected and invoice amount specified)
@@ -204,7 +204,7 @@ class RateCalculatorController extends Controller
 
                 // Subtotal for Tax
                 $subtotal = $baseCharge + $waraiCharge + $toPayCharge + $insuranceCharge + $codCharge + $adminDynamicTotal;
-                $stateTax = round($subtotal * 0.18, 2); // 18% GST
+                $stateTax = ($rateRes['gst'] ?? 0.00) + round(($toPayCharge + $insuranceCharge + $adminDynamicTotal) * 0.18, 2);
 
                 $finalTotal = round($subtotal + $stateTax, 2);
 

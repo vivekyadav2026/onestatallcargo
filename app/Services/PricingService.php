@@ -189,7 +189,9 @@ class PricingService
                 $fsc = $rateResponse['fsc'] ?? 0;
                 $cod = $rateResponse['cod_charge'] ?? 0;
                 
-                $total = $finalBaseFreight + $fsc + $cod;
+                $subtotal = $finalBaseFreight + $fsc + $cod;
+                $gst = round($subtotal * 0.18, 2);
+                $total = $subtotal + $gst;
 
                 return [
                     "zone"             => $rateResponse['zone']      ?? "External",
@@ -199,7 +201,7 @@ class PricingService
                     "base_freight"     => round($finalBaseFreight, 2),
                     "fsc_amount"       => round($fsc, 2),
                     "cod_charge"       => round($cod, 2),
-                    "gst"              => 0,
+                    "gst"              => round($gst, 2),
                     "total"            => round($total, 2),
                     "provider"         => $courier->name,
                     "breakdown"        => $rateResponse['breakdown'] ?? [],

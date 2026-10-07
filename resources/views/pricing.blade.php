@@ -75,20 +75,20 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">Weight*</label>
-                                <div class="flex relative">
-                                    <input type="number" step="0.1" x-model.number="weightKg" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" placeholder="0.5">
-                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xs">kg</span>
+                                <div class="flex shadow-sm rounded-lg">
+                                    <input type="number" step="0.1" x-model.number="weightKg" required class="flex-1 bg-gray-50 border border-gray-200 rounded-l-lg px-4 py-3 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" placeholder="0.5">
+                                    <span class="inline-flex items-center px-4 rounded-r-lg border border-l-0 border-gray-200 bg-gray-100 text-gray-500 font-bold text-xs">kg</span>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Package Dimensions</label>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Package Dimensions (L x W x H)</label>
                                 <div class="flex items-center gap-2">
-                                    <input type="number" placeholder="L" x-model="dim_l" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
-                                    <span class="text-gray-400 text-xs font-bold">X</span>
-                                    <input type="number" placeholder="W" x-model="dim_w" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
-                                    <span class="text-gray-400 text-xs font-bold">X</span>
-                                    <input type="number" placeholder="H" x-model="dim_h" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
-                                    <span class="text-gray-400 text-xs font-bold">CM</span>
+                                    <input type="number" placeholder="L" x-model="dim_l" class="flex-1 w-full min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-400 text-xs font-bold">×</span>
+                                    <input type="number" placeholder="W" x-model="dim_w" class="flex-1 w-full min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-400 text-xs font-bold">×</span>
+                                    <input type="number" placeholder="H" x-model="dim_h" class="flex-1 w-full min-w-0 bg-gray-50 border border-gray-200 rounded-lg px-2 py-3 text-center text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] transition">
+                                    <span class="text-gray-500 text-xs font-bold pl-1">CM</span>
                                 </div>
                             </div>
                         </div>
@@ -218,7 +218,7 @@
                                                 </div>
                                                 <div class="text-center">
                                                     <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
-                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="(rate.rate * 1.5).toFixed(2)"></span></div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="rate.rate.toFixed(2)"></span></div>
                                                 </div>
                                             </div>
                                             

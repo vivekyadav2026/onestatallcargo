@@ -46,7 +46,9 @@
         </div>
         
         <div class="barcode-area">
-            <div class="barcode-bars"></div>
+            <div style="margin-bottom: 5px; display: flex; justify-content: center; width: 100%;">
+                {!! $barcode !!}
+            </div>
             <div class="barcode-text">{{ $shipment->awb_number }}</div>
             <div class="shipment-type">{{ strtoupper($shipment->shipment_type) }}</div>
         </div>

@@ -24,7 +24,7 @@ class XpressbeesService implements CourierInterface
     protected array $credentials;
 
     // ─── MARGIN (20%) ────────────────────────────────────────────────────────
-    private const MARGIN   = 1.20;  // 20% added to base freight
+      // 20% added to base freight
 
     // ─── Zone map: rough pincode prefix → zone index (0-based) ──────────────
     private const ZONE_PREFIXES = [
@@ -76,8 +76,8 @@ class XpressbeesService implements CourierInterface
         $rawFsc = round($rawBaseFreight * $fsc_percent, 2);
 
         // Apply Margin separately so PricingService can add them without double counting
-        $baseFreight = round($rawBaseFreight * self::MARGIN, 2);
-        $fsc = round($rawFsc * self::MARGIN, 2);
+        $baseFreight = $rawBaseFreight;
+        $fsc = $rawFsc;
 
         // Sub-total before COD
         $subtotal = round($baseFreight + $fsc, 2);
@@ -176,51 +176,131 @@ class XpressbeesService implements CourierInterface
                 'XBkey' => $this->credentials['xb_key'] ?? ''
             ];
 
-            // Step 1: Generate AWB
+            // Step 1: Generate AWB Batch
             $awbUrl = $this->credentials['endpoints']['awb_series'] ?? 'https://xbclientapi.xbees.in/POSTShipmentService.svc/AWBNumberSeriesGeneration';
-            $awbResponse = Http::withHeaders($headers)->post($awbUrl, [
-                'ClientName' => $this->credentials['client_name'] ?? 'Onestall'
+            $awbGenResponse = Http::withHeaders($headers)->post($awbUrl, [
+                'BusinessUnit' => 'ECOM',
+                'ServiceType' => 'FORWARD',
+                'DeliveryType' => ($shipmentDetails['is_cod'] ?? false) ? 'COD' : 'PREPAID',
+                'Count' => 1
             ]);
 
-            if (!$awbResponse->successful()) {
-                return ['status' => 'error', 'message' => 'Failed to generate AWB: ' . $awbResponse->body()];
+            if (!$awbGenResponse->successful() || $awbGenResponse->json('ReturnCode') !== 100) {
+                return ['status' => 'error', 'message' => 'Failed to generate AWB Batch: ' . $awbGenResponse->body()];
             }
             
-            $awbData = $awbResponse->json();
-            // Just for debugging what Xpressbees returns
-            if (!isset($awbData['AWBNo']) && !isset($awbData['data'])) {
-                return ['status' => 'error', 'message' => 'AWB Gen failed, got: ' . json_encode($awbData)];
+            $batchId = $awbGenResponse->json('BatchID');
+
+            // Step 2: Fetch AWB from Batch
+            $awbFetchUrl = 'https://xbclientapi.xbees.in/TrackingService.svc/GetAWBNumberGeneratedSeries';
+            $awbFetchResponse = Http::withHeaders($headers)->post($awbFetchUrl, [
+                'BusinessUnit' => 'ECOM',
+                'ServiceType' => 'FORWARD',
+                'BatchID' => $batchId
+            ]);
+
+            if (!$awbFetchResponse->successful() || $awbFetchResponse->json('ReturnCode') !== 100) {
+                return ['status' => 'error', 'message' => 'Failed to fetch AWB from Batch: ' . $awbFetchResponse->body()];
             }
-            $awbNumber = $awbData['AWBNo'] ?? $awbData['data'] ?? ''; // Adjust based on actual response
+
+            $awbSeries = $awbFetchResponse->json('AWBNoSeries');
+            if (empty($awbSeries) || !is_array($awbSeries)) {
+                return ['status' => 'error', 'message' => 'No AWB found in batch response'];
+            }
+
+            $awbNumber = $awbSeries[0];
 
             // Step 2: Manifest Forward
             $manifestUrl = $this->credentials['endpoints']['manifest'] ?? 'https://apishipmentmanifestation.xbees.in/shipmentmanifestation/forward';
+            
             $manifestPayload = [
-                'AWBNo' => $awbNumber,
-                'OrderNo' => $shipmentDetails['order_id'] ?? uniqid(),
-                'ConsigneeName' => $shipmentDetails['receiver_name'],
-                'ConsigneePhone' => $shipmentDetails['receiver_phone'],
-                'ConsigneeAddress' => $shipmentDetails['delivery_address'],
-                'ConsigneePinCode' => $shipmentDetails['delivery_pincode'],
-                'ConsigneeCity' => $shipmentDetails['delivery_city'],
-                'ConsigneeState' => $shipmentDetails['delivery_state'] ?? 'State',
-                'PaymentType' => ($shipmentDetails['is_cod'] ?? false) ? 'COD' : 'Prepaid',
-                'CollectableAmount' => ($shipmentDetails['is_cod'] ?? false) ? ($shipmentDetails['invoice_value'] ?? 0) : 0,
-                'DeclaredValue' => $shipmentDetails['invoice_value'] ?? 0,
-                'Weight' => $shipmentDetails['weight_kg'] ?? 0.5,
-                'Length' => $shipmentDetails['length_cm'] ?? 10,
-                'Breadth' => $shipmentDetails['width_cm'] ?? 10,
-                'Height' => $shipmentDetails['height_cm'] ?? 10,
-                'PickupName' => $shipmentDetails['pickup_name'] ?? 'OneStall Cargo Hub',
-                'PickupPhone' => $shipmentDetails['pickup_phone'] ?? '9999999999',
-                'PickupAddress' => $shipmentDetails['pickup_address'] ?? 'Warehouse',
-                'PickupPinCode' => $shipmentDetails['pickup_pincode'] ?? '',
-                'PickupCity' => $shipmentDetails['pickup_city'] ?? '',
-                'PickupState' => $shipmentDetails['pickup_state'] ?? 'State',
-                'ClientName' => $this->credentials['client_name'] ?? 'Onestall',
+                'ManifestDetails' => [
+                    [
+                        'ManifestID' => 'MF' . time() . rand(100, 999),
+                        'AirWayBillNO' => $awbNumber,
+                        'BusinessAccountName' => 'Onestall', // Usually ClientName or Business Account Name
+                        'OrderNo' => $shipmentDetails['order_id'] ?? uniqid(),
+                        'OrderType' => ($shipmentDetails['is_cod'] ?? false) ? 'COD' : 'PrePaid',
+                        'CollectibleAmount' => ($shipmentDetails['is_cod'] ?? false) ? (string)($shipmentDetails['invoice_value'] ?? 0) : '0',
+                        'DeclaredValue' => (string)($shipmentDetails['invoice_value'] ?? 0),
+                        'PickupType' => 'Vendor',
+                        'Quantity' => '1',
+                        'ServiceType' => 'SD', // SD typically means Standard Delivery
+                        'Weight' => (string)($shipmentDetails['weight_kg'] ?? 0.5),
+                        'Length' => (string)($shipmentDetails['length_cm'] ?? 10),
+                        'Breadth' => (string)($shipmentDetails['width_cm'] ?? 10),
+                        'Height' => (string)($shipmentDetails['height_cm'] ?? 10),
+                        
+                        'DropDetails' => [
+                            'Addresses' => [
+                                [
+                                    'AddressName' => $shipmentDetails['receiver_name'] ?? 'Customer',
+                                    'AddressAddress1' => $shipmentDetails['delivery_address'] ?? 'Address',
+                                    'AddressAddress2' => '',
+                                    'AddressCity' => $shipmentDetails['delivery_city'] ?? 'City',
+                                    'AddressState' => $shipmentDetails['delivery_state'] ?? 'State',
+                                    'AddressPincode' => $shipmentDetails['delivery_pincode'] ?? '000000',
+                                    'AddressType' => 'Drop'
+                                ]
+                            ],
+                            'ContactDetails' => [
+                                [
+                                    'ContactName' => $shipmentDetails['receiver_name'] ?? 'Customer',
+                                    'ContactPhoneNo' => $shipmentDetails['receiver_phone'] ?? '9999999999',
+                                    'ContactEmailId' => 'customer@example.com',
+                                    'ContactType' => 'Drop'
+                                ]
+                            ]
+                        ],
+                        
+                        'PickupDetails' => [
+                            'Addresses' => [
+                                [
+                                    'AddressName' => $shipmentDetails['pickup_name'] ?? 'Pickup Name',
+                                    'AddressAddress1' => $shipmentDetails['pickup_address'] ?? 'Pickup Address',
+                                    'AddressAddress2' => '',
+                                    'AddressCity' => $shipmentDetails['pickup_city'] ?? 'City',
+                                    'AddressState' => $shipmentDetails['pickup_state'] ?? 'State',
+                                    'AddressPincode' => $shipmentDetails['pickup_pincode'] ?? '000000',
+                                    'AddressType' => 'Pickup'
+                                ]
+                            ],
+                            'ContactDetails' => [
+                                [
+                                    'ContactName' => $shipmentDetails['pickup_name'] ?? 'Pickup Contact',
+                                    'ContactPhoneNo' => $shipmentDetails['pickup_phone'] ?? '9999999999',
+                                    'ContactEmailId' => 'vendor@onestall.com',
+                                    'ContactType' => 'Pickup'
+                                ]
+                            ]
+                        ],
+                        
+                        'RTODetails' => [
+                            'Addresses' => [
+                                [
+                                    'AddressName' => $shipmentDetails['pickup_name'] ?? 'RTO Name',
+                                    'AddressAddress1' => $shipmentDetails['pickup_address'] ?? 'RTO Address',
+                                    'AddressAddress2' => '',
+                                    'AddressCity' => $shipmentDetails['pickup_city'] ?? 'City',
+                                    'AddressState' => $shipmentDetails['pickup_state'] ?? 'State',
+                                    'AddressPincode' => $shipmentDetails['pickup_pincode'] ?? '000000',
+                                    'AddressType' => 'RTO'
+                                ]
+                            ],
+                            'ContactDetails' => [
+                                [
+                                    'ContactName' => $shipmentDetails['pickup_name'] ?? 'RTO Contact',
+                                    'ContactPhoneNo' => $shipmentDetails['pickup_phone'] ?? '9999999999',
+                                    'ContactEmailId' => 'vendor@onestall.com',
+                                    'ContactType' => 'RTO'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ];
 
-            $manifestResponse = Http::withHeaders($headers)->post($manifestUrl, [$manifestPayload]); // Sometimes wrapped in array
+            $manifestResponse = Http::withHeaders($headers)->post($manifestUrl, $manifestPayload);
 
             if ($manifestResponse->successful()) {
                 return [

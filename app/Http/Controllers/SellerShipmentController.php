@@ -501,7 +501,11 @@ class SellerShipmentController extends Controller
             'enable_rto_address' => true,
         ];
 
-        return view('seller.label', compact('shipment', 'settings'));
+        // Generate Real Barcode
+        $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+        $barcode = $generator->getBarcode($shipment->awb_number, $generator::TYPE_CODE_128, 2, 60);
+
+        return view('seller.label', compact('shipment', 'settings', 'barcode'));
     }
 
     public function printLR($awb)
