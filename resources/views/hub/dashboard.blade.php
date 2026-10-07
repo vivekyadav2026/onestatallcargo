@@ -242,6 +242,8 @@
                                     <option value="Proprietorship">Proprietorship</option>
                                     <option value="Partnership">Partnership</option>
                                     <option value="Private Limited">Private Limited</option>
+                                    <option value="LLP">LLP</option>
+                                    <option value="ONC">ONC</option>
                                 </select>
                             </div>
                             <div>
@@ -262,7 +264,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">ID Front Image</label>
-                                <input type="file" name="id_front" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none">
+                                <input type="file" name="id_front" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">ID Back Image</label>
+                                <input type="file" name="id_back" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 mb-1">PAN Card Image</label>
