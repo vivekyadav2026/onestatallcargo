@@ -42,18 +42,18 @@ class KycController extends Controller
         $kyc->status = 'pending';
         $kyc->rejection_reason = null;
 
-        // Handle Document File Uploads safely
+        // Handle Document File Uploads safely with compression
         if ($request->hasFile('id_front')) {
-            $kyc->id_front_path = $request->file('id_front')->store('kyc_docs', 'public');
+            $kyc->id_front_path = \App\Services\ImageService::uploadAndCompress($request->file('id_front'), 'kyc_docs', 'public');
         }
         if ($request->hasFile('id_back')) {
-            $kyc->id_back_path = $request->file('id_back')->store('kyc_docs', 'public');
+            $kyc->id_back_path = \App\Services\ImageService::uploadAndCompress($request->file('id_back'), 'kyc_docs', 'public');
         }
         if ($request->hasFile('pan_doc')) {
-            $kyc->pan_doc_path = $request->file('pan_doc')->store('kyc_docs', 'public');
+            $kyc->pan_doc_path = \App\Services\ImageService::uploadAndCompress($request->file('pan_doc'), 'kyc_docs', 'public');
         }
         if ($request->hasFile('gst_doc')) {
-            $kyc->gst_doc_path = $request->file('gst_doc')->store('kyc_docs', 'public');
+            $kyc->gst_doc_path = \App\Services\ImageService::uploadAndCompress($request->file('gst_doc'), 'kyc_docs', 'public');
         }
 
         $kyc->save();

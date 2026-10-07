@@ -254,7 +254,7 @@ class HubDashboardController extends Controller
             if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
             }
-            $userData['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $userData['avatar'] = \App\Services\ImageService::uploadAndCompress($request->file('avatar'), 'avatars', 'public');
         }
 
         $user->update($userData);

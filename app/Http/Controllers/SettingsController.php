@@ -39,7 +39,7 @@ class SettingsController extends Controller
             if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
             }
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = \App\Services\ImageService::uploadAndCompress($request->file('avatar'), 'avatars', 'public');
         }
 
         $user->save();
