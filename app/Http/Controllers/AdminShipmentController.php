@@ -23,7 +23,7 @@ class AdminShipmentController extends Controller
             $query->where('status', $request->status);
         }
 
-        $shipments = $query->paginate(15)->appends($request->all());
+        $shipments = $query->paginate(15)->withQueryString();
 
         return view('admin.shipments.index', compact('shipments'));
     }

@@ -9,7 +9,7 @@ class AdminWeightFreezeController extends Controller
 {
     public function index(Request $request)
     {
-        $freezes = WeightFreeze::with('user')->orderBy('created_at', 'desc')->paginate(15);
+        $freezes = WeightFreeze::with('user')->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         return view('admin.weight.freeze', compact('freezes'));
     }
 

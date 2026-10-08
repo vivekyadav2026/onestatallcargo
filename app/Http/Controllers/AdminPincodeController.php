@@ -18,7 +18,7 @@ class AdminPincodeController extends Controller
                   ->orWhere('city', 'like', "%{$request->search}%");
         }
 
-        $pincodes = $query->orderBy('created_at', 'desc')->paginate(50);
+        $pincodes = $query->orderBy('created_at', 'desc')->paginate(50)->withQueryString();
         $franchises = Franchise::with('user')->where('status', 'approved')->get();
 
         return view('admin.pincodes.index', compact('pincodes', 'franchises'));

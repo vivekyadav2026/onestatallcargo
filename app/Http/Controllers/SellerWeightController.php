@@ -33,7 +33,7 @@ class SellerWeightController extends Controller
             // no filter
         }
         
-        $discrepancies = $query->orderBy('created_at', 'desc')->paginate(15)->appends($request->all());
+        $discrepancies = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         return view('seller.weight.index', compact(
             'discrepancies', 

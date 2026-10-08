@@ -50,7 +50,7 @@ class HubRiderController extends Controller
                 }
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(15)->withQueryString();
             
         $hubs = $scope['hubs'];
 

@@ -51,7 +51,7 @@ class HubNdrController extends Controller
                 $q->where('pickup_city', $scope['city'])->orWhere('delivery_city', $scope['city']);
             });
         }
-        $shipments = $shipmentsQuery->orderBy('updated_at', 'desc')->paginate(15);
+        $shipments = $shipmentsQuery->orderBy('updated_at', 'desc')->paginate(15)->withQueryString();
             
         $ridersQuery = Rider::with('user')->where('is_active', true);
         if ($scope['franchise_id']) {

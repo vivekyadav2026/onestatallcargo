@@ -11,7 +11,7 @@ class AdminNDRController extends Controller
         $shipments = Shipment::whereIn('status', ['NDR', 'RTO Initiated'])
                         ->with('user')
                         ->orderBy('updated_at', 'desc')
-                        ->paginate(15);
+                        ->paginate(15)->withQueryString();
         return view('admin.ndr.index', compact('shipments'));
     }
 

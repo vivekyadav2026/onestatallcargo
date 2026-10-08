@@ -38,7 +38,7 @@ class SellerNdrController extends Controller
             $query->where('ndr_reason', $request->reason);
         }
 
-        $ndrShipments = $query->orderBy('updated_at', 'desc')->paginate(15)->appends($request->all());
+        $ndrShipments = $query->orderBy('updated_at', 'desc')->paginate(15)->withQueryString();
             
         return view('seller.ndr', compact('ndrShipments', 'tab'));
     }

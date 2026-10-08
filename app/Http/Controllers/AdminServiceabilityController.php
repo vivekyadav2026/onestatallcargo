@@ -20,7 +20,7 @@ class AdminServiceabilityController extends Controller
                   ->orWhere('city', 'like', "%{$request->search}%");
         }
         
-        $pincodes = $query->paginate(20);
+        $pincodes = $query->paginate(20)->withQueryString();
         $franchises = Franchise::where('status', 'approved')->get();
         
         return view('admin.serviceability.index', compact('pincodes', 'totalActive', 'onestallCovered', 'externalOnly', 'franchises'));

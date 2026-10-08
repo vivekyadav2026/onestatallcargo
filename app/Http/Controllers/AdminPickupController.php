@@ -9,11 +9,31 @@ class AdminPickupController extends Controller
 {
     public function index(Request $request)
     {
-        // Get all pending pickups (Manifested status)
-        $pendingPickups = Shipment::where('status', 'Manifested')
-                            ->with(['user', 'assignedRider'])
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(15);
+        $query = Shipment::whereIn('status', ['Manifested', 'Pickup Scheduled'])->with(['user', 'assignedRider']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('awb_number', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function($userQ) use ($search) {
+                      $userQ->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->filled('rider_id')) {
+            if ($request->rider_id == 'unassigned') {
+                $query->whereNull('rider_id');
+            } else {
+                $query->where('rider_id', $request->rider_id);
+            }
+        }
+
+        $pendingPickups = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         // Get all pickup riders
         $riders = User::whereIn('role', ['rider', 'pickup_rider'])->get();

@@ -21,7 +21,7 @@ class AdminSellerController extends Controller
             });
         }
 
-        $sellers = $query->orderBy('created_at', 'desc')->paginate(15)->appends($request->all());
+        $sellers = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         
         return view('admin.sellers.index', compact('sellers'));
     }

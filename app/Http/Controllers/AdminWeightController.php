@@ -10,7 +10,7 @@ class AdminWeightController extends Controller
 {
     public function index(Request $request)
     {
-        $discrepancies = WeightDiscrepancy::with(['shipment', 'user'])->orderBy('created_at', 'desc')->paginate(15);
+        $discrepancies = WeightDiscrepancy::with(['shipment', 'user'])->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         return view('admin.weight.index', compact('discrepancies'));
     }
 

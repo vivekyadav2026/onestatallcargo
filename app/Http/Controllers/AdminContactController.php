@@ -8,7 +8,7 @@ class AdminContactController extends Controller
 {
     public function index()
     {
-        $leads = ContactLead::latest()->paginate(20);
+        $leads = ContactLead::latest()->paginate(20)->withQueryString();
         return view('admin.contacts.index', compact('leads'));
     }
 

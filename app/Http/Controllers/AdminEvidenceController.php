@@ -15,7 +15,7 @@ class AdminEvidenceController extends Controller
             $query->where('awb_number', 'LIKE', "%{$search}%");
         }
 
-        $evidences = $query->orderBy('updated_at', 'desc')->paginate(15)->appends($request->all());
+        $evidences = $query->orderBy('updated_at', 'desc')->paginate(15)->withQueryString();
             
         return view('admin.evidence.index', compact('evidences'));
     }

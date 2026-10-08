@@ -10,7 +10,7 @@ class AdminHubController extends Controller
 {
     public function index()
     {
-        $hubs = Hub::with('manager')->orderBy('created_at', 'desc')->paginate(15);
+        $hubs = Hub::with('manager')->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         $managers = User::where('role', 'franchise')->get();
         $pendingFranchises = \App\Models\Franchise::where('status', 'pending')->orderBy('created_at', 'desc')->get();
         return view('admin.hubs.index', compact('hubs', 'managers', 'pendingFranchises'));

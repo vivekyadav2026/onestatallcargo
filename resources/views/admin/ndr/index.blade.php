@@ -42,10 +42,12 @@
                         {{ $shipment->ndr_reason ?? 'Customer Unavailable' }}
                     </td>
                     <td class="px-6 py-4">
-                        @if($shipment->ndr_action == 'reattempt')
+                        @if(strtolower($shipment->ndr_action) == 're-attempt' || strtolower($shipment->ndr_action) == 'reattempt')
                             <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded font-bold text-[10px] uppercase">Reattempt Requested</span>
-                        @elseif($shipment->ndr_action == 'rto')
+                        @elseif(strtolower($shipment->ndr_action) == 'rto')
                             <span class="px-2 py-1 bg-red-100 text-red-800 rounded font-bold text-[10px] uppercase">RTO Requested</span>
+                        @elseif(strtolower($shipment->ndr_action) == 'hold')
+                            <span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-bold text-[10px] uppercase">Hold Requested</span>
                         @else
                             <span class="text-gray-400 text-xs italic">Awaiting Seller...</span>
                         @endif

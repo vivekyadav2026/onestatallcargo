@@ -76,7 +76,7 @@ class HubSellerController extends Controller
             'shipments as pending_pickups' => function($q) {
                 $q->whereIn('status', ['Pending', 'Pickup Scheduled']);
             }
-        ])->orderBy('created_at', 'desc')->paginate(15)->appends($request->all());
+        ])->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         
         return view('hub.sellers.index', compact('sellers'));
     }

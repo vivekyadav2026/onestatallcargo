@@ -17,7 +17,7 @@ class AdminRateCardController extends Controller {
             $query->where('is_active', $request->status === 'active');
         }
         
-        $rateCards = $query->paginate(15);
+        $rateCards = $query->paginate(15)->withQueryString();
         
         return view('admin.ratecards.index', compact('rateCards'));
     }

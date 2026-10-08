@@ -17,7 +17,7 @@ class AdminBillingController extends Controller {
             ->select('user_id', DB::raw('SUM(invoice_value) as total_cod'), DB::raw('COUNT(id) as total_shipments'))
             ->groupBy('user_id')
             ->with('user')
-            ->paginate(15);
+            ->paginate(15)->withQueryString();
             
         $totalPendingCOD = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', false)->sum('invoice_value');
         $totalSettledCOD = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', true)->sum('invoice_value');

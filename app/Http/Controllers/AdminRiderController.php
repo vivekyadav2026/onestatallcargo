@@ -16,7 +16,7 @@ class AdminRiderController extends Controller
     {
         $riders = Rider::with(['user', 'franchise', 'hub'])
                       ->orderBy('created_at', 'desc')
-                      ->paginate(15);
+                      ->paginate(15)->withQueryString();
         
         $franchises = Franchise::where('status', 'approved')->get();
         $hubs = Hub::where('is_active', true)->get();

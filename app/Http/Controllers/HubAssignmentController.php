@@ -58,7 +58,7 @@ class HubAssignmentController extends Controller
         $shipmentsQuery = Shipment::whereIn('status', ['Pending', 'Manifested']);
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(15)->withQueryString();
             
         $ridersQuery = Rider::with('user')->where('is_active', true);
         if ($scope['franchise_id']) {
@@ -78,7 +78,7 @@ class HubAssignmentController extends Controller
         $shipmentsQuery = Shipment::whereIn('status', ['Received', 'Out for Delivery']);
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(15)->withQueryString();
             
         $ridersQuery = Rider::with('user')->where('is_active', true);
         if ($scope['franchise_id']) {

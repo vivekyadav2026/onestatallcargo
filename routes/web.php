@@ -197,11 +197,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'store'])->name('admin.customers.store');
         Route::post('/customers/{id}', [\App\Http\Controllers\AdminCustomerController::class, 'update'])->name('admin.customers.update');
         Route::delete('/customers/{id}', [\App\Http\Controllers\AdminCustomerController::class, 'destroy'])->name('admin.customers.destroy');
-        Route::post('/customers/{id}/toggle', [\App\Http\Controllers\AdminCustomerController::class, 'toggleStatus'])->name('admin.customers.toggle');
+        Route::post('/customers/{id}/toggle', [\App\Http\Controllers\AdminCustomerController::class, 'toggle'])->name('admin.customers.toggle');
         Route::get('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'index'])->name('admin.sellers.index');
         Route::post('/sellers', [\App\Http\Controllers\AdminSellerController::class, 'store'])->name('admin.sellers.store');
         Route::post('/sellers/{id}', [\App\Http\Controllers\AdminSellerController::class, 'update'])->name('admin.sellers.update');
-        Route::post('/sellers/{id}/toggle', [\App\Http\Controllers\AdminSellerController::class, 'toggleStatus'])->name('admin.sellers.toggle');
+        Route::post('/sellers/{id}/toggle', [\App\Http\Controllers\AdminSellerController::class, 'toggle'])->name('admin.sellers.toggle');
         Route::delete('/sellers/{id}', [\App\Http\Controllers\AdminSellerController::class, 'destroy'])->name('admin.sellers.destroy');
         
         
@@ -259,7 +259,7 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/ratecards/{id}', [\App\Http\Controllers\AdminRateCardController::class, 'update'])->name('admin.ratecards.update');
             Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
             Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
-            Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggleStatus'])->name('admin.couriers.toggle');
+            Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
             Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
         });
 

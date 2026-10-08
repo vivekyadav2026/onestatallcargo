@@ -473,7 +473,7 @@ class SellerShipmentController extends Controller
             $query->where('courier_partner', $request->courier);
         }
 
-        $shipments = $query->orderBy('created_at', 'desc')->paginate(15);
+        $shipments = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         $shipments->appends($request->all());
 
         return view('seller.shipments', compact('shipments', 'counts'));

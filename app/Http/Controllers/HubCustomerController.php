@@ -53,7 +53,7 @@ class HubCustomerController extends Controller
             'shipments as delivered_orders' => function($q) {
                 $q->where('status', 'Delivered');
             }
-        ])->orderBy('created_at', 'desc')->paginate(15)->appends($request->all());
+        ])->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         
         return view('hub.customers.index', compact('customers'));
     }

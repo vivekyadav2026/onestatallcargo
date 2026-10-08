@@ -31,7 +31,7 @@ class SellerWeightFreezeController extends Controller
             $query->where('status', 'rejected');
         }
         
-        $freezes = $query->orderBy('created_at', 'desc')->paginate(15)->appends($request->all());
+        $freezes = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         return view('seller.weight.freeze', compact('freezes', 'tab', 'search'));
     }

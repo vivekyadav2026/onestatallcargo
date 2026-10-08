@@ -37,7 +37,7 @@ class HubWalletController extends Controller
         if (class_exists(WalletTransaction::class)) {
             $transactions = WalletTransaction::where('user_id', $user->id)
                 ->orderBy('created_at', 'desc')
-                ->paginate(15);
+                ->paginate(15)->withQueryString();
         }
 
         // Calculate Pending COD Remittance

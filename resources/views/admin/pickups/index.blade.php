@@ -15,11 +15,44 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6">
+    
+    <!-- Filters -->
+    <form action="{{ route('admin.pickups.index') }}" method="GET" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-end mb-6">
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-xs font-bold text-gray-700 mb-1">Search AWB / Seller</label>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="AWB or Seller Name" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+        </div>
+        <div class="w-40">
+            <label class="block text-xs font-bold text-gray-700 mb-1">Status</label>
+            <select name="status" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+                <option value="">All Pickups</option>
+                <option value="Manifested" {{ request('status') == 'Manifested' ? 'selected' : '' }}>Manifested (Unassigned)</option>
+                <option value="Pickup Scheduled" {{ request('status') == 'Pickup Scheduled' ? 'selected' : '' }}>Pickup Scheduled</option>
+            </select>
+        </div>
+        <div class="w-48">
+            <label class="block text-xs font-bold text-gray-700 mb-1">Assignment</label>
+            <select name="rider_id" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+                <option value="">All Riders</option>
+                <option value="unassigned" {{ request('rider_id') == 'unassigned' ? 'selected' : '' }}>Unassigned Only</option>
+                @foreach($riders as $r)
+                    <option value="{{ $r->id }}" {{ request('rider_id') == $r->id ? 'selected' : '' }}>{{ $r->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
+            Filter
+        </button>
+        <a href="{{ route('admin.pickups.index') }}" class="w-full sm:w-auto px-5 py-2 bg-white border border-gray-200 text-gray-700 font-bold rounded-lg text-sm hover:bg-gray-50 transition text-center">
+            Clear
+        </a>
+    </form>
+
+<div class="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-6">
         <form action="{{ route('admin.pickups.assign') }}" method="POST">
             @csrf
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                <h2 class="font-bold text-gray-800"><i class="fa-solid fa-boxes-packing mr-2 text-[var(--gold-deep)]"></i> Pending Pickups (Manifested)</h2>
+                <h2 class="font-bold text-gray-800"><i class="fa-solid fa-boxes-packing mr-2 text-[var(--gold-deep)]"></i> Pickups (Pending & Scheduled)</h2>
                 
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
                     <select name="rider_id" required class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm font-bold focus:outline-none focus:border-[var(--gold)]">
@@ -60,7 +93,7 @@
                                 <div class="text-[10px] text-gray-400"><i class="fa-solid fa-phone mr-1"></i> {{ $shipment->user->phone ?? 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                {{ $shipment->delivery_city }} ({{ $shipment->delivery_pincode }})
+                                {{ $shipment->pickup_city }} ({{ $shipment->pickup_pincode }})
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 rounded bg-gray-100 text-[10px] font-bold">{{ strtoupper($shipment->shipment_type) }}</span>

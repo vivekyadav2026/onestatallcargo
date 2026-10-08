@@ -58,14 +58,14 @@ class HubBaggingController extends Controller
                 if ($scope['hub_id']) $q->orWhere('hub_id', $scope['hub_id']);
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(10)->withQueryString();
             
         $manifests = Manifest::where(function($q) use ($scope) {
                 if ($scope['franchise_id']) $q->orWhere('franchise_id', $scope['franchise_id']);
                 if ($scope['hub_id']) $q->orWhere('source_hub_id', $scope['hub_id']);
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(10)->withQueryString();
 
         $hubs = Hub::where('is_active', true)->get();
 
