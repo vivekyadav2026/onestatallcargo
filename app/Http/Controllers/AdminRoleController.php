@@ -40,6 +40,7 @@ class AdminRoleController extends Controller {
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'status' => 'required|in:active,pending,rejected',
             'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,customer,user,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
             'company_name' => 'nullable|string|max:255',
             'permissions' => 'nullable|array'
@@ -55,6 +56,15 @@ class AdminRoleController extends Controller {
             'permissions' => $validated['permissions'] ?? []
         ]);
 
+        // Auto-create Rider profile if applicable
+        if (in_array($validated['role'], ['rider', 'pickup_rider', 'delivery_rider'])) {
+            \App\Models\Rider::create([
+                'user_id' => $user->id,
+                'status' => 'active',
+                'is_active' => true
+            ]);
+        }
+
         return redirect()->route('admin.roles.index')->with('success', 'User created and role assigned successfully.');
     }
 
@@ -65,9 +75,13 @@ class AdminRoleController extends Controller {
 
     public function update(Request $request, $id) {
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'phone' => 'nullable|string|max:20|unique:users,phone,'.$id,
+            'password' => 'nullable|string|min:6',
+            'status' => 'required|in:active,pending,rejected',
             'role' => 'required|string|in:admin,operations,seller,aggregator,b2b_customer,b2c_customer,customer,user,franchise,pickup_rider,delivery_rider,courier_partner,corporate',
             'company_name' => 'nullable|string|max:255',
-            'permissions' => 'nullable|array',
             'wallet_balance' => 'required|numeric|min:0',
             'permissions' => 'nullable|array'
         ]);
@@ -79,12 +93,31 @@ class AdminRoleController extends Controller {
             return back()->with('error', 'You cannot remove your own Super Admin privileges!');
         }
 
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if (!empty($validated['phone'])) {
+            $user->phone = $validated['phone'];
+        }
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
         $user->role = $validated['role'];
         $user->company_name = $validated['company_name'];
         $user->wallet_balance = $validated['wallet_balance'];
         $user->permissions = $validated['permissions'] ?? [];
         $user->save();
 
-        return redirect()->route('admin.roles.index')->with('success', 'User role & permissions updated successfully.');
+        if (in_array($validated['role'], ['rider', 'pickup_rider', 'delivery_rider'])) {
+            \App\Models\Rider::firstOrCreate(
+                ['user_id' => $user->id],
+                ['status' => 'active', 'is_active' => true]
+            );
+        }
+
+        return redirect()->route('admin.roles.index')->with('success', 'User details & permissions updated successfully.');
     }
 }
+
+
+
+

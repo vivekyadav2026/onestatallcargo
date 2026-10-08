@@ -406,6 +406,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile', [\App\Http\Controllers\RiderAppController::class, 'profile'])->name('rider.profile');
         Route::get('/history', [\App\Http\Controllers\RiderAppController::class, 'history'])->name('rider.history');
         Route::get('/settings', [\App\Http\Controllers\RiderAppController::class, 'settings'])->name('rider.settings');
+        Route::post('/location', [\App\Http\Controllers\RiderAppController::class, 'updateLocation'])->name('rider.location.update');
         Route::post('/profile/update', [\App\Http\Controllers\RiderAppController::class, 'updateProfile'])->name('rider.profile.update');
         Route::post('/evidence', [\App\Http\Controllers\RiderAppController::class, 'uploadEvidence'])->name('rider.evidence.upload');
     });
@@ -416,6 +417,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'resolveNdr'])->name('ndr.resolve');
 Route::post('ndr/resolve/{awb}', [\App\Http\Controllers\PublicContactController::class, 'submitResolveNdr'])->name('ndr.resolve.submit');
+
+
+
 
 
 

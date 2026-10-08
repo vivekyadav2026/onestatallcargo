@@ -13,6 +13,14 @@ class AdminController extends Controller
     public function dashboard()
     {
         // Real Data
+        $yesterday = today()->subDay();
+        $yesterdayShipments = Shipment::whereDate('created_at', $yesterday)->count();
+        $yesterdayDelivered = Shipment::where('status', 'Delivered')->whereDate('updated_at', $yesterday)->count();
+        $yesterdayRto = Shipment::whereIn('status', ['RTO Initiated', 'RTO Delivered'])->whereDate('updated_at', $yesterday)->count();
+        $yesterdayNdr = Shipment::where('status', 'NDR')->whereDate('updated_at', $yesterday)->count();
+        $yesterdayRevenue = WalletTransaction::where('type', 'debit')->where('status', 'completed')->whereDate('created_at', $yesterday)->sum('amount');
+        $yesterdaySettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'completed')->whereDate('created_at', $yesterday)->sum('amount');
+        
         $totalShipments = Shipment::count();
         $inTransit = Shipment::where('status', 'In Transit')->count();
         $outForDelivery = Shipment::where('status', 'Out for Delivery')->count();
@@ -84,7 +92,7 @@ class AdminController extends Controller
             'activeSellers',
             'activeHubs',
             'totalRiders',
-            'recentShipments'
+            'recentShipments', 'yesterdayShipments', 'yesterdayDelivered', 'yesterdayRto', 'yesterdayNdr', 'yesterdayRevenue', 'yesterdaySettlements', 'yesterdayShipments', 'yesterdayDelivered', 'yesterdayRto', 'yesterdayNdr', 'yesterdayRevenue', 'yesterdaySettlements'
         ));
     }
 
@@ -97,4 +105,6 @@ class AdminController extends Controller
         return view('admin.map', compact('activeRiders'));
     }
 }
+
+
 

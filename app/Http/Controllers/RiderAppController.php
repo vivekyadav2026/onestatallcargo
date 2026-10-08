@@ -98,10 +98,17 @@ class RiderAppController extends Controller
         return back()->with('success', 'Shipment marked as NDR successfully.');
     }
 
-    public function scan()
+    
+    public function scan(Request $request)
     {
-        return view('rider.scan');
+        $awb = $request->query('awb');
+        $shipment = null;
+        if ($awb) {
+            $shipment = \App\Models\Shipment::where('awb_number', $awb)->first();
+        }
+        return view('rider.scan', compact('shipment', 'awb'));
     }
+
 
     public function cod()
     {
@@ -174,5 +181,22 @@ class RiderAppController extends Controller
 
         return back()->with('success', 'Profile and Settings updated successfully!');
     }
+
+    public function updateLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+        
+        $user = Auth::user();
+        $user->latitude = $validated['latitude'];
+        $user->longitude = $validated['longitude'];
+        $user->last_location_at = now();
+        $user->save();
+        
+        return response()->json(['success' => true, 'message' => 'Location updated']);
+    }
 }
+
 

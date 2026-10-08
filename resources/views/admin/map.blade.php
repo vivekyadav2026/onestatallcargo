@@ -45,10 +45,11 @@
         <div class="lg:col-span-3">
             <div class="bg-white p-2 rounded-3xl border border-gray-200 shadow-sm h-[600px] relative">
                 <!-- Leaflet CSS & JS -->
-                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                <style>.leaflet-container .leaflet-pane img { max-width: none !important; }</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                 
-                <div id="fleetMap" class="w-full h-full rounded-2xl z-0"></div>
+                <div id="fleetMap" class="w-full h-full rounded-2xl"></div>
 
                 <!-- Map Setup Script -->
                 <script>
@@ -70,22 +71,26 @@
                         });
 
                         // Dynamic Rider Locations from Database
-                        var riders = @json($activeRiders);
+                        var riders = {!! json_encode($activeRiders) !!};
 
                         if(riders.length === 0) {
                             // Default view if no active riders
                             map.setView([19.0760, 72.8777], 11);
                         } else {
                             // Center on the first rider
-                            map.setView([riders[0].latitude, riders[0].longitude], 12);
+                            map.setView([parseFloat(riders[0].latitude), parseFloat(riders[0].longitude)], 12);
                             
                             // Add markers
                             riders.forEach(function(rider) {
-                                L.marker([rider.latitude, rider.longitude], {icon: riderIcon})
+                                L.marker([parseFloat(rider.latitude), parseFloat(rider.longitude)], {icon: riderIcon})
                                  .addTo(map)
                                  .bindPopup("<b>" + rider.name + "</b><br>Role: " + rider.role + "<br>Last updated: " + (rider.last_location_at || 'Just now'));
                             });
                         }
+                        // Auto-refresh every 30 seconds to fetch new positions
+                        setInterval(function() {
+                            window.location.reload();
+                        }, 30000);
                     });
                 </script>
             </div>
@@ -94,3 +99,9 @@
     </div>
 </div>
 @endsection
+
+
+
+
+
+

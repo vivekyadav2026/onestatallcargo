@@ -44,6 +44,34 @@
         <a href="{{ route('rider.profile') }}" class="flex flex-col items-center {{ request()->routeIs('rider.profile') ? 'text-[#D4AF37]' : 'text-gray-400' }}"><i class="fa-solid fa-user text-xl mb-1"></i><span class="text-[10px] font-bold">Profile</span></a>
     </nav>
     
+
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        function updateRiderLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    fetch('{{ route("rider.location.update") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        })
+                    }).catch(err => console.error('Error updating location', err));
+                });
+            }
+        }
+        
+        // Update immediately and then every 30 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            updateRiderLocation();
+            setInterval(updateRiderLocation, 30000);
+        });
+    </script>
+
 </body>
 </html>
+
