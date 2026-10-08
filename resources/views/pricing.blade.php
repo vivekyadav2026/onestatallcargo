@@ -157,87 +157,35 @@
                         <div class="space-y-4">
                             <template x-for="rate in rates" :key="rate.courier_name">
                                 <div>
-                                    <!-- Surface Card -->
-                                    <div x-show="filterMode === 'all' || filterMode === 'surface'" x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors mb-3">
+                                    <div x-show="filterMode === 'all' || filterMode === (rate.tat <= 3 ? 'air' : 'surface')" x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors mb-3">
                                         <div @click="expanded = !expanded" class="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition">
-                                            
-                                            <!-- Courier Logo/Name -->
                                             <div class="flex-1 max-w-[35%] flex flex-col text-left justify-center">
                                                 <div class="font-extrabold text-[12px] md:text-[14px] text-gray-900 uppercase tracking-tight" x-text="rate.courier_name"></div>
-                                                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Surface</div>
+                                                <div class="text-[9px] text-[#4338ca] font-bold uppercase tracking-widest mt-1" x-text="rate.tat <= 3 ? 'Air' : 'Surface'"></div>
                                             </div>
-                                            
-                                            <!-- Weight & Rate -->
                                             <div class="flex-1 flex justify-around items-center px-2 border-l border-r border-gray-100">
                                                 <div class="text-center">
                                                     <div class="text-[10px] text-gray-400 mb-0.5">Weight</div>
-                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800" x-text="Math.max(weight, (l*b*h)/5000).toFixed(2)"></div>
+                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800"><span x-text="rate.chargeable_weight.toFixed(2)"></span> KG</div>
                                                 </div>
                                                 <div class="text-center">
                                                     <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
                                                     <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="rate.rate.toFixed(2)"></span></div>
                                                 </div>
                                             </div>
-                                            
-                                            <!-- Chevron -->
                                             <div class="pl-3 transition-transform duration-200" :class="expanded ? 'rotate-90' : ''">
                                                 <i class="fa-solid fa-chevron-right text-[#4338ca] text-lg"></i>
                                             </div>
                                         </div>
-                                        
-                                        <!-- Expanded Details -->
                                         <div x-show="expanded" class="border-t border-gray-100 bg-[#f8faff] p-4 text-left text-xs" x-collapse>
                                             <div class="grid grid-cols-2 gap-4">
                                                 <div>
                                                     <div class="text-gray-400 mb-1">Estimated Delivery</div>
-                                                    <div class="font-bold text-gray-800"><span x-text="rate.estimated_delivery_days"></span> Days</div>
+                                                    <div class="font-bold text-gray-800"><span x-text="rate.tat"></span> Days</div>
                                                 </div>
                                                 <div>
                                                     <div class="text-gray-400 mb-1">Service Type</div>
-                                                    <div class="font-bold text-[#4338ca]">Surface (Ground)</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Air Card -->
-                                    <div x-show="filterMode === 'all' || filterMode === 'air'" x-data="{ expanded: false }" class="bg-white rounded-xl border border-gray-200 flex flex-col overflow-hidden shadow-sm hover:border-[#4338ca] transition-colors">
-                                        <div @click="expanded = !expanded" class="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition">
-                                            
-                                            <!-- Courier Logo/Name -->
-                                            <div class="flex-1 max-w-[35%] flex flex-col text-left justify-center">
-                                                <div class="font-extrabold text-[12px] md:text-[14px] text-gray-900 uppercase tracking-tight" x-text="rate.courier_name"></div>
-                                                <div class="text-[9px] text-[#4338ca] font-bold uppercase tracking-widest mt-1">Air</div>
-                                            </div>
-                                            
-                                            <!-- Weight & Rate -->
-                                            <div class="flex-1 flex justify-around items-center px-2 border-l border-r border-gray-100">
-                                                <div class="text-center">
-                                                    <div class="text-[10px] text-gray-400 mb-0.5">Weight</div>
-                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800" x-text="Math.max(weight, (l*b*h)/5000).toFixed(2)"></div>
-                                                </div>
-                                                <div class="text-center">
-                                                    <div class="text-[10px] text-gray-400 mb-0.5">Rate</div>
-                                                    <div class="text-[12px] md:text-[14px] font-bold text-gray-800">&#8377;<span x-text="rate.rate.toFixed(2)"></span></div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Chevron -->
-                                            <div class="pl-3 transition-transform duration-200" :class="expanded ? 'rotate-90' : ''">
-                                                <i class="fa-solid fa-chevron-right text-[#4338ca] text-lg"></i>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Expanded Details -->
-                                        <div x-show="expanded" class="border-t border-gray-100 bg-[#f8faff] p-4 text-left text-xs" x-collapse>
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <div class="text-gray-400 mb-1">Estimated Delivery</div>
-                                                    <div class="font-bold text-gray-800"><span x-text="Math.max(1, rate.estimated_delivery_days - 1)"></span> Days</div>
-                                                </div>
-                                                <div>
-                                                    <div class="text-gray-400 mb-1">Service Type</div>
-                                                    <div class="font-bold text-[#4338ca]">Air (Express)</div>
+                                                    <div class="font-bold text-[#4338ca]" x-text="rate.tat <= 3 ? 'Air (Express)' : 'Surface (Ground)'"></div>
                                                 </div>
                                             </div>
                                         </div>
