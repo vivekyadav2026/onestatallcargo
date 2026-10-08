@@ -84,7 +84,7 @@
         <input type="hidden" name="mode" value="{{ $mode ?? 'create' }}">
         <input type="hidden" name="shipment_id" value="{{ ($mode ?? '') === 'edit' ? ($shipment->id ?? '') : '' }}">
         <input type="hidden" name="shipment_type" :value="shipmentType">
-        <input type="hidden" name="is_cod" :value="paymentMode === 'COD' ? '1' : '0'">
+        <input type="hidden" name="payment_mode" :value="paymentMode">
         <input type="hidden" name="ship_now" value="1">
         
         <!-- Custom Tabs mimicking BigShip -->
@@ -416,6 +416,7 @@ function bookingForm() {
 }
 </script>
 @endsection
+
 
 
 

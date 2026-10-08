@@ -18,19 +18,19 @@ class AdminController extends Controller
         $yesterdayDelivered = Shipment::where('status', 'Delivered')->whereDate('updated_at', $yesterday)->count();
         $yesterdayRto = Shipment::whereIn('status', ['RTO Initiated', 'RTO Delivered'])->whereDate('updated_at', $yesterday)->count();
         $yesterdayNdr = Shipment::where('status', 'NDR')->whereDate('updated_at', $yesterday)->count();
-        $yesterdayRevenue = WalletTransaction::where('type', 'debit')->where('status', 'completed')->whereDate('created_at', $yesterday)->sum('amount');
-        $yesterdaySettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'completed')->whereDate('created_at', $yesterday)->sum('amount');
+        $yesterdayRevenue = WalletTransaction::where('type', 'debit')->where('status', 'success')->whereDate('created_at', $yesterday)->sum('amount');
+        $yesterdaySettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'success')->whereDate('created_at', $yesterday)->sum('amount');
         
         $totalShipments = Shipment::count();
-        $inTransit = Shipment::where('status', 'In Transit')->count();
+        $inTransit = Shipment::whereIn('status', ['Manifested', 'In Transit', 'Received', 'Out for Delivery'])->count();
         $outForDelivery = Shipment::where('status', 'Out for Delivery')->count();
         $deliveredToday = Shipment::where('status', 'Delivered')->whereDate('updated_at', today())->count();
-        $pendingPickups = Shipment::where('status', 'Pending Pickup')->count();
+        $pendingPickups = Shipment::whereIn('status', ['Pending', 'Pickup Scheduled'])->count();
         $ndrCount = Shipment::where('status', 'NDR')->count();
         $rtoCount = Shipment::whereIn('status', ['RTO Initiated', 'RTO Delivered'])->count();
         
-        $totalRevenue = WalletTransaction::where('type', 'debit')->where('status', 'completed')->sum('amount');
-        $totalSettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'completed')->sum('amount');
+        $totalRevenue = WalletTransaction::where('type', 'debit')->where('status', 'success')->sum('amount');
+        $totalSettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'success')->sum('amount');
 
         // Couriers performance
         $couriers = DB::table('shipments')
@@ -39,6 +39,8 @@ class AdminController extends Controller
             ->groupBy('courier_partner')
             ->get();
             
+        $dbCouriers = DB::table('couriers')->pluck('is_active', 'name');
+            
         $courierPerformance = [];
         foreach ($couriers as $c) {
             $efficiency = $c->total > 0 ? round(($c->delivered / $c->total) * 100) : 0;
@@ -46,7 +48,8 @@ class AdminController extends Controller
                 'name' => $c->courier_partner,
                 'load' => $c->total,
                 'efficiency' => $efficiency,
-                'rto' => $c->rto_count
+                'rto' => $c->rto_count,
+                'is_active' => $dbCouriers[$c->courier_partner] ?? false
             ];
         }
 
@@ -66,6 +69,17 @@ class AdminController extends Controller
         $activeSellers = User::where('role', 'seller')->count();
         $activeHubs = User::where('role', 'franchise')->count();
         $totalRiders = User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])->count();
+        
+        // System Health (Bottom Bar)
+        $dbVersion = "MySQL 8.x Optimized";
+        try {
+            $pdo = DB::connection()->getPdo();
+            $dbVersion = "MySQL " . $pdo->getAttribute(\PDO::ATTR_SERVER_VERSION);
+        } catch (\Exception $e) {}
+        
+        $activeApiCount = \App\Models\Courier::where('is_active', true)->count();
+        $latestRemittance = WalletTransaction::where('type', 'cod_remittance')->latest()->first();
+        $remittanceStatus = $latestRemittance ? 'Last done: ' . $latestRemittance->created_at->diffForHumans() : 'Auto-settlements active';
 
         // Recent Bookings
         $recentShipmentsRaw = Shipment::with('user')->latest()->limit(5)->get();
@@ -92,7 +106,8 @@ class AdminController extends Controller
             'activeSellers',
             'activeHubs',
             'totalRiders',
-            'recentShipments', 'yesterdayShipments', 'yesterdayDelivered', 'yesterdayRto', 'yesterdayNdr', 'yesterdayRevenue', 'yesterdaySettlements', 'yesterdayShipments', 'yesterdayDelivered', 'yesterdayRto', 'yesterdayNdr', 'yesterdayRevenue', 'yesterdaySettlements'
+            'dbVersion', 'activeApiCount', 'remittanceStatus',
+            'recentShipments', 'yesterdayShipments', 'yesterdayDelivered', 'yesterdayRto', 'yesterdayNdr', 'yesterdayRevenue', 'yesterdaySettlements'
         ));
     }
 

@@ -167,10 +167,10 @@
                 </div>
             </div>
             <div class="my-4">
-                <h3 class="text-2xl font-black text-gray-900">₹{{ number_format(($totalRevenue ?? 0) / 100, 2) }}</h3>
+                <h3 class="text-2xl font-black text-gray-900">₹{{ number_format($totalRevenue ?? 0, 2) }}</h3>
             </div>
             <p class="text-[10px] font-semibold text-gray-500 pt-2 border-t border-gray-100">
-                Yesterday: <span class="text-gray-900">?{{ number_format(($yesterdayRevenue ?? 0) / 100, 2) }}</span>
+                Yesterday: <span class="text-gray-900">₹{{ number_format($yesterdayRevenue ?? 0, 2) }}</span>
             </p>
         </div>
 
@@ -183,10 +183,10 @@
                 </div>
             </div>
             <div class="my-4">
-                <h3 class="text-2xl font-black text-gray-900">₹{{ number_format(($totalSettlements ?? 0) / 100, 2) }}</h3>
+                <h3 class="text-2xl font-black text-gray-900">₹{{ number_format($totalSettlements ?? 0, 2) }}</h3>
             </div>
             <p class="text-[10px] font-semibold text-gray-500 pt-2 border-t border-gray-100">
-                Yesterday: <span class="text-gray-900">?{{ number_format(($yesterdaySettlements ?? 0) / 100, 2) }}</span>
+                Yesterday: <span class="text-gray-900">₹{{ number_format($yesterdaySettlements ?? 0, 2) }}</span>
             </p>
         </div>
     </div>
@@ -256,7 +256,7 @@
                                 <td class="px-6 py-4 font-bold text-rose-500">{{ number_format($partner['rto'] ?? 0) }}</td>
                                 <td class="px-6 py-4 text-right">
                                     <span class="flex items-center justify-end gap-1.5 text-[11px] text-gray-500">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                        <span class="w-1.5 h-1.5 rounded-full {{ ($partner['is_active'] ?? false) ? 'bg-emerald-500' : 'bg-rose-500' }}"></span> {{ ($partner['is_active'] ?? false) ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
                             </tr>

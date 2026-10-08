@@ -301,6 +301,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('seller.shipments.evidence');
         Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\SellerShipmentController::class, 'bulkCancel'])->name('seller.shipments.bulk-cancel');
         Route::post('/shipments/eway-bill', [\App\Http\Controllers\SellerShipmentController::class, 'updateEwayBill'])->name('seller.shipments.eway');
+        Route::get('/shipments/{id}/couriers', [\App\Http\Controllers\SellerShipmentController::class, 'getCouriers'])->name('seller.shipments.couriers');
         Route::post('/shipments/{id}/ship-now', [\App\Http\Controllers\SellerShipmentController::class, 'shipNowAction'])->name('seller.shipments.shipNow');
         Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\SellerShipmentController::class, 'cancel'])->name('seller.shipments.cancel');
         Route::get('/book', [\App\Http\Controllers\SellerShipmentController::class, 'create'])->name('seller.book');

@@ -14,16 +14,16 @@
         .barcode-bars { height: 60px; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px, #000 4px, #000 8px, #fff 8px, #fff 10px, #000 10px, #000 14px, #fff 14px, #fff 18px); margin-bottom: 10px; width: 100%; }
         .barcode-text { font-family: 'Courier New', Courier, monospace; font-size: 26px; font-weight: bold; letter-spacing: 2px; }
         .shipment-type { font-size: 12px; font-weight: bold; margin-top: 5px; }
-        .addresses { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; font-size: 12px; line-height: 1.4; gap: 15px; }
-        .address-box { flex: 1; word-wrap: break-word; }
-        .address-box strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; }
-        .details { font-size: 12px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-        .details table { width: 100%; text-align: left; border-collapse: collapse; }
-        .details th { font-weight: bold; padding: 4px 0; vertical-align: top; white-space: nowrap; padding-right: 8px; }
-        .details td { padding: 4px 0; vertical-align: top; }
+        .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.35; }
+        .address-box { word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
+        .address-box strong { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+        .details { font-size: 11px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .details table { width: 100%; text-align: left; border-collapse: collapse; border: 1px solid #000; table-layout: fixed; word-wrap: break-word; }
+        .details th { font-weight: bold; padding: 4px 6px; vertical-align: top; background: #f9fafb; border: 1px solid #000; font-size: 10px; }
+        .details td { padding: 4px 6px; vertical-align: top; border: 1px solid #000; font-size: 10px; font-weight: bold; }
         .cod-box { font-size: 22px; font-weight: bold; text-align: center; padding: 10px; border: 2px solid #000; margin-top: 15px; margin-bottom: 15px; border-radius: 4px; }
         .cod-box.prepaid { border-color: #4CAF50; color: #4CAF50; }
-        .footer { text-align: center; font-size: 10px; font-weight: bold; line-height: 1.5; margin-top: auto; }
+        .footer { text-align: center; font-size: 9px; font-weight: bold; line-height: 1.3; margin-top: auto; word-wrap: break-word; }
         
         @media print {
             body { padding: 0; background: #fff; display: block; }
@@ -65,7 +65,7 @@
             <div class="address-box">
                 <strong>FROM:</strong>
                 {{ $shipment->user->company_name ?? $shipment->user->name }}<br>
-                Seller Hub<br>
+                {{ $shipment->pickup_address }}<br>{{ $shipment->pickup_city }} - {{ $shipment->pickup_pincode }}<br>
                 Ph: {{ $shipment->user->phone ?? 'N/A' }}
             </div>
         </div>
@@ -96,7 +96,7 @@
         
         @if($shipment->is_cod)
         <div class="cod-box">
-            COD TO COLLECT: ₹{{ number_format($shipment->total_amount, 2) }}
+            COD TO COLLECT: Rs. {{ number_format($shipment->cod_amount ?? $shipment->invoice_value, 2) }}
         </div>
         @else
         <div class="cod-box prepaid">
@@ -105,7 +105,7 @@
         @endif
         
         <div class="footer">
-            @if(!empty($settings['enable_rto_address']))<p>Return Address: If undelivered, return to Origin Hub.</p>@endif 
+            @if(!empty($settings['enable_rto_address']))<p>Return Address: If undelivered, return to {{ $shipment->pickup_address }}, {{ $shipment->pickup_city }} - {{ $shipment->pickup_pincode }}</p>@endif 
             @if(!empty($settings['enable_support_contact']) || !empty($settings['enable_support_email']))
             <p>
                 @if(!empty($settings['enable_support_contact'])) Support: {{ $shipment->user->support_phone ?? '1800-XXX-XXXX' }} @endif 

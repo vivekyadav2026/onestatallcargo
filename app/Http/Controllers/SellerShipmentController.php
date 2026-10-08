@@ -8,6 +8,97 @@ use Illuminate\Support\Str;
 
 class SellerShipmentController extends Controller
 {
+    public function getCouriers($id)
+    {
+        $shipment = \App\Models\Shipment::where('user_id', \Illuminate\Support\Facades\Auth::id())->where('id', $id)->firstOrFail();
+        
+        $serviceability = app(\App\Services\ServiceabilityService::class)->determineRouting($shipment->delivery_pincode);
+        
+        $pricing = app(\App\Services\PricingService::class);
+        $w = (float)($shipment->width_cm ?? 10);
+        $h = (float)($shipment->height_cm ?? 10);
+        $l = (float)($shipment->length_cm ?? 10);
+        $physicalWeight = (float)($shipment->weight_kg ?? 0.5);
+        
+        $is_cod = $shipment->is_cod == 1;
+        $invoice_value = (float)($shipment->invoice_value ?? 0);
+        
+        $results = [];
+
+        if ($serviceability['fulfillment_type'] === 'onestall') {
+            // Only show Onestall
+            try {
+                $rate = $pricing->calculateOneStallRate(
+                    $shipment->pickup_pincode ?? '110001', 
+                    $shipment->delivery_pincode ?? '110001', 
+                    $physicalWeight, 
+                    $l, $w, $h, 
+                    $is_cod, 
+                    $invoice_value
+                );
+                
+                $results[] = [
+                    'name' => 'OneStall Cargo',
+                    'transport_mode' => 'Surface',
+                    'eta' => '1-2 Days',
+                    'rating' => '5.0',
+                    'rate' => round($rate, 2),
+                    'recommended' => true
+                ];
+            } catch (\Exception $e) {
+                // Fallback to basic rate
+                $chargeableWeight = max($physicalWeight, ($l * $w * $h) / 5000);
+                $results[] = [
+                    'name' => 'OneStall Cargo',
+                    'transport_mode' => 'Surface',
+                    'eta' => '1-2 Days',
+                    'rating' => '5.0',
+                    'rate' => round((1150 + ($chargeableWeight * 420)) * 1.18, 2),
+                    'recommended' => true
+                ];
+            }
+        } else {
+            // Show only active 3rd party
+            $couriers = \App\Models\Courier::where('is_active', true)->where('name', '!=', 'Onestall Cargo')->get();
+            
+            foreach ($couriers as $c) {
+                try {
+                    // Fetch real volumetric divisor from RateCard
+                    $rc = \App\Models\RateCard::where('courier_id', $c->id)->where('is_active', true)->latest()->first();
+                    $volDivisor = $rc ? $rc->volumetric_divisor : 5000;
+                    $cw = max($physicalWeight, ($l * $w * $h) / $volDivisor);
+
+                    $rate = $pricing->calculateExternalRate(
+                        $c->id, 
+                        $shipment->pickup_pincode ?? '110001', 
+                        $shipment->delivery_pincode ?? '110001', 
+                        $cw, 
+                        $is_cod, 
+                        $invoice_value
+                    );
+                    
+                    $results[] = [
+                        'name' => $c->name,
+                        'transport_mode' => $c->transport_mode ?? 'Surface',
+                        'eta' => $c->eta_days ? $c->eta_days . ' Days' : '3-5 Days',
+                        'rating' => $c->rating ?? '4.0',
+                        'rate' => round($rate['total'] ?? $rate['base_freight'] ?? 0, 2),
+                        'recommended' => false
+                    ];
+                } catch (\Exception $e) {
+                    continue; // Skip couriers that fail pricing calculation instead of dummy fallback
+                }
+            }
+            
+            // Mark the cheapest as recommended
+            if (count($results) > 0) {
+                usort($results, fn($a, $b) => $a['rate'] <=> $b['rate']);
+                $results[0]['recommended'] = true;
+            }
+        }
+
+        return response()->json($results);
+    }
     public function create(Request $request)
     {
         $shipment = null;
@@ -405,18 +496,55 @@ class SellerShipmentController extends Controller
         return back()->with('success', 'E-Way Bill ' . $shipment->eway_bill_number . ' successfully updated for ' . $shipment->awb_number);
     }
 
-    public function shipNowAction($id)
+    public function shipNowAction(Request $request, $id)
     {
         $shipment = \App\Models\Shipment::where('user_id', Auth::id())->where('id', $id)->firstOrFail();
         
         if (in_array(strtolower($shipment->status), ['new', 'manifested', 'booked'])) {
+            
+            $newCharge = $request->input('shipping_charge');
+            $courier = $request->input('courier_partner');
+            
+            if ($newCharge !== null && $courier) {
+                $oldCharge = $shipment->shipping_charge ?? $shipment->total_amount ?? 0;
+                $diff = (float)$newCharge - (float)$oldCharge;
+                
+                if ($diff > 0) {
+                    try {
+                        app(\App\Services\WalletService::class)->deduct(
+                            Auth::id(), 
+                            $diff, 
+                            'Courier Upgrade Upcharge: ' . $courier, 
+                            $shipment->awb_number
+                        );
+                    } catch (\Exception $e) {
+                        return back()->with('error', $e->getMessage());
+                    }
+                } elseif ($diff < 0) {
+                    app(\App\Services\WalletService::class)->credit(
+                        Auth::id(), 
+                        abs($diff), 
+                        'Courier Downgrade Savings: ' . $courier, 
+                        $shipment->awb_number
+                    );
+                }
+                
+                $shipment->shipping_charge = $newCharge;
+                $shipment->total_amount = $newCharge;
+                $shipment->courier_partner = $courier;
+            }
+
             $shipment->status = 'Pickup Scheduled';
             $shipment->save();
 
-            // Optionally create an event tracking entry here if ShipmentEvent model exists,
-            // but we'll stick to basic state change to keep it simple.
+            \App\Models\ShipmentEvent::create([
+                'shipment_id' => $shipment->id,
+                'status' => 'Pickup Scheduled',
+                'location' => 'Origin Hub',
+                'remarks' => 'Shipment assigned to ' . ($courier ?? 'Courier')
+            ]);
 
-            return back()->with('success', 'Shipment successfully marked as Pickup Scheduled.');
+            return back()->with('success', 'Shipment successfully assigned to ' . ($courier ?? 'Courier') . ' and marked for pickup.');
         }
 
         return back()->with('error', 'Shipment cannot be shipped at this stage.');
@@ -530,6 +658,7 @@ class SellerShipmentController extends Controller
         return view('seller.invoice', compact('shipment'));
     }
 }
+
 
 
 
