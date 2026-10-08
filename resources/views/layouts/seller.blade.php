@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
@@ -337,5 +337,11 @@
             }
         });
     </script>
+    @if(session('print_awb'))
+    <script>
+        window.open('{{ route('seller.label', session('print_awb')) }}', '_blank');
+    </script>
+    @endif
 </body>
 </html>
+

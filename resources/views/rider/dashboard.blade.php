@@ -24,7 +24,7 @@
             
             @if($del->is_cod)
             <div class="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs font-bold p-2 rounded flex justify-between">
-                <span>Collect COD:</span><span>₹{{ number_format($del->total_amount, 2) }}</span>
+                <span>Collect COD:</span><span>₹{{ number_format($del->cod_amount, 2) }}</span>
             </div>
             @endif
 

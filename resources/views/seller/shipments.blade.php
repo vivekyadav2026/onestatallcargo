@@ -165,6 +165,7 @@
     delivery_pincode: '{{ $shipment->delivery_pincode }}', 
     invoice_value: {{ $shipment->invoice_value ?? 0 }}, 
     total_amount: {{ $shipment->total_amount ?? 0 }}, 
+    cod_amount: {{ $shipment->cod_amount ?? 0 }}, 
     weight_kg: {{ $shipment->weight_kg ?? 0.5 }}, 
     is_cod: {{ $shipment->is_cod ? 1 : 0 }}, 
     courier_partner: '{{ $shipment->courier_partner }}', 
@@ -378,7 +379,11 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center border-b border-gray-200/60 pb-1.5">
                                 <span class="text-gray-500">Invoice Value</span>
-                                <span class="font-bold text-gray-900" x-text="'?' + (activeOrder.invoice_value || activeOrder.total_amount || 0)"></span>
+                                <span class="font-bold text-gray-900" x-html="'<i class=''fa-solid fa-indian-rupee-sign text-[10px]''></i> ' + (activeOrder.invoice_value || 0)"></span>
+                            </div>
+                                                        <div class="flex justify-between items-center border-b border-gray-200/60 pb-1.5" x-show="activeOrder.is_cod">
+                                <span class="text-gray-500">COD Collect</span>
+                                <span class="font-bold text-gray-900" x-html="'<i class=''fa-solid fa-indian-rupee-sign text-[10px]''></i> ' + (activeOrder.cod_amount || activeOrder.invoice_value || 0)"></span>
                             </div>
                             <div class="flex justify-between items-center border-b border-gray-200/60 pb-1.5">
                                 <span class="text-gray-500">Payment Mode</span>
@@ -535,4 +540,7 @@
     });
 </script>
 @endsection
+
+
+
 

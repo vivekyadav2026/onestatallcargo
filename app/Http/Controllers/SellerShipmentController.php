@@ -44,8 +44,10 @@ class SellerShipmentController extends Controller
             'hs_code' => 'nullable|string',
             'vehicle_type' => 'nullable|string',
             'weight_kg' => 'required|numeric',
-            'is_cod' => 'nullable|boolean',
+            'payment_mode' => 'nullable|string',
+            'cod_amount' => 'nullable|numeric',
             'invoice_value' => 'nullable|numeric',
+            'cod_amount' => 'nullable|numeric',
         ]);
 
         $user = Auth::user();
@@ -127,7 +129,7 @@ class SellerShipmentController extends Controller
             }
         }
 
-        $is_cod = $validated['is_cod'] ?? false;
+        $is_cod = ($request->input('payment_mode') === 'COD');
         
         if (!$isEdit) {
             try {
@@ -153,7 +155,15 @@ class SellerShipmentController extends Controller
         $shipment->delivery_city = $validated['delivery_city'];
         $shipment->delivery_pincode = $validated['delivery_pincode'];
         $shipment->weight_kg = $validated['weight_kg'];
+        $shipment->length_cm = $request->input('length_cm');
+        $shipment->width_cm = $request->input('width_cm');
+        $shipment->height_cm = $request->input('height_cm');
+        $shipment->order_id = $request->input('order_id');
+        $shipment->receiver_email = $request->input('receiver_email');
+        $shipment->delivery_landmark = $request->input('delivery_landmark');
+        $shipment->delivery_state = $request->input('delivery_state');
         $shipment->is_cod = $is_cod;
+        $shipment->cod_amount = $request->input('cod_amount');
         $shipment->invoice_value = $validated['invoice_value'] ?? 0;
         $shipment->total_amount = $totalAmount;
 
@@ -216,13 +226,13 @@ class SellerShipmentController extends Controller
 
         if ($isEdit) {
             if ($shipNow) {
-                return redirect()->route('seller.label', $shipment->awb_number)->with('success', 'Order updated and label generated.');
+                return redirect()->route('seller.shipments.index')->with('success', 'Order updated successfully.')->with('print_awb', $shipment->awb_number);
             }
             return redirect()->route('seller.shipments.index')->with('success', 'Order updated successfully.');
         }
 
         if ($shipNow) {
-            return redirect()->route('seller.label', $shipment->awb_number)->with('success', "Shipment Booked! Forwarded to {$shipment->courier_partner}.");
+            return redirect()->route('seller.shipments.index')->with('success', "Shipment Booked! Forwarded to {$shipment->courier_partner}.")->with('print_awb', $shipment->awb_number);
         }
 
         return redirect()->route('seller.shipments.index')->with('success', 'Order created successfully.');
@@ -520,3 +530,8 @@ class SellerShipmentController extends Controller
         return view('seller.invoice', compact('shipment'));
     }
 }
+
+
+
+
+

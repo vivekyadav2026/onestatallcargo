@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -40,7 +40,7 @@
             <div class="border border-gray-300 p-4 rounded-lg">
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-2">Shipper (Exporter)</h3>
                 <p class="font-black text-lg text-gray-900">{{ Auth::user()->name }}</p>
-                <p class="text-sm text-gray-700 mt-1">Ph: {{ Auth::user()->phone ?? 'N/A' }}</p>
+                <p class="text-sm text-gray-700 mt-1">Ph: {{ Auth::user()->phone ₹₹ 'N/A' }}</p>
                 <p class="text-sm text-gray-700 mt-1 font-bold">Country of Origin: INDIA</p>
             </div>
             
@@ -49,8 +49,8 @@
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-2">Consignee (Importer)</h3>
                 <p class="font-black text-lg text-gray-900">{{ $shipment->receiver_name }}</p>
                 <p class="text-sm text-gray-700 mt-1">{{ $shipment->delivery_address }}<br>{{ $shipment->delivery_city }} - {{ $shipment->delivery_pincode }}</p>
-                <p class="text-sm text-gray-700 mt-1 font-bold">Destination Country: {{ $shipment->destination_country ?? 'N/A' }}</p>
-                <p class="text-sm text-gray-700 mt-1">Ph: {{ $shipment->delivery_phone }}</p>
+                <p class="text-sm text-gray-700 mt-1 font-bold">Destination Country: {{ $shipment->destination_country ₹₹ 'N/A' }}</p>
+                <p class="text-sm text-gray-700 mt-1">Ph: {{ $shipment->receiver_phone }}</p>
             </div>
         </div>
 
@@ -68,19 +68,38 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
+                    @php
+                        $items = [];
+                        if (!empty($shipment->product_details)) {
+                            $decoded = json_decode($shipment->product_details, true);
+                            if (is_array($decoded) && count($decoded) > 0) {
+                                $items = $decoded;
+                            }
+                        }
+                        if (empty($items)) {
+                            $items[] = [
+                                'name' => $shipment->product_name ₹: 'General Export Goods',
+                                'qty' => $shipment->product_qty ₹: 1,
+                                'price' => $shipment->customs_value ₹₹ $shipment->invoice_value,
+                                'sku' => $shipment->product_sku
+                            ];
+                        }
+                    @endphp
+                    @foreach($items as $item)
                     <tr>
-                        <td class="px-4 py-4 text-center">{{ $shipment->packages_count ?? 1 }}</td>
-                        <td class="px-4 py-4 font-bold text-gray-700">General Export Goods</td>
-                        <td class="px-4 py-4 font-mono text-gray-500">{{ $shipment->hs_code ?? '9999.99' }}</td>
+                        <td class="px-4 py-4 text-center">{{ $item['qty'] }}</td>
+                        <td class="px-4 py-4 font-bold text-gray-700">{{ $item['name'] }}</td>
+                        <td class="px-4 py-4 font-mono text-gray-500">{{ $shipment->hs_code ₹₹ ($item['sku'] ₹: 'N/A') }}</td>
                         <td class="px-4 py-4">{{ $shipment->weight_kg }} KG</td>
-                        <td class="px-4 py-4 text-right">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
-                        <td class="px-4 py-4 text-right font-bold text-gray-900">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
+                        <td class="px-4 py-4 text-right">₹{{ number_format($item['price'], 2) }}</td>
+                        <td class="px-4 py-4 text-right font-bold text-gray-900">₹{{ number_format($item['qty'] * $item['price'], 2) }}</td>
                     </tr>
+                    @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="bg-gray-50 border-t-2 border-gray-800">
                         <td colspan="5" class="px-4 py-3 text-right font-bold uppercase tracking-widest text-xs text-gray-600">Total Declared Value:</td>
-                        <td class="px-4 py-3 text-right font-black text-lg text-gray-900">₹{{ number_format($shipment->customs_value ?? $shipment->invoice_value, 2) }}</td>
+                        <td class="px-4 py-3 text-right font-black text-lg text-gray-900">₹{{ number_format($shipment->customs_value ₹₹ $shipment->invoice_value, 2) }}</td>
                     </tr>
                 </tfoot>
             </table>
@@ -106,3 +125,4 @@
     </div>
 </body>
 </html>
+

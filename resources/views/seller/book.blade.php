@@ -56,7 +56,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">Add Order</h1>
-        <div class="text-[11px] font-semibold text-gray-500">
+        <div class="text-[11px] font-semibold text-gray-700">
             <a href="{{ route('seller.dashboard') }}" class="hover:text-[#4338ca] transition">Dashboard</a> 
             <span class="mx-1">/</span> 
             <span class="text-gray-900">Add Order</span>
@@ -83,22 +83,21 @@
         @csrf
         <input type="hidden" name="mode" value="{{ $mode ?? 'create' }}">
         <input type="hidden" name="shipment_id" value="{{ ($mode ?? '') === 'edit' ? ($shipment->id ?? '') : '' }}">
-        <input type="hidden" name="invoice_value" :value="totalOrderValue()">
         <input type="hidden" name="shipment_type" :value="shipmentType">
         <input type="hidden" name="is_cod" :value="paymentMode === 'COD' ? '1' : '0'">
         <input type="hidden" name="ship_now" value="1">
         
         <!-- Custom Tabs mimicking BigShip -->
         <div class="flex border-b border-gray-200 mb-6 bg-transparent">
-            <button type="button" @click="shipmentType = 'B2C'" :class="shipmentType !== 'International' ? 'text-indigo-900 border-b-2 border-indigo-900 font-bold' : 'text-gray-500 font-semibold'" class="px-6 py-3 text-[13px] transition">
+            <button type="button" @click="shipmentType = 'B2C'" :class="shipmentType !== 'International' ? 'text-indigo-900 border-b-2 border-indigo-900 font-bold' : 'text-gray-700 font-semibold'" class="px-6 py-3 text-[13px] transition">
                 Domestic
             </button>
-            <button type="button" @click="shipmentType = 'International'; paymentMode = 'Prepaid'" :class="shipmentType === 'International' ? 'text-indigo-900 border-b-2 border-indigo-900 font-bold' : 'text-gray-500 font-semibold'" class="px-6 py-3 text-[13px] transition">
+            <button type="button" @click="shipmentType = 'International'; paymentMode = 'Prepaid'" :class="shipmentType === 'International' ? 'text-indigo-900 border-b-2 border-indigo-900 font-bold' : 'text-gray-700 font-semibold'" class="px-6 py-3 text-[13px] transition">
                 International
             </button>
         </div>
         
-        <div class="bg-white rounded p-6 shadow-sm mb-6">
+        
             <div class="flex justify-between items-center mb-8">
                 <div class="text-red-500 text-[11px] font-semibold">*All Fields Required</div>
                 <a href="{{ route('seller.bulk') }}" class="bg-[#10b981] hover:bg-[#059669] text-white text-[12px] font-bold px-4 py-2 rounded shadow-sm transition">
@@ -106,77 +105,61 @@
                 </a>
             </div>
 
-            <!-- SECTION 1: Order Information -->
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-7 h-7 rounded-full bg-[#1e1b4b] text-white flex items-center justify-center font-bold text-sm">1</div>
-                <h3 class="text-[15px] font-bold text-[#1e1b4b]">Order Information</h3>
-            </div>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50"><div class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-file-invoice"></i></div><h3 class="font-bold text-gray-900 text-sm">Order Information</h3></div><div class="p-5 pt-6">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pl-2 md:pl-10 mb-10">
                 <div class="relative">
-                    <div class="flex justify-between items-end mb-1">
-                        <label class="text-[11px] font-semibold text-gray-500">Order ID / Invoice No<span class="text-red-500">*</span></label>
-                        <button type="button" @click="generateOrderId()" class="text-[10px] text-blue-500 font-semibold hover:underline">Auto Generate</button>
-                    </div>
-                    <div class="relative">
-                        <input type="text" name="order_id" x-model="orderId" placeholder="Enter Order/Invoice No" required :class="orderId ? 'border-gray-200 focus:border-indigo-500' : 'border-red-300 focus:border-red-500'" class="w-full px-3 py-2 border rounded text-xs outline-none">
-                        <i x-show="!orderId" class="fa-solid fa-circle-exclamation text-red-500 absolute right-3 top-1/2 -translate-y-1/2 text-[10px]"></i>
-                    </div>
-                    <p x-show="!orderId" class="text-[9px] text-red-500 mt-1">* This Field is Required</p>
+                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Order ID / Invoice No <span class="text-red-500">*</span></label><input type="text" name="order_id" x-model="orderId" readonly class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none bg-gray-100 text-gray-500 cursor-not-allowed shadow-sm">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-semibold text-gray-500 mb-1">Order Date <span class="text-red-500">*</span></label>
+                    <label class="block text-[11px] font-semibold text-gray-700 mb-1">Order Date <span class="text-red-500">*</span></label>
                     <input type="date" name="order_date" value="{{ date('Y-m-d') }}" required class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none text-gray-700">
                 </div>
             </div>
 
-            <!-- SECTION 2: Receiver Information -->
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-7 h-7 rounded-full bg-[#1e1b4b] text-white flex items-center justify-center font-bold text-sm">2</div>
-                <h3 class="text-[15px] font-bold text-[#1e1b4b]">Receiver Information</h3>
-            </div>
+            </div><div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50"><div class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-location-dot"></i></div><h3 class="font-bold text-gray-900 text-sm">Delivery Address</h3></div><div class="p-5 pt-6">
             
             <div class="pl-2 md:pl-10 mb-10">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">Email Id</label>
-                        <input type="email" name="receiver_email" placeholder="Enter email id" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">Email Id</label>
+                        <input type="email" name="receiver_email" value="{{ old('receiver_email', $shipment->receiver_email ?? '') }}" placeholder="Enter email id" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">Full Name/Company Name <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">Full Name/Company Name <span class="text-red-500">*</span></label>
                         <input type="text" name="receiver_name" value="{{ old('receiver_name', $shipment->receiver_name ?? '') }}" required placeholder="Enter Full Name/Co" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">Mobile No. <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">Mobile No. <span class="text-red-500">*</span></label>
                         <input type="text" name="receiver_phone" value="{{ old('receiver_phone', $shipment->receiver_phone ?? '') }}" required placeholder="Enter Mobile no" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
                     </div>
                     <div class="row-span-2">
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">Address<span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">Address<span class="text-red-500">*</span></label>
                         <textarea name="delivery_address" required placeholder="House No./ Ward Number, Building Name" rows="4" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none resize-none">{{ old('delivery_address', $shipment->delivery_address ?? '') }}</textarea>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">Landmark</label>
-                        <input type="text" name="delivery_landmark" placeholder="Enter the Landmark" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">Landmark</label>
+                        <input type="text" name="delivery_landmark" value="{{ old('delivery_landmark', $shipment->delivery_landmark ?? '') }}" placeholder="Enter the Landmark" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1" x-text="shipmentType === 'International' ? 'Zipcode / Pincode *' : 'Pincode *'">Pincode <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1" x-text="shipmentType === 'International' ? 'Zipcode / Pincode *' : 'Pincode *'">Pincode <span class="text-red-500">*</span></label>
                         <input type="text" name="delivery_pincode" x-model="deliveryPincode" @input="fetchCityState()" required placeholder="Enter the Pincode" class="w-full px-3 py-2 border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1" x-text="shipmentType === 'International' ? 'State / Province' : 'State'">State</label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1" x-text="shipmentType === 'International' ? 'State / Province' : 'State'">State</label>
                         <input type="text" name="delivery_state" x-model="deliveryState" placeholder="Enter the state Name" class="w-full px-3 py-2 bg-white border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none text-gray-700">
                     </div>
                     <!-- Spacer for correct grid layout -->
                     <div class="col-start-1 md:col-start-3 md:row-start-2 -mt-10 md:mt-0 opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto invisible md:visible"></div>
                     <div class="col-start-1 md:col-start-4 -mt-[48px] md:mt-0">
-                        <label class="block text-[11px] font-semibold text-gray-500 mb-1">City</label>
+                        <label class="block text-[11px] font-semibold text-gray-700 mb-1">City</label>
                         <input type="text" name="delivery_city" x-model="deliveryCity" placeholder="Enter the city Name" class="w-full px-3 py-2 bg-white border border-gray-200 focus:border-indigo-500 rounded text-xs outline-none text-gray-700">
                     </div>
                     
                     <!-- International Fields (Appended to the grid dynamically) -->
                     <div x-show="shipmentType === 'International'" class="col-span-1 md:col-span-2 pt-2 transition">
                         <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Destination Country <span class="text-red-500">*</span></label>
-                        <input type="text" list="country_list" name="destination_country" placeholder="Select or type country" :required="shipmentType === 'International'" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
+                        <input type="text" list="country_list" name="destination_country" value="{{ old('destination_country', $shipment->destination_country ?? '') }}" placeholder="Select or type country" :required="shipmentType === 'International'" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
                         <datalist id="country_list">
                             <option value="United States">
                             <option value="United Kingdom">
@@ -191,33 +174,44 @@
                     </div>
                     <div x-show="shipmentType === 'International'" class="pt-2 transition">
                         <label class="block text-[11px] font-semibold text-indigo-900 mb-1">Customs Value (₹) <span class="text-red-500">*</span></label>
-                        <input type="number" step="0.01" name="customs_value" placeholder="Total Value" :required="shipmentType === 'International'" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
+                        <input type="number" step="0.01" name="customs_value" value="{{ old('customs_value', $shipment->customs_value ?? '') }}" placeholder="Total Value" :required="shipmentType === 'International'" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
                     </div>
                     <div x-show="shipmentType === 'International'" class="pt-2 transition">
                         <label class="block text-[11px] font-semibold text-indigo-900 mb-1">HS Code</label>
-                        <input type="text" name="hs_code" placeholder="e.g. 6109.10" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
+                        <input type="text" name="hs_code" value="{{ old('hs_code', $shipment->hs_code ?? '') }}" placeholder="e.g. 6109.10" class="w-full px-3 py-2 border border-indigo-200 bg-indigo-50 focus:border-indigo-500 rounded text-xs outline-none text-gray-700 shadow-sm">
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION 3: Box Dimension Detail -->
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-7 h-7 rounded-full bg-[#1e1b4b] text-white flex items-center justify-center font-bold text-sm">3</div>
-                <h3 class="text-[15px] font-bold text-[#1e1b4b]">Box Dimension Detail</h3>
-            </div>
+            </div><div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="px-5 py-3 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50"><div class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-cube"></i></div><h3 class="font-bold text-gray-900 text-sm">Box Dimension Detail & Products</h3></div><div class="p-5 pt-6">
             
             <div class="pl-2 md:pl-10 mb-10">
                 <div class="flex items-center gap-2 mb-4">
                     <input type="checkbox" class="w-3.5 h-3.5 text-[#4338ca] rounded border-gray-300">
-                    <label class="text-[11px] italic font-semibold text-gray-600">Multi Box Shipment</label>
+                    <label class="text-[11px] italic font-semibold text-gray-800">Multi Box Shipment</label>
                 </div>
                 
-                <div class="w-48 mb-6">
-                    <label class="block text-[11px] font-semibold text-gray-500 mb-1">Payment Mode <span class="text-red-500">*</span></label>
-                    <select x-model="paymentMode" :disabled="shipmentType === 'International'" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500 bg-white disabled:bg-gray-100 disabled:text-gray-500">
-                        <option value="Prepaid">Prepaid</option>
-                        <option value="COD">COD</option>
-                    </select>
+                <div class="mb-6 border border-gray-100 p-4 rounded bg-gray-50/30 shadow-sm">
+                    <label class="block text-[11px] font-semibold text-gray-700 mb-2">Payment Mode <span class="text-red-500">*</span></label>
+                    <div class="flex gap-3 mb-5">
+                        <button type="button" @click="paymentMode = 'Prepaid'" :class="paymentMode === 'Prepaid' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-white border-gray-200 text-gray-800'" class="px-4 py-2 border rounded text-[11px] font-bold flex items-center gap-2 transition" :disabled="shipmentType === 'International'">
+                            <i class="fa-regular fa-credit-card"></i> Prepaid
+                        </button>
+                        <button type="button" @click="paymentMode = 'COD'" :class="paymentMode === 'COD' ? 'bg-emerald-50 border-emerald-500 text-emerald-700' : 'bg-white border-gray-200 text-gray-800'" class="px-4 py-2 border rounded text-[11px] font-bold flex items-center gap-2 transition" :disabled="shipmentType === 'International'">
+                            <i class="fa-solid fa-money-bill"></i> Cash on Delivery (COD)
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-700 mb-1">Order Total Value (₹) <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" name="invoice_value" x-bind:value="totalOrderValue()" readonly class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none bg-gray-100 text-gray-700 cursor-not-allowed shadow-sm">
+                        </div>
+                        <div x-show="paymentMode === 'COD'" class="transition-all">
+                            <label class="block text-[11px] font-bold text-gray-800 mb-1">COD Amount (₹) <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" name="cod_amount" x-model="codAmount" :required="paymentMode === 'COD'" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-emerald-500 shadow-sm">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="inline-block bg-yellow-400 text-white text-[11px] font-bold px-5 py-1.5 rounded-full mb-5 shadow-sm">
@@ -228,7 +222,7 @@
                     <div class="flex items-start gap-2 sm:gap-4 min-w-[320px]">
                         <!-- Weight -->
                         <div class="flex-1 min-w-[70px]">
-                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Box Weight <span class="text-red-500">*</span></span>
+                            <span class="block text-[10px] font-bold text-gray-700 mb-1 whitespace-nowrap">Box Weight <span class="text-red-500">*</span></span>
                             <div class="relative">
                                 <input type="number" step="0.01" name="weight_kg" x-model.number="deadWeight" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">KG</span>
@@ -237,7 +231,7 @@
 
                         <!-- Length -->
                         <div class="flex-1 min-w-[70px]">
-                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Length <span class="text-red-500">*</span></span>
+                            <span class="block text-[10px] font-bold text-gray-700 mb-1 whitespace-nowrap">Length <span class="text-red-500">*</span></span>
                             <div class="relative">
                                 <input type="number" name="length_cm" x-model.number="lengthCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
@@ -246,7 +240,7 @@
 
                         <!-- Breadth / Width -->
                         <div class="flex-1 min-w-[70px]">
-                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Breadth <span class="text-red-500">*</span></span>
+                            <span class="block text-[10px] font-bold text-gray-700 mb-1 whitespace-nowrap">Breadth <span class="text-red-500">*</span></span>
                             <div class="relative">
                                 <input type="number" name="width_cm" x-model.number="widthCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
@@ -255,7 +249,7 @@
 
                         <!-- Height -->
                         <div class="flex-1 min-w-[70px]">
-                            <span class="block text-[10px] font-bold text-gray-500 mb-1 whitespace-nowrap">Height <span class="text-red-500">*</span></span>
+                            <span class="block text-[10px] font-bold text-gray-700 mb-1 whitespace-nowrap">Height <span class="text-red-500">*</span></span>
                             <div class="relative">
                                 <input type="number" name="height_cm" x-model.number="heightCm" class="w-full h-10 border border-gray-200 rounded-lg pl-2 pr-7 text-xs font-bold text-gray-800 bg-white focus:outline-none focus:border-indigo-500 text-center shadow-sm">
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-bold pointer-events-none">CM</span>
@@ -267,30 +261,23 @@
                 <div class="w-full overflow-x-auto pb-2">
                     <div class="min-w-[800px]">
                         <!-- Products Table Headers -->
-                        <div class="grid gap-3 mb-1" :class="paymentMode === 'COD' ? 'grid-cols-7' : 'grid-cols-6'">
-                            <div class="col-span-2 text-[10px] font-bold text-gray-500">Product Name <span class="text-red-500">*</span></div>
-                            <div class="text-[10px] font-bold text-gray-500">Category <span class="text-red-500">*</span></div>
-                            <div class="text-[10px] font-bold text-gray-500">HSN Code</div>
-                            <div class="text-[10px] font-bold text-gray-500">Quantity <span class="text-red-500">*</span></div>
-                            <div class="text-[10px] font-bold text-gray-500">Amount <span class="text-red-500">*</span></div>
-                            <div class="text-[10px] font-bold text-gray-500" x-show="paymentMode === 'COD'">Collectable Amount <span class="text-red-500">*</span></div>
+                        <div class="grid gap-3 mb-1 grid-cols-7">
+                            <div class="col-span-2 text-[10px] font-bold text-gray-700">Product Name <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-700">Category <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-700">HSN Code</div>
+                            <div class="text-[10px] font-bold text-gray-700">Quantity <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-700">Unit Price <span class="text-red-500">*</span></div>
+                            <div class="text-[10px] font-bold text-gray-700">Subtotal <span class="text-red-500">*</span></div>
                         </div>
 
                         <template x-for="(product, index) in products" :key="index">
-                            <div class="grid gap-3 mb-3 items-center" :class="paymentMode === 'COD' ? 'grid-cols-7' : 'grid-cols-6'">
+                            <div class="grid gap-3 mb-3 items-center grid-cols-7">
                                 <div class="col-span-2">
                                     <input type="text" name="product_name[]" x-model="product.name" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
                                 </div>
+                                <div><select name="product_category[]" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none text-gray-800 focus:border-indigo-500 shadow-sm"><option>Select Category</option><option>Apparel</option><option>Electronics</option><option>Health & Beauty</option></select></div>
                                 <div>
-                                    <select class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none text-gray-600 focus:border-indigo-500 shadow-sm">
-                                        <option>Select Category</option>
-                                        <option>Apparel</option>
-                                        <option>Electronics</option>
-                                        <option>Health & Beauty</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <input type="text" x-model="product.hsn" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
+                                    <input type="text" name="product_sku[]" x-model="product.sku" placeholder="HSN/SKU" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
                                 </div>
                                 <div>
                                     <input type="number" min="1" name="product_qty[]" x-model.number="product.qty" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
@@ -299,8 +286,8 @@
                                     <input type="number" step="0.01" name="product_price[]" x-model.number="product.price" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-xs outline-none focus:border-indigo-500 shadow-sm">
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <div class="flex-1" x-show="paymentMode === 'COD'">
-                                        <input type="number" step="0.01" :value="product.price * product.qty" readonly class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none text-gray-500 shadow-sm">
+                                    <div class="flex-1">
+                                        <input type="number" step="0.01" :value="product.price * product.qty" readonly class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none text-gray-700 shadow-sm">
                                     </div>
                                     <button type="button" @click="addProduct" x-show="index === products.length - 1" class="w-8 h-8 rounded-lg bg-[#8bc34a] hover:bg-[#7cb342] text-white flex items-center justify-center shrink-0 shadow-sm transition">
                                         <i class="fa-solid fa-plus text-sm"></i>
@@ -315,16 +302,11 @@
                 </div>
             </div>
 
-            <!-- SECTION 4: Pickup Location -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-3 w-full md:w-auto">
-                    <div class="w-7 h-7 rounded-full bg-[#1e1b4b] text-white flex items-center justify-center font-bold text-sm">4</div>
-                    <h3 class="text-[15px] font-bold text-[#1e1b4b]">Pickup Location</h3>
-                </div>
+            </div><div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6"><div class="px-5 py-3 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-gray-50/50"><div class="flex items-center gap-2"><div class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fa-solid fa-warehouse"></i></div><h3 class="font-bold text-gray-900 text-sm">Pickup Location</h3></div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
-                    <span class="text-[11px] font-semibold text-gray-600">Search Pickup Location</span>
+                    <span class="text-[11px] font-semibold text-gray-800">Search Pickup Location</span>
                     <div class="relative w-full sm:w-64">
-                        <div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-100 border border-gray-200 rounded-l flex items-center justify-center text-gray-500">
+                        <div class="absolute left-0 top-0 bottom-0 w-8 bg-gray-100 border border-gray-200 rounded-l flex items-center justify-center text-gray-700">
                             <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
                         </div>
                         <input type="text" x-model="warehouseSearch" placeholder="Search by Warehouse Name/City Name/Pincode" class="w-full pl-10 pr-3 py-1.5 border border-gray-200 rounded text-[10px] outline-none focus:border-indigo-500">
@@ -346,18 +328,18 @@
                             <div class="flex flex-col w-full text-[11px]">
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start sm:items-center">
                                     <div class="font-bold text-gray-900 text-center flex items-center justify-center">{{ $wh->name }}</div>
-                                    <div class="text-center text-gray-600 border-l border-r border-gray-200 flex flex-col justify-center">
+                                    <div class="text-center text-gray-800 border-l border-r border-gray-200 flex flex-col justify-center">
                                         <span class="block text-gray-400">Contact Person</span>
                                         <span class="font-bold text-gray-800">{{ $wh->phone }}</span>
                                     </div>
-                                    <div class="text-center text-gray-500 flex flex-col items-center justify-center px-2">
+                                    <div class="text-center text-gray-700 flex flex-col items-center justify-center px-2">
                                         <span class="block truncate w-full" title="{{ $wh->address }}">{{ Str::limit($wh->address, 35) }}</span>
                                     </div>
                                 </div>
                             </div>
                         </label>
                     @empty
-                        <div class="col-span-2 text-center py-6 text-sm text-gray-500 font-semibold bg-gray-50 rounded">
+                        <div class="col-span-2 text-center py-6 text-sm text-gray-700 font-semibold bg-gray-50 rounded">
                             No warehouses found. Please add a warehouse first.
                         </div>
                     @endforelse
@@ -365,11 +347,11 @@
 
                 <div class="flex items-center gap-2 py-4">
                     <input type="checkbox" checked class="w-3.5 h-3.5 text-[#007bff] rounded border-gray-300">
-                    <label class="text-[11px] italic font-semibold text-gray-600">Return address will be the same as pickup address</label>
+                    <label class="text-[11px] italic font-semibold text-gray-800">Return address will be the same as pickup address</label>
                 </div>
             </div>
 
-            <!-- Footer Buttons -->
+            </div><!-- Footer Buttons -->
             <div class="flex justify-center gap-4 mt-8 pt-4">
                 <button type="reset" class="px-8 py-2 bg-[#f3f4f6] hover:bg-gray-200 text-gray-700 text-xs font-bold rounded">
                     RESET
@@ -379,8 +361,7 @@
                 </button>
             </div>
             
-        </div>
-    </form>
+        </form>
 </div>
 
 <script>
@@ -389,15 +370,16 @@ function bookingForm() {
         shipmentType: @json($initialType),
         paymentMode: @json($initialCod === '1' || $initialCod === true ? 'COD' : 'Prepaid'),
         warehouseSearch: '',
-        orderId: '{{ old('order_id') }}',
+        orderId: '{{ old('order_id', $shipment->order_id ?? '') }}' || ('ORD-' + Math.floor(100000 + Math.random() * 900000)),
+        codAmount: {{ old('cod_amount', $shipment->cod_amount ?? 0) }},
         deliveryPincode: '{{ old('delivery_pincode', $shipment->delivery_pincode ?? '') }}',
         deliveryCity: '{{ old('delivery_city', $shipment->delivery_city ?? '') }}',
         deliveryState: '{{ old('delivery_state', $shipment->delivery_state ?? '') }}',
         selectedWarehouse: {{ $warehouses->where('is_default', true)->first()->id ?? ($warehouses->first()->id ?? 'null') }},
         deadWeight: {{ $initialWeight }},
-        lengthCm: 10,
-        widthCm: 10,
-        heightCm: 10,
+        lengthCm: {{ old('length_cm', $shipment->length_cm ?? 10) }},
+        widthCm: {{ old('width_cm', $shipment->width_cm ?? 10) }},
+        heightCm: {{ old('height_cm', $shipment->height_cm ?? 10) }},
         products: {!! json_encode($initialProducts) !!},
         generateOrderId() {
             this.orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
@@ -434,3 +416,13 @@ function bookingForm() {
 }
 </script>
 @endsection
+
+
+
+
+
+
+
+
+
+
