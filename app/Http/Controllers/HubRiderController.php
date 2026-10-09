@@ -37,24 +37,42 @@ class HubRiderController extends Controller
         ];
     }
 
-    public function index()
+        public function index()
     {
-        $scope = $this->getAuthScope();
-        
-        $riders = Rider::with(['user', 'hub'])
-            ->where(function($q) use ($scope) {
-                if ($scope['franchise_id']) {
-                    $q->where('franchise_id', $scope['franchise_id']);
-                } else {
-                    $q->whereNull('franchise_id')->whereIn('hub_id', $scope['hubs']->pluck('id'));
-                }
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(15)->withQueryString();
-            
-        $hubs = $scope['hubs'];
+        $hubManagerId = Auth::id();
+        $hub = \App\Models\Hub::where('manager_id', $hubManagerId)->first();
+        if(!$hub) {
+            return redirect()->route('hub.dashboard')->with('error', 'No Hub Assigned.');
+        }
 
-        return view('hub.fleet.index', compact('riders', 'hubs'));
+        $riders = Rider::where('hub_id', $hub->id)
+                      ->with(['user'])
+                      ->orderBy('created_at', 'desc')
+                      ->paginate(15);
+                      
+        // Append live performance stats to each rider
+        foreach($riders as $rider) {
+            if(!$rider->user) continue;
+            
+            $todayShipments = \App\Models\Shipment::where('rider_id', $rider->user->id)
+                ->where('status', 'Delivered')
+                ->whereDate('updated_at', today())
+                ->get();
+                
+            $rider->today_deliveries = $todayShipments->count();
+            
+            $rider->today_cash = $todayShipments->where('is_cod', 1)->filter(function($s) {
+                return empty($s->payment_type) || $s->payment_type === 'Cash';
+            })->sum(function($s) {
+                return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+            });
+            
+            $rider->today_upi = $todayShipments->where('payment_type', 'UPI')->sum(function($s) {
+                return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+            });
+        }
+        
+        return view('hub.fleet.index', compact('riders', 'hub'));
     }
 
     public function store(Request $request)
@@ -170,5 +188,33 @@ class HubRiderController extends Controller
         $rider->user->delete();
 
         return back()->with("success", "Rider deleted successfully.");
+    }
+
+    public function report(Request $request, $id)
+    {
+        $rider = Rider::with('user')->findOrFail($id);
+        $userId = $rider->user->id;
+
+        $selectedDate = $request->query('date', today()->toDateString());
+
+        $shipments = \App\Models\Shipment::where('rider_id', $userId)
+                        ->where('status', 'Delivered')
+                        ->whereDate('updated_at', $selectedDate)
+                        ->orderBy('updated_at', 'desc')
+                        ->get();
+
+        $totalDeliveries = $shipments->count();
+
+        $totalCash = $shipments->where('is_cod', 1)->filter(function($s) {
+            return empty($s->payment_type) || $s->payment_type === 'Cash';
+        })->sum(function($s) {
+            return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+        });
+
+        $totalUpi = $shipments->where('payment_type', 'UPI')->sum(function($s) {
+            return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+        });
+
+        return view('hub.fleet.report', compact('rider', 'shipments', 'selectedDate', 'totalDeliveries', 'totalCash', 'totalUpi'));
     }
 }

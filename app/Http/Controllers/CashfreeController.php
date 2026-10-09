@@ -176,7 +176,101 @@ class CashfreeController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Payment not verified']);
     }
+
+    public function generateCodLink(Request $request)
+    {
+        $request->validate([
+            'awb_number' => 'required|string',
+            'amount' => 'required|numeric|min:1'
+        ]);
+
+        $appId = \App\Models\Setting::where('key', 'cashfree_app_id')->value('value');
+        if (empty($appId) || $appId == 'TEST_APP_ID') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cashfree API keys are not configured in Admin Settings.'
+            ]);
+        }
+
+        $linkId = 'COD_' . $request->awb_number . '_' . time();
+
+        $payload = [
+            'link_id' => $linkId,
+            'link_amount' => round($request->amount, 2),
+            'link_currency' => 'INR',
+            'link_purpose' => 'COD Payment for ' . $request->awb_number,
+            'customer_details' => [
+                'customer_phone' => '9999999999',
+                'customer_email' => 'cod@onestall.com',
+                'customer_name' => 'Customer'
+            ],
+            'link_notify' => [
+                'send_sms' => false,
+                'send_email' => false
+            ],
+            'link_meta' => [
+                'notify_url' => str_replace('http://', 'https://', url('/api/webhooks/cashfree-cod'))
+            ]
+        ];
+
+        // Ensure we use the correct API version for Links
+        $headers = $this->getHeaders();
+        $headers['x-api-version'] = '2022-09-01'; // Links API often uses this version
+
+        $env = \App\Models\Setting::where('key', 'cashfree_environment')->value('value') ?: env('CASHFREE_ENV', 'sandbox');
+        $baseUrl = $env === 'production' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg';
+
+        $response = Http::withHeaders($headers)
+            ->post($baseUrl . '/links', $payload);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            return response()->json([
+                'success' => true,
+                'link_url' => $data['link_url'],
+                'link_id' => $linkId
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Cashfree API Error: ' . $response->body()
+        ], 500);
+    }
+
+    public function verifyCodLink(Request $request)
+    {
+        $request->validate([
+            'link_id' => 'required|string'
+        ]);
+
+        $headers = $this->getHeaders();
+        $headers['x-api-version'] = '2022-09-01'; // Same version used for creating links
+
+        $env = \App\Models\Setting::where('key', 'cashfree_environment')->value('value') ?: env('CASHFREE_ENV', 'sandbox');
+        $baseUrl = $env === 'production' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg';
+
+        $response = Http::withHeaders($headers)
+            ->get($baseUrl . '/links/' . $request->link_id);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            if (isset($data['link_status']) && $data['link_status'] === 'PAID') {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Payment Verified Successfully!'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Payment is still Pending. Ask customer to pay.'
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error verifying with Cashfree API'
+        ], 500);
+    }
 }
-
-
-

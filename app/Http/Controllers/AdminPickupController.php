@@ -36,7 +36,7 @@ class AdminPickupController extends Controller
         $pendingPickups = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         // Get all pickup riders
-        $riders = User::whereIn('role', ['rider', 'pickup_rider'])->get();
+        $riders = User::whereIn('role', ['rider', 'pickup_rider', 'delivery_rider'])->get();
 
         return view('admin.pickups.index', compact('pendingPickups', 'riders'));
     }

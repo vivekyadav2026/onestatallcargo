@@ -212,6 +212,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riders', [\App\Http\Controllers\AdminRiderController::class, 'index'])->name('admin.riders.index');
         Route::post('/riders', [\App\Http\Controllers\AdminRiderController::class, 'store'])->name('admin.riders.store');
         Route::post('/riders/{id}/update', [\App\Http\Controllers\AdminRiderController::class, 'update'])->name('admin.riders.update');
+        Route::get('/riders/{id}/report', [\App\Http\Controllers\AdminRiderController::class, 'report'])->name('admin.riders.report');
         Route::post('/riders/{id}/delete', [\App\Http\Controllers\AdminRiderController::class, 'destroy'])->name('admin.riders.destroy');
         Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
@@ -358,6 +359,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/fleet", [\App\Http\Controllers\HubRiderController::class, "index"])->name("hub.fleet.index");
         Route::post("/fleet", [\App\Http\Controllers\HubRiderController::class, "store"])->name("hub.fleet.store");
         Route::post("/fleet/{id}/update", [\App\Http\Controllers\HubRiderController::class, "update"])->name("hub.fleet.update");
+        Route::get('/fleet/{id}/report', [\App\Http\Controllers\HubRiderController::class, 'report'])->name('hub.fleet.report');
         Route::post("/fleet/{id}/delete", [\App\Http\Controllers\HubRiderController::class, "destroy"])->name("hub.fleet.destroy");
 
         
@@ -410,6 +412,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/location', [\App\Http\Controllers\RiderAppController::class, 'updateLocation'])->name('rider.location.update');
         Route::post('/profile/update', [\App\Http\Controllers\RiderAppController::class, 'updateProfile'])->name('rider.profile.update');
         Route::post('/evidence', [\App\Http\Controllers\RiderAppController::class, 'uploadEvidence'])->name('rider.evidence.upload');
+        Route::post('/ndr/{awb}', [\App\Http\Controllers\RiderAppController::class, 'autoNdr'])->name('rider.ndr');
     });
 });
 

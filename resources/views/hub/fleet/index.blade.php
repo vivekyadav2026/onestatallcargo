@@ -93,7 +93,7 @@
                         <th class="px-4 py-3">Phone & Email</th>
                         <th class="px-4 py-3">Role</th>
                         <th class="px-4 py-3">Hub Assigned</th>
-                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Status</th><th class="px-4 py-3">Today's Performance</th>
                         <th class="px-4 py-3 text-right">Action</th>
                     </tr>
                 </thead>
@@ -112,6 +112,22 @@
                                 {{ $rider->status }}
                             </span>
                         </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-4">
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-gray-900">{{ $rider->today_deliveries ?? 0 }}</div>
+                                            <div class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Deliveries</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-green-600">&#8377;{{ number_format($rider->today_cash ?? 0, 0) }}</div>
+                                            <div class="text-[9px] font-bold text-green-700 uppercase tracking-widest">Cash</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-blue-600">&#8377;{{ number_format($rider->today_upi ?? 0, 0) }}</div>
+                                            <div class="text-[9px] font-bold text-blue-700 uppercase tracking-widest">UPI</div>
+                                        </div>
+                                    </div>
+                                </td>
                         <td class="px-4 py-3 text-right flex justify-end gap-2">
                             <button @click="viewRider = {{ $rider->id }}" class="text-gray-600 font-bold hover:underline text-xs bg-gray-100 px-2 py-1 rounded">View</button>
                             <button @click="editRider = {{ $rider->id }}" class="text-blue-600 font-bold hover:underline text-xs bg-blue-50 px-2 py-1 rounded">Edit</button>

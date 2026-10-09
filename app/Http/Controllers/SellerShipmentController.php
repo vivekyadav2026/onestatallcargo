@@ -42,7 +42,7 @@ class SellerShipmentController extends Controller
                     'transport_mode' => 'Surface',
                     'eta' => '1-2 Days',
                     'rating' => '5.0',
-                    'rate' => round($rate, 2),
+                    'rate' => round($rate['total'] ?? 0, 2),
                     'recommended' => true
                 ];
             } catch (\Exception $e) {

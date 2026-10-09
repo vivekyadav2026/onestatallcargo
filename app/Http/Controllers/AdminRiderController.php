@@ -12,11 +12,33 @@ use Illuminate\Validation\Rule;
 
 class AdminRiderController extends Controller
 {
-    public function index()
+        public function index()
     {
         $riders = Rider::with(['user', 'franchise', 'hub'])
                       ->orderBy('created_at', 'desc')
                       ->paginate(15)->withQueryString();
+                      
+        // Append live performance stats to each rider
+        foreach($riders as $rider) {
+            if(!$rider->user) continue;
+            
+            $todayShipments = \App\Models\Shipment::where('rider_id', $rider->user->id)
+                ->where('status', 'Delivered')
+                ->whereDate('updated_at', today())
+                ->get();
+                
+            $rider->today_deliveries = $todayShipments->count();
+            
+            $rider->today_cash = $todayShipments->where('is_cod', 1)->filter(function($s) {
+                return empty($s->payment_type) || $s->payment_type === 'Cash';
+            })->sum(function($s) {
+                return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+            });
+            
+            $rider->today_upi = $todayShipments->where('payment_type', 'UPI')->sum(function($s) {
+                return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+            });
+        }
         
         $franchises = Franchise::where('status', 'approved')->get();
         $hubs = Hub::where('is_active', true)->get();
@@ -108,5 +130,34 @@ class AdminRiderController extends Controller
         $rider = Rider::findOrFail($id);
         $rider->user->delete(); // Casually deletes the user and cascades the rider
         return back()->with('success', 'Rider removed successfully.');
+    }
+
+    public function report(Request $request, $id)
+    {
+        $rider = Rider::with('user')->findOrFail($id);
+        $userId = $rider->user->id;
+
+        $selectedDate = $request->query('date', today()->toDateString());
+
+        // Fetch shipments updated on that date
+        $shipments = \App\Models\Shipment::where('rider_id', $userId)
+                        ->where('status', 'Delivered')
+                        ->whereDate('updated_at', $selectedDate)
+                        ->orderBy('updated_at', 'desc')
+                        ->get();
+
+        $totalDeliveries = $shipments->count();
+
+        $totalCash = $shipments->where('is_cod', 1)->filter(function($s) {
+            return empty($s->payment_type) || $s->payment_type === 'Cash';
+        })->sum(function($s) {
+            return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+        });
+
+        $totalUpi = $shipments->where('payment_type', 'UPI')->sum(function($s) {
+            return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
+        });
+
+        return view('admin.riders.report', compact('rider', 'shipments', 'selectedDate', 'totalDeliveries', 'totalCash', 'totalUpi'));
     }
 }

@@ -103,7 +103,7 @@
                             <tr class="bg-gray-50 text-[10px] font-extrabold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                                 <th class="px-6 py-4">Rider Details</th>
                                 <th class="px-6 py-4">Assignment</th>
-                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Status</th><th class="px-6 py-4">Today's Performance</th>
                                 <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -123,7 +123,24 @@
                                     <span class="px-2 py-1 rounded {{ $rider->status === 'active' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }} text-[10px] font-bold uppercase tracking-widest">{{ $rider->status }}</span>
                                     <div class="text-[10px] text-gray-400 mt-1">{{ optional($rider->user)->role ? str_replace('_', ' ', $rider->user->role) : '' }}</div>
                                 </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex gap-4">
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-gray-900">{{ $rider->today_deliveries ?? 0 }}</div>
+                                            <div class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Deliveries</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-green-600">&#8377;{{ number_format($rider->today_cash ?? 0, 0) }}</div>
+                                            <div class="text-[9px] font-bold text-green-700 uppercase tracking-widest">Cash</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-black text-blue-600">&#8377;{{ number_format($rider->today_upi ?? 0, 0) }}</div>
+                                            <div class="text-[9px] font-bold text-blue-700 uppercase tracking-widest">UPI</div>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 text-right">
+                                      <a href="{{ route('admin.riders.report', $rider->id) }}" class="text-indigo-600 hover:text-indigo-900 font-bold text-xs mr-3"><i class="fa-solid fa-chart-line mr-1"></i> Daily Report</a>
                                     <div class="flex justify-end gap-2">
                                         <button @click="editRider = {{ $rider->id }}; showEditModal = true" class="text-blue-500 hover:text-blue-700 font-bold text-xs bg-blue-50 px-2 py-1 rounded"><i class="fa-solid fa-pen"></i></button>
                                         <form action="{{ route('admin.riders.destroy', $rider->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to completely delete this rider?');" class="inline-block">

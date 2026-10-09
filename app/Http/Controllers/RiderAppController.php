@@ -15,12 +15,12 @@ class RiderAppController extends Controller
     {
         $riderId = Auth::id();
 
-        $pendingPickups = Shipment::whereIn('status', ['Manifested', 'Pickup Scheduled'])
+        $pendingPickups = Shipment::with('user')->whereIn('status', ['Manifested', 'Pickup Scheduled'])
                             ->where('rider_id', $riderId)
                             ->orderBy('created_at', 'desc')
                             ->get();
 
-        $pendingDeliveries = Shipment::where('status', 'Out for Delivery')
+        $pendingDeliveries = Shipment::with('user')->where('status', 'Out for Delivery')
                             ->where('rider_id', $riderId)
                             ->orderBy('created_at', 'desc')
                             ->get();
@@ -110,30 +110,56 @@ class RiderAppController extends Controller
     }
 
 
-    public function cod()
+            public function cod(\Illuminate\Http\Request $request)
     {
         $riderId = Auth::id();
+        
+        $selectedDate = $request->query('date', today()->toDateString());
 
-        $codShipments = Shipment::where('rider_id', $riderId)
+        $codShipments = \App\Models\Shipment::where('rider_id', $riderId)
                             ->where('status', 'Delivered')
                             ->where('is_cod', true)
+                            ->whereDate('updated_at', $selectedDate)
                             ->orderBy('updated_at', 'desc')
                             ->get();
 
-        $totalCollected = $codShipments->sum('invoice_value');
+        $totalCollected = $codShipments->sum(function ($shipment) {
+            return $shipment->cod_amount > 0 ? $shipment->cod_amount : $shipment->invoice_value;
+        });
 
-        return view('rider.cod', compact('codShipments', 'totalCollected'));
+        return view('rider.cod', compact('codShipments', 'totalCollected', 'selectedDate'));
     }
 
     public function profile()
     {
         $user = Auth::user();
-        $totalDeliveries = Shipment::where('rider_id', $user->id)
+        $rider = \App\Models\Rider::with('hub')->where('user_id', $user->id)->first();
+        
+        $totalDeliveries = \App\Models\Shipment::where('rider_id', $user->id)
                                    ->where('status', 'Delivered')
                                    ->count();
-        return view('rider.profile', compact('user', 'totalDeliveries'));
-    }
+                                   
+        $totalPickups = \App\Models\Shipment::where('rider_id', $user->id)
+                                 ->where('status', 'In Transit')
+                                 ->count();
+                                 
+        $todayDeliveries = \App\Models\Shipment::where('rider_id', $user->id)
+                                   ->where('status', 'Delivered')
+                                   ->whereDate('updated_at', today())
+                                   ->count();
+                                   
+        $todayCodShipments = \App\Models\Shipment::where('rider_id', $user->id)
+                                   ->where('status', 'Delivered')
+                                   ->where('is_cod', 1)
+                                   ->whereDate('updated_at', today())
+                                   ->get();
+                                   
+        $todayCodCollected = $todayCodShipments->sum(function ($shipment) {
+            return $shipment->cod_amount > 0 ? $shipment->cod_amount : $shipment->invoice_value;
+        });
 
+        return view('rider.profile', compact('user', 'rider', 'totalDeliveries', 'totalPickups', 'todayDeliveries', 'todayCodCollected'));
+    }
     public function history()
     {
         $riderId = Auth::id();
