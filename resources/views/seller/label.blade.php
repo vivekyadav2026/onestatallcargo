@@ -47,7 +47,11 @@
         
         <div class="barcode-area">
             <div style="margin-bottom: 5px; display: flex; justify-content: center; width: 100%;">
-                {!! $barcode !!}
+                @if(!empty($barcode))
+                    {!! $barcode !!}
+                @else
+                    <div class="barcode-bars"></div>
+                @endif
             </div>
             <div class="barcode-text">{{ $shipment->awb_number }}</div>
             <div class="shipment-type">{{ strtoupper($shipment->shipment_type) }}</div>
@@ -59,14 +63,14 @@
                 {{ $shipment->receiver_name }}<br>
                 @if(!empty($settings['enable_consignee_address'])){{ $shipment->delivery_address }}<br>@else<i>[Address Hidden]</i><br>@endif
                 {{ $shipment->delivery_city }} - {{ $shipment->delivery_pincode }}<br>
-                {{ strtoupper($shipment->destination_country) }}<br>
+                {{ strtoupper($shipment->destination_country ?? 'India') }}<br>
                 Ph: {{ !empty($settings['enable_consignee_contact']) ? $shipment->receiver_phone : substr($shipment->receiver_phone, 0, 4) . '******' }}
             </div>
             <div class="address-box">
                 <strong>FROM:</strong>
-                {{ $shipment->user->company_name ?? $shipment->user->name }}<br>
-                {{ $shipment->pickup_address }}<br>{{ $shipment->pickup_city }} - {{ $shipment->pickup_pincode }}<br>
-                Ph: {{ $shipment->user->phone ?? 'N/A' }}
+                {{ optional($shipment->user)->company_name ?? optional($shipment->user)->name ?? 'OneStall Shipper' }}<br>
+                {{ $shipment->pickup_address ?? 'Origin Hub' }}<br>{{ $shipment->pickup_city ?? 'City' }} - {{ $shipment->pickup_pincode ?? '000000' }}<br>
+                Ph: {{ optional($shipment->user)->phone ?? 'N/A' }}
             </div>
         </div>
         

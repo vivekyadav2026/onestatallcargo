@@ -624,9 +624,55 @@ class SellerShipmentController extends Controller
         return back()->with('success', "$count shipment(s) cancelled successfully.");
     }
 
-    public function printLabel($awb)
+    /**
+     * Authorize access for Seller, Admin, or authorized Franchise
+     */
+    private function authorizeShipmentAccess(string $awb): Shipment
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = \App\Models\Shipment::where('awb_number', $awb)->first();
+        if (!$shipment) {
+            abort(404, 'Shipment not found.');
+        }
+
+        $user = Auth::user();
+        if ($user && $user->isAdmin()) {
+            return $shipment;
+        }
+
+        if ($user && $shipment->user_id === $user->id) {
+            return $shipment;
+        }
+
+        if ($user && $user->isFranchise()) {
+            $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
+            if ($franchise) {
+                if ($franchise->isState()) {
+                    $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                    $isAuthorized = ($shipment->state_franchise_id === $franchise->id)
+                        || ($shipment->franchise_id === $franchise->id)
+                        || ($shipment->pickup_franchise_id === $franchise->id)
+                        || ($shipment->delivery_state === $franchise->state)
+                        || in_array($shipment->franchise_id, $districtIds)
+                        || in_array($shipment->pickup_franchise_id, $districtIds);
+                    if ($isAuthorized) return $shipment;
+                } else {
+                    $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+                    if (!is_array($pincodes)) { $pincodes = $pincodes ? [$pincodes] : []; }
+                    $isAuthorized = ($shipment->franchise_id === $franchise->id)
+                        || ($shipment->pickup_franchise_id === $franchise->id)
+                        || in_array($shipment->pickup_pincode, $pincodes)
+                        || in_array($shipment->delivery_pincode, $pincodes);
+                    if ($isAuthorized) return $shipment;
+                }
+            }
+        }
+
+        abort(403, 'Unauthorized: You do not have permission to access the shipment slip for this order.');
+    }
+
+    public function printLabel(Request $request, $awb)
+    {
+        $shipment = $this->authorizeShipmentAccess($awb);
         
         $settings = Auth::user()->label_settings ?? [
             'label_type' => 'thermal',
@@ -638,22 +684,41 @@ class SellerShipmentController extends Controller
             'enable_rto_address' => true,
         ];
 
-        // Generate Real Barcode
-        $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
-        $barcode = $generator->getBarcode($shipment->awb_number, $generator::TYPE_CODE_128, 2, 60);
+        // Generate Real Barcode safely
+        $barcode = null;
+        try {
+            if (class_exists(\Picqer\Barcode\BarcodeGeneratorSVG::class)) {
+                $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+                $barcode = $generator->getBarcode($shipment->awb_number, $generator::TYPE_CODE_128, 2, 60);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Barcode generation failed for {$shipment->awb_number}: " . $e->getMessage());
+            $barcode = null;
+        }
+
+        if ($request->query('download') === 'pdf' || $request->query('format') === 'pdf') {
+            if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+                try {
+                    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('seller.label', compact('shipment', 'settings', 'barcode'));
+                    return $pdf->download("shipment-slip-{$shipment->awb_number}.pdf");
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error("PDF generation failed for {$shipment->awb_number}: " . $e->getMessage());
+                }
+            }
+        }
 
         return view('seller.label', compact('shipment', 'settings', 'barcode'));
     }
 
-    public function printLR($awb)
+    public function printLR(Request $request, $awb)
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = $this->authorizeShipmentAccess($awb);
         return view('seller.lr', compact('shipment'));
     }
 
-    public function printInvoice($awb)
+    public function printInvoice(Request $request, $awb)
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = $this->authorizeShipmentAccess($awb);
         return view('seller.invoice', compact('shipment'));
     }
 }

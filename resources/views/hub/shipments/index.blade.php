@@ -47,11 +47,13 @@
             $kycRecord = \App\Models\Kyc::where('user_id', Auth::id())->first();
             $isKycApproved = $kycRecord && $kycRecord->status === 'approved';
 
-            function getTabUrl($statusVal) {
-                $params = request()->query();
-                $params['status'] = $statusVal;
-                unset($params['page']);
-                return '?' . http_build_query($params);
+            if (!function_exists('getTabUrl')) {
+                function getTabUrl($statusVal) {
+                    $params = request()->query();
+                    $params['status'] = $statusVal;
+                    unset($params['page']);
+                    return '?' . http_build_query($params);
+                }
             }
         @endphp
 
@@ -271,7 +273,7 @@
 
                                     <!-- Dropdown Menu Opens Downwards smoothly -->
                                     <div x-show="openMenu" @click.away="openMenu = false" class="absolute right-2 top-10 w-52 min-w-[210px] bg-white border border-gray-200 rounded-xl shadow-2xl py-2 z-[9999] text-left" style="display: none;">
-                                        <a href="{{ route('hub.label', $shipment->awb_number) }}" target="_blank" class="block px-4 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50"><i class="fa-solid fa-print text-blue-500 mr-1.5"></i> Print Shipping Label</a>
+                                        <a href="{{ route('hub.label', $shipment->awb_number) }}" target="_blank" class="block px-4 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50"><i class="fa-solid fa-print text-blue-500 mr-1.5"></i> Print / Download Slip</a>
                                         @if($isKycApproved)
                                             <a href="{{ route('hub.shipments.create') }}?edit={{ $shipment->id }}" class="block px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50">Edit Order</a>
                                         @else
@@ -408,8 +410,8 @@
                         </span>
                     </template>
                     <template x-if="(activeOrder.status || '').toLowerCase() !== 'cancelled'">
-                        <a :href="'{{ url('seller/shipment') }}/' + activeOrder.awb_number + '/label" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-print"></i> Print Label
+                        <a :href="'{{ url('hub/shipments/label') }}/' + activeOrder.awb_number" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-print"></i> Print / Download Slip
                         </a>
                     </template>
                 </div>

@@ -41,8 +41,8 @@
             <!-- Consignor -->
             <div class="border border-gray-300 p-4 rounded-lg">
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-2">Consignor (Sender)</h3>
-                <p class="font-black text-lg text-gray-900">{{ Auth::user()->name }}</p>
-                <p class="text-sm text-gray-700 mt-1">Ph: {{ Auth::user()->phone ?? 'N/A' }}</p>
+                <p class="font-black text-lg text-gray-900">{{ optional($shipment->user)->company_name ?? optional($shipment->user)->name ?? Auth::user()->name }}</p>
+                <p class="text-sm text-gray-700 mt-1">Ph: {{ optional($shipment->user)->phone ?? Auth::user()->phone ?? 'N/A' }}</p>
             </div>
             
             <!-- Consignee -->
@@ -50,7 +50,7 @@
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 pb-2 mb-2">Consignee (Receiver)</h3>
                 <p class="font-black text-lg text-gray-900">{{ $shipment->receiver_name }}</p>
                 <p class="text-sm text-gray-700 mt-1">{{ $shipment->delivery_address }}<br>{{ $shipment->delivery_city }} - {{ $shipment->delivery_pincode }}</p>
-                <p class="text-sm text-gray-700 mt-1 font-bold">Ph: {{ $shipment->delivery_phone }}</p>
+                <p class="text-sm text-gray-700 mt-1 font-bold">Ph: {{ $shipment->receiver_phone ?? $shipment->delivery_phone ?? 'N/A' }}</p>
             </div>
         </div>
 

@@ -162,6 +162,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'index'])->name('admin.shipments.index');
         Route::get('/shipments/create', [\App\Http\Controllers\AdminShipmentController::class, 'create'])->name('admin.shipments.create');
         Route::post('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'store'])->name('admin.shipments.store');
+        Route::get('/shipments/{awb}/label', [\App\Http\Controllers\AdminShipmentController::class, 'printLabel'])->name('admin.shipments.label');
+        Route::get('/shipments/{awb}/slip', [\App\Http\Controllers\AdminShipmentController::class, 'printLabel'])->name('admin.shipments.slip');
+        Route::get('/shipments/{awb}/invoice', [\App\Http\Controllers\AdminShipmentController::class, 'printInvoice'])->name('admin.shipments.invoice');
+        Route::get('/shipments/{awb}/lr', [\App\Http\Controllers\AdminShipmentController::class, 'printLR'])->name('admin.shipments.lr');
         
         Route::resource('serviceability', \App\Http\Controllers\AdminServiceabilityController::class, ['as' => 'admin']);
         Route::get('/pickups', [\App\Http\Controllers\AdminPickupController::class, 'index'])->name('admin.pickups.index');
@@ -182,6 +186,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hubs/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggle'])->name('admin.hubs.toggle');
         Route::post('/hubs/franchise/{id}/approve', [\App\Http\Controllers\AdminHubController::class, 'approveFranchise'])->name('admin.hubs.approve_franchise');
         Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
+        
+        // Franchise Hierarchy Routes (Phase 2 & 360 Overview)
+        Route::post('/franchises/state', [\App\Http\Controllers\AdminHubController::class, 'storeStateFranchise'])->name('admin.franchises.store_state');
+        Route::post('/franchises/district', [\App\Http\Controllers\AdminHubController::class, 'storeDistrictFranchise'])->name('admin.franchises.store_district');
+        Route::get('/franchises/{id}/overview', [\App\Http\Controllers\AdminHubController::class, 'overviewFranchise'])->name('admin.franchises.overview');
+        Route::get('/franchises/{id}/edit', [\App\Http\Controllers\AdminHubController::class, 'editFranchise'])->name('admin.franchises.edit');
+        Route::post('/franchises/{id}/update', [\App\Http\Controllers\AdminHubController::class, 'updateFranchise'])->name('admin.franchises.update');
+        Route::post('/franchises/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggleFranchise'])->name('admin.franchises.toggle');
         
                 Route::get('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'index'])->name('admin.customers.index');
         Route::post('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'store'])->name('admin.customers.store');
@@ -344,7 +356,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/shipments/{id}/ship-now', [\App\Http\Controllers\HubShipmentController::class, 'shipNowAction'])->name('hub.shipments.shipNow');
         Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\HubShipmentController::class, 'cancel'])->name('hub.shipments.cancel');
         Route::get('/shipments/label/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printLabel'])->name('hub.label');
+        Route::get('/shipments/slip/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printLabel'])->name('hub.slip');
         Route::get('/shipments/invoice/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printInvoice'])->name('hub.invoice');
+        Route::get('/shipments/lr/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printLR'])->name('hub.lr');
         
         // Evidence mock for hub just in case
         Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('hub.shipments.evidence');

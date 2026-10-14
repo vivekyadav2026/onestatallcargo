@@ -33,19 +33,59 @@ class HubDashboardController extends Controller
         $hubs = \App\Models\Hub::where('manager_id', Auth::id())->get();
         
         $shipmentsQuery = Shipment::query();
+        $subordinateDistricts = collect();
+        $stateRoyaltyTotal = 0;
+        $stateBagsInTransit = 0;
+
         if ($franchise) {
-            $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
-            if (!is_array($pincodes)) {
-                $pincodes = $pincodes ? [$pincodes] : [];
-            }
-            $shipmentsQuery->where(function($q) use ($franchise, $pincodes) {
-                $q->where('franchise_id', $franchise->id)
-                  ->orWhere('user_id', Auth::id());
-                if (!empty($pincodes)) {
-                    $q->orWhereIn('pickup_pincode', $pincodes)
-                      ->orWhereIn('delivery_pincode', $pincodes);
+            if ($franchise->isState()) {
+                // --- STATE FRANCHISE SCOPE ---
+                $subordinateDistricts = $franchise->districtFranchises()
+                    ->with('user')
+                    ->withCount([
+                        'shipments',
+                        'shipments as delivered_count' => fn($q) => $q->where('status', 'Delivered'),
+                        'shipments as pending_count' => fn($q) => $q->where('status', 'Pending')
+                    ])
+                    ->get();
+                $districtIds = $subordinateDistricts->pluck('id')->toArray();
+
+                $shipmentsQuery->where(function($q) use ($franchise, $districtIds) {
+                    $q->where('state_franchise_id', $franchise->id)
+                      ->orWhere('franchise_id', $franchise->id)
+                      ->orWhere('delivery_state', $franchise->state)
+                      ->orWhere('user_id', Auth::id());
+                    if (!empty($districtIds)) {
+                        $q->orWhereIn('franchise_id', $districtIds);
+                    }
+                });
+
+                $stateBagsInTransit = \App\Models\Bag::where('status', 'SEALED')
+                    ->where(function($q) use ($franchise, $districtIds) {
+                        $q->where('franchise_id', $franchise->id);
+                        if (!empty($districtIds)) {
+                            $q->orWhereIn('franchise_id', $districtIds);
+                        }
+                    })->count();
+
+                $stateRoyaltyTotal = \App\Models\FranchiseCommission::where('franchise_id', $franchise->id)
+                    ->where('status', 'credited')
+                    ->sum('amount');
+            } else {
+                // --- DISTRICT FRANCHISE SCOPE ---
+                $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+                if (!is_array($pincodes)) {
+                    $pincodes = $pincodes ? [$pincodes] : [];
                 }
-            });
+                $shipmentsQuery->where(function($q) use ($franchise, $pincodes) {
+                    $q->where('franchise_id', $franchise->id)
+                      ->orWhere('user_id', Auth::id());
+                    if (!empty($pincodes)) {
+                        $q->orWhereIn('pickup_pincode', $pincodes)
+                          ->orWhereIn('delivery_pincode', $pincodes);
+                    }
+                });
+            }
         } else {
             $shipmentsQuery->where('user_id', Auth::id());
         }
@@ -58,17 +98,38 @@ class HubDashboardController extends Controller
         $ndr = (clone $shipmentsQuery)->where('status', 'NDR')->count();
         $rto = (clone $shipmentsQuery)->where('status', 'RTO')->count();
         
-        // Mock COD Pending and Earnings for now, update with Wallet/COD logics later
-        $codPending = (clone $shipmentsQuery)->where('payment_type', 'COD')->where('status', 'Delivered')->sum('invoice_value') ?? 0;
-        $todayEarnings = (clone $shipmentsQuery)->whereDate('created_at', today())->count() * 45; // Mock 45rs per booking
-        
-        // Graph Data (Last 7 days)
+        // Accurate COD Pending: delivered COD parcels not yet remitted
+        $codPending = (clone $shipmentsQuery)
+            ->where(function($q) {
+                $q->where('payment_type', 'COD')->orWhere('is_cod', true);
+            })
+            ->where('status', 'Delivered')
+            ->where(function($q) {
+                $q->where('cod_remitted', 0)->orWhereNull('cod_remitted');
+            })
+            ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(cod_amount, invoice_value, 0)')) ?? 0;
+
+        // Accurate ledger-backed earnings from FranchiseCommission
+        $todayEarnings = 0;
+        if ($franchise) {
+            $todayEarnings = \App\Models\FranchiseCommission::where('franchise_id', $franchise->id)
+                ->whereDate('created_at', today())
+                ->sum('amount');
+        }
+
+        // Graph Data (Last 7 days) from real FranchiseCommission records
         $chartLabels = [];
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = today()->subDays($i);
             $chartLabels[] = $date->format('M d');
-            $chartData[] = (clone $shipmentsQuery)->whereDate('created_at', $date)->count() * 45; // Mock earnings
+            if ($franchise) {
+                $chartData[] = (float) \App\Models\FranchiseCommission::where('franchise_id', $franchise->id)
+                    ->whereDate('created_at', $date)
+                    ->sum('amount');
+            } else {
+                $chartData[] = 0.00;
+            }
         }
         
         $recentScans = (clone $shipmentsQuery)->orderBy('updated_at', 'desc')->take(10)->get();
@@ -88,7 +149,7 @@ class HubDashboardController extends Controller
             'recentScans', 'riders', 'kyc', 'franchise', 
             'totalBookings', 'pendingPickup', 'outForDelivery', 'delivered', 
             'ndr', 'rto', 'codPending', 'todayEarnings', 
-            'chartLabels', 'chartData'
+            'chartLabels', 'chartData', 'subordinateDistricts', 'stateRoyaltyTotal', 'stateBagsInTransit'
         ));
     }
 

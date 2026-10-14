@@ -47,11 +47,13 @@
             $kycRecord = \App\Models\Kyc::where('user_id', Auth::id())->first();
             $isKycApproved = $kycRecord && $kycRecord->status === 'approved';
 
-            function getTabUrl($statusVal) {
-                $params = request()->query();
-                $params['status'] = $statusVal;
-                unset($params['page']);
-                return '?' . http_build_query($params);
+            if (!function_exists('getTabUrl')) {
+                function getTabUrl($statusVal) {
+                    $params = request()->query();
+                    $params['status'] = $statusVal;
+                    unset($params['page']);
+                    return '?' . http_build_query($params);
+                }
             }
         @endphp
 

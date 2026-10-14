@@ -30,17 +30,23 @@ class ShipmentService
             return;
         }
 
-        $routing = $this->serviceabilityService->determineRouting($deliveryPincode);
+        $pickupPincode = $shipment->pickup_pincode;
+        $routing = $this->serviceabilityService->determineRouting($deliveryPincode, $pickupPincode);
 
         if ($routing['serviceable']) {
             $shipment->fulfillment_type = $routing['fulfillment_type'];
             
             if ($routing['fulfillment_type'] === 'onestall') {
-                $shipment->franchise_id = $routing['franchise_id'];
+                $shipment->franchise_id = $routing['district_franchise_id'] ?? $routing['franchise_id'];
+                $shipment->state_franchise_id = $routing['state_franchise_id'] ?? null;
+                if (!empty($routing['pickup_franchise_id'])) {
+                    $shipment->pickup_franchise_id = $routing['pickup_franchise_id'];
+                }
                 $shipment->provider_id = null;
                 $shipment->courier_partner = 'Onestall Franchise'; // Legacy compatibility
             } else {
                 $shipment->franchise_id = null;
+                $shipment->state_franchise_id = null;
                 $shipment->provider_id = $routing['provider_id'];
                 
                 $provider = Courier::find($routing['provider_id']);

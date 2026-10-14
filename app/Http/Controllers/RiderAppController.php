@@ -56,12 +56,22 @@ class RiderAppController extends Controller
 
         if ($validated['action_type'] == 'Pickup') {
             $shipment->status = 'In Transit';
+            $shipment->save();
+            try {
+                app(\App\Services\FranchiseCommissionService::class)->processPickupCommissions($shipment);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Pickup commission processing error: ' . $e->getMessage());
+            }
         } else {
             $shipment->status = 'Delivered';
+            $shipment->save();
+            try {
+                app(\App\Services\FranchiseCommissionService::class)->processDeliveryCommissions($shipment);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Delivery commission processing error: ' . $e->getMessage());
+            }
             app(\App\Services\NotificationService::class)->notifyShipmentUpdate($shipment, 'Good news! Your shipment ' . $shipment->awb_number . ' has been successfully delivered.');
         }
-
-        $shipment->save();
 
         ShipmentEvent::create([
             'shipment_id' => $shipment->id,

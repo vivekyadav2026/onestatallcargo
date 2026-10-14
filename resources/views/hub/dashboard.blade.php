@@ -58,6 +58,73 @@
     </div>
     @endif
 
+    @if($franchise && $franchise->isState())
+    <!-- State Franchise Control Tower Banner -->
+    <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-gray-900 rounded-3xl p-6 text-white shadow-lg mb-6 border border-purple-800">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-purple-500/20 border border-purple-400/30 rounded-2xl flex items-center justify-center text-2xl text-purple-300">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-500/30 border border-purple-400/40 text-purple-200">State Franchise HQ</span>
+                        <span class="text-xs text-gray-300">{{ $franchise->state }}</span>
+                    </div>
+                    <h2 class="text-xl font-black mt-0.5">{{ $franchise->company_name }}</h2>
+                    <p class="text-xs text-purple-200 mt-1">State-level logistics oversight, linehaul bag movements, and subordinate district hubs</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 bg-white/10 rounded-2xl p-3 border border-white/10">
+                <div class="text-center px-2">
+                    <div class="text-[10px] uppercase font-bold text-purple-200">Districts</div>
+                    <div class="text-xl font-black text-white">{{ $subordinateDistricts->count() }}</div>
+                </div>
+                <div class="w-px h-8 bg-white/20"></div>
+                <div class="text-center px-2">
+                    <div class="text-[10px] uppercase font-bold text-purple-200">Linehaul Bags</div>
+                    <div class="text-xl font-black text-white">{{ $stateBagsInTransit }}</div>
+                </div>
+                <div class="w-px h-8 bg-white/20"></div>
+                <div class="text-center px-2">
+                    <div class="text-[10px] uppercase font-bold text-purple-200">State Royalty</div>
+                    <div class="text-xl font-black text-[#FFD700]">₹{{ number_format($stateRoyaltyTotal, 2) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @elseif($franchise && $franchise->isDistrict())
+    <!-- District Franchise Hub Banner -->
+    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-5 text-white shadow-md mb-6 border border-blue-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-blue-500/20 border border-blue-400/30 rounded-2xl flex items-center justify-center text-xl text-blue-300">
+                <i class="fa-solid fa-map-pin"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-500/30 text-blue-200">District Franchise</span>
+                    <span class="text-xs text-blue-200">District: {{ $franchise->district ?? $franchise->city }} ({{ $franchise->state }})</span>
+                </div>
+                <h3 class="text-lg font-black mt-0.5">{{ $franchise->company_name }}</h3>
+                @if($franchise->parentFranchise)
+                    <div class="text-[11px] text-blue-200">Parent State Hub: <span class="font-bold text-white">{{ $franchise->parentFranchise->company_name }}</span></div>
+                @endif
+            </div>
+        </div>
+        <div class="flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-2 border border-white/10 text-xs">
+            <div>
+                <span class="text-blue-200 text-[10px] uppercase block">Delivery Comm:</span>
+                <span class="font-black text-white">{{ $franchise->delivery_commission_type === 'flat' ? '₹' . $franchise->delivery_commission_rate . ' flat' : ($franchise->delivery_commission_type === 'per_kg' ? '₹' . $franchise->delivery_commission_rate . '/kg' : $franchise->delivery_commission_rate . '%') }}</span>
+            </div>
+            <div class="w-px h-6 bg-white/20"></div>
+            <div>
+                <span class="text-blue-200 text-[10px] uppercase block">Pickup Comm:</span>
+                <span class="font-black text-white">{{ $franchise->pickup_commission_type === 'flat' ? '₹' . $franchise->pickup_commission_rate . ' flat' : ($franchise->pickup_commission_type === 'per_kg' ? '₹' . $franchise->pickup_commission_rate . '/kg' : $franchise->pickup_commission_rate . '%') }}</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Top Metrics Grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
@@ -133,6 +200,55 @@
         </div>
     </div>
 
+    @if($franchise && $franchise->isState() && $subordinateDistricts->count() > 0)
+    <!-- Subordinate District Hubs Monitoring Card -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+        <div class="p-5 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-sitemap text-purple-600"></i>
+                <h3 class="font-extrabold text-gray-900 text-sm">Subordinate District Franchises & Hubs ({{ $subordinateDistricts->count() }})</h3>
+            </div>
+            <span class="text-xs text-gray-500 font-bold">State Territory: {{ $franchise->state }}</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs whitespace-nowrap">
+                <thead>
+                    <tr class="bg-gray-50 text-[10px] font-black uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                        <th class="px-5 py-3">District Hub</th>
+                        <th class="px-5 py-3">District Name</th>
+                        <th class="px-5 py-3">Manager</th>
+                        <th class="px-5 py-3">Total Parcels</th>
+                        <th class="px-5 py-3">Delivered</th>
+                        <th class="px-5 py-3">Pending</th>
+                        <th class="px-5 py-3">Delivery Comm</th>
+                        <th class="px-5 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
+                    @foreach($subordinateDistricts as $dist)
+                        <tr class="hover:bg-purple-50/30 transition">
+                            <td class="px-5 py-3 font-bold text-gray-900">{{ $dist->company_name }}</td>
+                            <td class="px-5 py-3 font-bold text-blue-600">{{ $dist->district ?? $dist->city }}</td>
+                            <td class="px-5 py-3 text-gray-600">{{ $dist->owner_name }} ({{ $dist->phone }})</td>
+                            <td class="px-5 py-3 font-bold">{{ $dist->shipments_count }}</td>
+                            <td class="px-5 py-3 font-bold text-green-600">{{ $dist->delivered_count }}</td>
+                            <td class="px-5 py-3 font-bold text-amber-600">{{ $dist->pending_count }}</td>
+                            <td class="px-5 py-3 font-bold text-gray-800">
+                                {{ $dist->delivery_commission_type === 'flat' ? '₹' . $dist->delivery_commission_rate : $dist->delivery_commission_rate . '%' }}
+                            </td>
+                            <td class="px-5 py-3">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $dist->status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                    {{ $dist->status }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
     
     <!-- Left Column: Scanner Tool -->
@@ -196,6 +312,7 @@
                             <th class="px-6 py-4">Time</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4">Rider</th>
+                            <th class="px-6 py-4 text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -208,6 +325,11 @@
                             </td>
                             <td class="px-6 py-3 text-xs text-gray-500">
                                 {{ $scan->rider_id ? optional(\App\Models\User::find($scan->rider_id))->name ?? 'Deleted Rider' : '-' }}
+                            </td>
+                            <td class="px-6 py-3 text-right">
+                                <a href="{{ route('hub.label', $scan->awb_number) }}" target="_blank" class="px-2.5 py-1 text-[10px] font-bold bg-[#1e1b4b] text-white hover:bg-black rounded-lg transition inline-flex items-center gap-1 shadow-sm">
+                                    <i class="fa-solid fa-print"></i> Slip
+                                </a>
                             </td>
                         </tr>
                         @endforeach

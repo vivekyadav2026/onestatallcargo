@@ -102,4 +102,57 @@ class AdminShipmentController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function printLabel(Request $request, $awb)
+    {
+        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        
+        $settings = [
+            'label_type' => 'thermal',
+            'enable_product_name' => true,
+            'enable_consignee_contact' => true,
+            'enable_consignee_address' => true,
+            'enable_support_contact' => true,
+            'enable_support_email' => true,
+            'enable_rto_address' => true,
+        ];
+
+        // Generate Real Barcode safely
+        $barcode = null;
+        try {
+            if (class_exists(\Picqer\Barcode\BarcodeGeneratorSVG::class)) {
+                $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+                $barcode = $generator->getBarcode($shipment->awb_number, $generator::TYPE_CODE_128, 2, 60);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Barcode generation failed for {$shipment->awb_number}: " . $e->getMessage());
+            $barcode = null;
+        }
+
+        // Gracefully handle optional PDF download if requested and dependency present
+        if ($request->query('download') === 'pdf' || $request->query('format') === 'pdf') {
+            if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+                try {
+                    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('seller.label', compact('shipment', 'settings', 'barcode'));
+                    return $pdf->download("shipment-slip-{$shipment->awb_number}.pdf");
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error("PDF generation failed for {$shipment->awb_number}: " . $e->getMessage());
+                }
+            }
+        }
+
+        return view('seller.label', compact('shipment', 'settings', 'barcode'));
+    }
+
+    public function printLR(Request $request, $awb)
+    {
+        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        return view('seller.lr', compact('shipment'));
+    }
+
+    public function printInvoice(Request $request, $awb)
+    {
+        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        return view('seller.invoice', compact('shipment'));
+    }
 }

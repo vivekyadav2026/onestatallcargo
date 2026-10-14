@@ -39,30 +39,68 @@ class HubBaggingController extends Controller
 
     private function authorizeBag($bag, $scope)
     {
-        // STRICT ISOLATION: The bag MUST match the franchise_id or hub_id explicitly.
+        $franchise = $scope['franchise_id'] ? Franchise::find($scope['franchise_id']) : null;
+        if ($franchise && $franchise->isState()) {
+            $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+            $destHub = Hub::find($bag->destination_hub_id);
+            $sourceHub = Hub::find($bag->hub_id);
+            $isStateAuthorized = $bag->franchise_id === $franchise->id 
+                || in_array($bag->franchise_id, $districtIds)
+                || ($destHub && $destHub->manager_id === Auth::id())
+                || ($sourceHub && $sourceHub->manager_id === Auth::id());
+            if ($isStateAuthorized) {
+                return;
+            }
+        }
+
+        // STRICT ISOLATION: The bag MUST match the franchise_id, source hub_id, or destination_hub_id.
         $ownsFranchise = $scope['franchise_id'] && $bag->franchise_id === $scope['franchise_id'];
         $ownsHub = $scope['hub_id'] && $bag->hub_id === $scope['hub_id'];
+        $isDestHub = $scope['hub_id'] && $bag->destination_hub_id === $scope['hub_id'];
         
-        if (!$ownsFranchise && !$ownsHub) {
-            abort(403, 'UNAUTHORIZED: You do not own this bag.');
+        if (!$ownsFranchise && !$ownsHub && !$isDestHub) {
+            abort(403, 'UNAUTHORIZED: You do not have custody of this bag.');
         }
     }
 
     public function index()
     {
         $scope = $this->getAuthScope();
+        $franchise = $scope['franchise_id'] ? Franchise::find($scope['franchise_id']) : null;
         
         $bags = Bag::withCount('shipments')
-            ->where(function($q) use ($scope) {
-                if ($scope['franchise_id']) $q->orWhere('franchise_id', $scope['franchise_id']);
-                if ($scope['hub_id']) $q->orWhere('hub_id', $scope['hub_id']);
+            ->where(function($q) use ($scope, $franchise) {
+                if ($franchise && $franchise->isState()) {
+                    $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                    $q->where('franchise_id', $franchise->id);
+                    if (!empty($districtIds)) {
+                        $q->orWhereIn('franchise_id', $districtIds);
+                    }
+                } else {
+                    if ($scope['franchise_id']) $q->orWhere('franchise_id', $scope['franchise_id']);
+                }
+                if ($scope['hub_id']) {
+                    $q->orWhere('hub_id', $scope['hub_id'])
+                      ->orWhere('destination_hub_id', $scope['hub_id']);
+                }
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)->withQueryString();
             
-        $manifests = Manifest::where(function($q) use ($scope) {
-                if ($scope['franchise_id']) $q->orWhere('franchise_id', $scope['franchise_id']);
-                if ($scope['hub_id']) $q->orWhere('source_hub_id', $scope['hub_id']);
+        $manifests = Manifest::where(function($q) use ($scope, $franchise) {
+                if ($franchise && $franchise->isState()) {
+                    $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                    $q->where('franchise_id', $franchise->id);
+                    if (!empty($districtIds)) {
+                        $q->orWhereIn('franchise_id', $districtIds);
+                    }
+                } else {
+                    if ($scope['franchise_id']) $q->orWhere('franchise_id', $scope['franchise_id']);
+                }
+                if ($scope['hub_id']) {
+                    $q->orWhere('source_hub_id', $scope['hub_id'])
+                      ->orWhere('destination_hub_id', $scope['hub_id']);
+                }
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)->withQueryString();
@@ -134,12 +172,23 @@ class HubBaggingController extends Controller
             // STRICT CUSTODY CHECK
             if ($scope['franchise_id']) {
                 $franchise = \App\Models\Franchise::find($scope['franchise_id']);
-                $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
-                if (!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
-                $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
-                
-                if ($shipment->franchise_id !== $scope['franchise_id'] && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
-                    return back()->with('error', 'UNAUTHORIZED: Shipment is not mapped to your Franchise.');
+                if ($franchise && $franchise->isState()) {
+                    $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                    $isStateScope = $shipment->state_franchise_id === $franchise->id
+                        || $shipment->franchise_id === $franchise->id
+                        || in_array($shipment->franchise_id, $districtIds)
+                        || $shipment->delivery_state === $franchise->state;
+                    if (!$isStateScope && $shipment->user_id !== Auth::id()) {
+                        return back()->with('error', 'UNAUTHORIZED: Shipment is not mapped to your State network.');
+                    }
+                } else {
+                    $pincodes = $franchise ? (is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? [])) : [];
+                    if (!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
+                    $hasPincodeMatch = in_array($shipment->pickup_pincode, $pincodes) || in_array($shipment->delivery_pincode, $pincodes);
+                    
+                    if ($shipment->franchise_id !== $scope['franchise_id'] && $shipment->user_id !== Auth::id() && !$hasPincodeMatch) {
+                        return back()->with('error', 'UNAUTHORIZED: Shipment is not mapped to your Franchise.');
+                    }
                 }
             } else {
                  if ($shipment->pickup_city !== $scope['city'] && $shipment->delivery_city !== $scope['city']) {

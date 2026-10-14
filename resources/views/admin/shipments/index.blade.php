@@ -236,8 +236,8 @@
                         </span>
                     </template>
                     <template x-if="(activeOrder.status || '').toLowerCase() !== 'cancelled'">
-                        <a :href="`{{ url('seller/shipment') }}/${activeOrder.awb_number}/label`" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-print"></i> Print Label
+                        <a :href="`{{ url('admin/shipments') }}/${activeOrder.awb_number}/label`" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-print"></i> Print / Download Slip
                         </a>
                     </template>
                 </div>

@@ -11,6 +11,9 @@ return new class extends Migration
         Schema::table('couriers', function (Blueprint $table) {
             // Drop old api_code column if we want a clean break
             if (Schema::hasColumn('couriers', 'api_code')) {
+                try {
+                    $table->dropUnique(['api_code']);
+                } catch (\Throwable $e) {}
                 $table->dropColumn('api_code');
             }
             // Add robust credentials column

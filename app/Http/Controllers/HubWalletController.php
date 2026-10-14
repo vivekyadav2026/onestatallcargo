@@ -66,13 +66,16 @@ class HubWalletController extends Controller
                 })
                 ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(cod_amount, invoice_value, 0)'));
                 
-            // Total Earnings (e.g., 20% of shipping charge of delivered shipments in their scope)
-            // Just a placeholder calculation for Franchise earnings
-            $totalShipping = (clone $deliveredQuery)->sum('shipping_charge');
-            $totalEarnings = $totalShipping * 0.20; // 20% commission
+            // Ledger-backed Franchise earnings from FranchiseCommission
+            $totalEarnings = \App\Models\FranchiseCommission::where('franchise_id', $franchise->id)
+                ->where('status', 'credited')
+                ->sum('amount');
+            $pendingEarnings = \App\Models\FranchiseCommission::where('franchise_id', $franchise->id)
+                ->where('status', 'pending')
+                ->sum('amount');
         }
 
-        return view('hub.wallet.index', compact('user', 'transactions', 'pendingCod', 'totalEarnings'));
+        return view('hub.wallet.index', compact('user', 'transactions', 'pendingCod', 'totalEarnings', 'pendingEarnings'));
     }
 
     public function remitCod(Request $request)

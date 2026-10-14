@@ -27,4 +27,29 @@ class Shipment extends Model
     {
         return $this->hasMany(ShipmentEvent::class);
     }
+
+    public function franchise()
+    {
+        return $this->belongsTo(Franchise::class, 'franchise_id');
+    }
+
+    public function districtFranchise()
+    {
+        return $this->belongsTo(Franchise::class, 'franchise_id');
+    }
+
+    public function stateFranchise()
+    {
+        return $this->belongsTo(Franchise::class, 'state_franchise_id');
+    }
+
+    public function pickupFranchise()
+    {
+        return $this->belongsTo(Franchise::class, 'pickup_franchise_id');
+    }
+
+    public function commissions()
+    {
+        return $this->hasMany(FranchiseCommission::class);
+    }
 }

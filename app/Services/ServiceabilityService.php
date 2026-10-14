@@ -12,19 +12,38 @@ class ServiceabilityService
      * Determine the fulfillment and routing for a given delivery pincode.
      * Returns a structured array.
      */
-    public function determineRouting(string $deliveryPincode): array
+    public function determineRouting(string $deliveryPincode, ?string $pickupPincode = null): array
     {
         // PRIORITY 1: OneStall Cargo own service/franchise
         $franchiseId = $this->getFranchiseForPincode($deliveryPincode);
         $isDirectlyServiceable = \App\Models\ServiceablePincode::where('pincode', $deliveryPincode)->where('is_active', true)->exists();
 
         if ($franchiseId || $isDirectlyServiceable) {
+            $destFranchise = $franchiseId ? Franchise::find($franchiseId) : null;
+            $districtFranchiseId = null;
+            $stateFranchiseId = null;
+
+            if ($destFranchise) {
+                if ($destFranchise->isState()) {
+                    $stateFranchiseId = $destFranchise->id;
+                    $districtFranchiseId = $destFranchise->id;
+                } else {
+                    $districtFranchiseId = $destFranchise->id;
+                    $stateFranchiseId = $destFranchise->parent_franchise_id;
+                }
+            }
+
+            $pickupFranchiseId = $pickupPincode ? $this->getFranchiseForPincode($pickupPincode) : null;
+
             return [
                 'serviceable' => true,
                 'fulfillment_type' => 'onestall',
-                'franchise_id' => $franchiseId, // may be null if handled centrally
+                'franchise_id' => $districtFranchiseId ?? $franchiseId,
+                'district_franchise_id' => $districtFranchiseId ?? $franchiseId,
+                'state_franchise_id' => $stateFranchiseId,
+                'pickup_franchise_id' => $pickupFranchiseId,
                 'provider_id' => null,
-                'reason' => 'OneStall Cargo service available',
+                'reason' => 'OneStall Cargo network service available',
             ];
         }
 

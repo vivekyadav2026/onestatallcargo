@@ -24,20 +24,50 @@ class HubShipmentController extends Controller
 
     private function getVisibleShipmentQuery() {
         $user = Auth::user();
+        if ($user && $user->isAdmin()) {
+            return \App\Models\Shipment::query();
+        }
+
         $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
         $q = \App\Models\Shipment::query();
         if ($franchise) {
-            $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
-            if (!is_array($pincodes)) { $pincodes = $pincodes ? [$pincodes] : []; }
-            
-            $q->where(function($query) use ($franchise, $user, $pincodes) {
-                $query->where('franchise_id', $franchise->id)->orWhere('user_id', $user->id);
-                if (!empty($pincodes)) {
-                    $query->orWhereIn('pickup_pincode', $pincodes)->orWhereIn('delivery_pincode', $pincodes);
-                }
-            });
+            if ($franchise->isState()) {
+                $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                $q->where(function($query) use ($franchise, $user, $districtIds) {
+                    $query->where('state_franchise_id', $franchise->id)
+                          ->orWhere('franchise_id', $franchise->id)
+                          ->orWhere('pickup_franchise_id', $franchise->id)
+                          ->orWhere('user_id', $user->id)
+                          ->orWhere('delivery_state', $franchise->state);
+                    if (!empty($districtIds)) {
+                        $query->orWhereIn('franchise_id', $districtIds)
+                              ->orWhereIn('pickup_franchise_id', $districtIds);
+                    }
+                });
+            } else {
+                $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+                if (!is_array($pincodes)) { $pincodes = $pincodes ? [$pincodes] : []; }
+                
+                $q->where(function($query) use ($franchise, $user, $pincodes) {
+                    $query->where('franchise_id', $franchise->id)
+                          ->orWhere('pickup_franchise_id', $franchise->id)
+                          ->orWhere('user_id', $user->id);
+                    if (!empty($pincodes)) {
+                        $query->orWhereIn('pickup_pincode', $pincodes)->orWhereIn('delivery_pincode', $pincodes);
+                    }
+                });
+            }
         } else {
-            $q->where('user_id', $user->id);
+            $hub = \App\Models\Hub::where('manager_id', $user->id)->first();
+            if ($hub) {
+                $q->where(function($query) use ($hub, $user) {
+                    $query->where('user_id', $user->id)
+                          ->orWhere('pickup_pincode', $hub->pincode)
+                          ->orWhere('delivery_pincode', $hub->pincode);
+                });
+            } else {
+                $q->where('user_id', $user->id);
+            }
         }
         return $q;
     }
@@ -521,9 +551,33 @@ class HubShipmentController extends Controller
         return back()->with('success', "$count shipment(s) cancelled successfully.");
     }
 
-    public function printLabel($awb)
+    /**
+     * Strictly authorize shipment access for the authenticated franchise/hub user.
+     * Prevents cross-district access, enforces state franchise boundaries, and allows Super Admin.
+     */
+    public function authorizeShipmentAccess(string $awb): Shipment
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = Shipment::where('awb_number', $awb)->first();
+        if (!$shipment) {
+            abort(404, 'Shipment not found.');
+        }
+
+        $user = Auth::user();
+        if ($user && $user->isAdmin()) {
+            return $shipment;
+        }
+
+        $isAuthorized = $this->getVisibleShipmentQuery()->where('awb_number', $awb)->exists();
+        if (!$isAuthorized) {
+            abort(403, 'Unauthorized: You do not have permission to access the shipment slip for this order.');
+        }
+
+        return $shipment;
+    }
+
+    public function printLabel(Request $request, $awb)
+    {
+        $shipment = $this->authorizeShipmentAccess($awb);
         
         $settings = Auth::user()->label_settings ?? [
             'label_type' => 'thermal',
@@ -535,18 +589,42 @@ class HubShipmentController extends Controller
             'enable_rto_address' => true,
         ];
 
-        return view('seller.label', compact('shipment', 'settings'));
+        // Generate Real Barcode safely with error handling
+        $barcode = null;
+        try {
+            if (class_exists(\Picqer\Barcode\BarcodeGeneratorSVG::class)) {
+                $generator = new \Picqer\Barcode\BarcodeGeneratorSVG();
+                $barcode = $generator->getBarcode($shipment->awb_number, $generator::TYPE_CODE_128, 2, 60);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Barcode generation failed for {$shipment->awb_number}: " . $e->getMessage());
+            $barcode = null;
+        }
+
+        // Gracefully handle optional PDF download if requested and dependency present
+        if ($request->query('download') === 'pdf' || $request->query('format') === 'pdf') {
+            if (class_exists(\Barryvdh\DomPDF\Facade\Pdf::class)) {
+                try {
+                    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('seller.label', compact('shipment', 'settings', 'barcode'));
+                    return $pdf->download("shipment-slip-{$shipment->awb_number}.pdf");
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error("PDF generation failed for {$shipment->awb_number}: " . $e->getMessage());
+                }
+            }
+        }
+
+        return view('seller.label', compact('shipment', 'settings', 'barcode'));
     }
 
-    public function printLR($awb)
+    public function printLR(Request $request, $awb)
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = $this->authorizeShipmentAccess($awb);
         return view('seller.lr', compact('shipment'));
     }
 
-    public function printInvoice($awb)
+    public function printInvoice(Request $request, $awb)
     {
-        $shipment = \App\Models\Shipment::where('awb_number', $awb)->where('user_id', Auth::id())->firstOrFail();
+        $shipment = $this->authorizeShipmentAccess($awb);
         return view('seller.invoice', compact('shipment'));
     }
 }
