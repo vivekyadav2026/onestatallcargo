@@ -340,4 +340,41 @@ class FranchiseShipmentSlipDownloadTest extends TestCase
         $resInvoice->assertStatus(200);
         $resInvoice->assertSee('Commercial Invoice');
     }
+
+    public function test_shipping_label_does_not_display_delivery_platform_or_courier_name(): void
+    {
+        $courierShipment = Shipment::create([
+            'awb_number' => 'OSCSECRET99',
+            'user_id' => $this->sellerUser->id,
+            'receiver_name' => 'Secret Customer',
+            'receiver_phone' => '9876543299',
+            'delivery_address' => 'Mall Road',
+            'delivery_city' => 'Jaipur',
+            'delivery_pincode' => '302001',
+            'delivery_state' => 'Rajasthan',
+            'pickup_address' => 'Seller Warehouse',
+            'pickup_city' => 'Delhi',
+            'pickup_pincode' => '110001',
+            'weight_kg' => 1.0,
+            'invoice_value' => 999.00,
+            'total_amount' => 85.00,
+            'shipping_charge' => 85.00,
+            'status' => 'Manifested',
+            'shipment_type' => 'B2C',
+            'courier_partner' => 'Delhivery Surface',
+        ]);
+
+        $res = $this->actingAs($this->adminUser)
+            ->get(route('admin.shipments.label', $courierShipment->awb_number));
+
+        $res->assertStatus(200);
+        $res->assertSee('OSCSECRET99');
+        $res->assertSee('ONESTALL CARGO');
+        // Delivery courier/platform name must NOT appear on the shipping label
+        $res->assertDontSee('Delhivery Surface');
+        $res->assertDontSee('DELHIVERY');
+        $res->assertDontSee('<div class="courier">', false);
+        // B2C / B2B shipment type indicator is removed from under barcode
+        $res->assertDontSee('<div class="shipment-type">', false);
+    }
 }

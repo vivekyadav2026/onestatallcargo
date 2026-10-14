@@ -34,3 +34,7 @@ Route::prefix('v1/external')->group(function () {
     Route::post('/shipment', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'createShipment']);
     Route::get('/track/{awb}', [\App\Http\Controllers\Api\V1\ExternalCourierController::class, 'trackShipment']);
 });
+
+// E-commerce Platform Webhooks (WooCommerce, Shopify, Custom)
+Route::post('/v1/integrations/{platform}/webhook/{user_id}', [\App\Http\Controllers\Api\V1\IntegrationWebhookController::class, 'handle'])->name('api.integrations.webhook');
+

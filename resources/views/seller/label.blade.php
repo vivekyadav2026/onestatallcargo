@@ -67,13 +67,11 @@
             background: #e5e7eb;
         }
         .label-container { width: 100%; max-width: 384px; min-height: 576px; background: #fff; border: 2px solid #000; padding: 15px; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; }
-        .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
-        .courier { font-size: 16px; font-weight: bold; }
+        .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; text-align: center; }
+        .header h1 { margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; }
         .barcode-area { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
         .barcode-bars { height: 60px; background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px, #000 4px, #000 8px, #fff 8px, #fff 10px, #000 10px, #000 14px, #fff 14px, #fff 18px); margin-bottom: 10px; width: 100%; }
         .barcode-text { font-family: 'Courier New', Courier, monospace; font-size: 26px; font-weight: bold; letter-spacing: 2px; }
-        .shipment-type { font-size: 12px; font-weight: bold; margin-top: 5px; }
         .addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; font-size: 11px; line-height: 1.35; }
         .address-box { word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; }
         .address-box strong { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
@@ -102,8 +100,7 @@
 <body onload="window.print()">
     <div class="no-print-bar">
         <div class="info">
-            {{ $shipment->awb_number }}
-            <span class="badge">{{ strtoupper($shipment->courier_partner ?? 'COURIER') }}</span>
+            AWB: {{ $shipment->awb_number }}
         </div>
         <div class="btns">
             <button type="button" onclick="window.print()" class="btn-print">
@@ -117,7 +114,6 @@
     <div class="label-container">
         <div class="header">
             <h1>ONESTALL CARGO</h1>
-            <div class="courier">{{ strtoupper($shipment->courier_partner) }}</div>
         </div>
         
         <div class="barcode-area">
@@ -129,7 +125,6 @@
                 @endif
             </div>
             <div class="barcode-text">{{ $shipment->awb_number }}</div>
-            <div class="shipment-type">{{ strtoupper($shipment->shipment_type) }}</div>
         </div>
         
         <div class="addresses">

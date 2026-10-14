@@ -109,6 +109,9 @@
         </div>
         
         <div class="px-4 pb-2 pt-2 border-t border-gray-700/50">
+            <a href="{{ route('hub.integrations') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('hub.integrations*') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
+                <i class="fa-solid fa-plug w-5"></i> Integrations
+            </a>
             <a href="{{ route('hub.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
                 <i class="fa-solid fa-gear w-5"></i> Settings
             </a>

@@ -192,6 +192,14 @@
                 <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#5d16c5] to-[#0ea5e9]">Early COD</span>
             </a>
 
+            <!-- Channels / Integrations -->
+            <a href="{{ route('seller.integrations') }}" class="sidebar-item {{ request()->routeIs('seller.integrations*') ? 'active' : '' }}" title="Store Integrations">
+                <div class="icon-box">
+                    <i class="fa-solid fa-plug text-base"></i>
+                </div>
+                <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap">Integrations</span>
+            </a>
+
             <!-- API Integration Tab -->
             <a href="{{ route('seller.api-keys') }}" class="sidebar-item {{ request()->routeIs('seller.api-keys') ? 'active' : '' }}" title="API Integration">
                 <div class="icon-box">

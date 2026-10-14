@@ -339,6 +339,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/label-settings', [\App\Http\Controllers\SellerLabelSettingController::class, 'store'])->name('seller.label-settings.store');
         Route::get('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'index'])->name('seller.integrations');
         Route::post('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'save'])->name('seller.integrations.save');
+        Route::post('/integrations/{id}/sync', [\App\Http\Controllers\SellerIntegrationController::class, 'sync'])->name('seller.integrations.sync');
+        Route::post('/integrations/{id}/disconnect', [\App\Http\Controllers\SellerIntegrationController::class, 'disconnect'])->name('seller.integrations.disconnect');
         Route::post('/api-keys/generate', [\App\Http\Controllers\SellerApiController::class, 'generate'])->name('seller.api-keys.generate');
     });
 
@@ -422,6 +424,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/manifests/{id}', [\App\Http\Controllers\HubBaggingController::class, 'showManifest'])->name('hub.manifests.show');
         Route::get('/manifests/{id}/print', [\App\Http\Controllers\HubBaggingController::class, 'printManifest'])->name('hub.manifests.print');
         Route::post('/manifests/{id}/dispatch', [\App\Http\Controllers\HubBaggingController::class, 'dispatchManifest'])->name('hub.manifests.dispatch');
+
+        // Hub Integrations
+        Route::get('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'index'])->name('hub.integrations');
+        Route::post('/integrations', [\App\Http\Controllers\SellerIntegrationController::class, 'save'])->name('hub.integrations.save');
+        Route::post('/integrations/{id}/sync', [\App\Http\Controllers\SellerIntegrationController::class, 'sync'])->name('hub.integrations.sync');
+        Route::post('/integrations/{id}/disconnect', [\App\Http\Controllers\SellerIntegrationController::class, 'disconnect'])->name('hub.integrations.disconnect');
     });
 
     // RIDER PORTAL (Requires Rider Role)
