@@ -31,7 +31,30 @@ class SellerNdrController extends Controller
         if ($request->filled('search')) {
             $query->where('awb_number', 'like', '%' . $request->search . '%');
         }
-        if ($request->filled('date')) {
+        // Quick date preset resolution
+        if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['start_date' => $today, 'end_date' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+            }
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('updated_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->filled('start_date')) {
+            $query->where('updated_at', '>=', $request->start_date . ' 00:00:00');
+        } elseif ($request->filled('end_date')) {
+            $query->where('updated_at', '<=', $request->end_date . ' 23:59:59');
+        } elseif ($request->filled('date')) {
             $query->whereDate('created_at', $request->date);
         }
         if ($request->filled('reason')) {

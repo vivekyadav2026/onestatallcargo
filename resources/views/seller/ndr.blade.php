@@ -28,9 +28,27 @@
             <form method="GET" action="{{ route('seller.ndr') }}" class="flex flex-wrap items-center gap-2">
                 <input type="hidden" name="tab" value="{{ $tab }}">
                 
-                <input type="date" name="date" value="{{ request('date') }}" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
+                <!-- Quick Date Preset -->
+                <select name="quick_date" onchange="if(this.value && this.value !== 'custom'){ document.getElementById('sellerNdrStartDate').value=''; document.getElementById('sellerNdrEndDate').value=''; } this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-2 text-xs font-semibold text-gray-700 outline-none">
+                    <option value="">Date Range (All)</option>
+                    <option value="today" {{ request('quick_date') === 'today' ? 'selected' : '' }}>Today</option>
+                    <option value="yesterday" {{ request('quick_date') === 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                    <option value="7days" {{ request('quick_date') === '7days' ? 'selected' : '' }}>Last 7 Days</option>
+                    <option value="30days" {{ request('quick_date') === '30days' ? 'selected' : '' }}>Last 30 Days</option>
+                    <option value="this_month" {{ request('quick_date') === 'this_month' ? 'selected' : '' }}>This Month</option>
+                    <option value="custom" {{ (request('start_date') || request('end_date')) && !request('quick_date') ? 'selected' : '' }}>Custom Dates</option>
+                </select>
+
+                <!-- From & To Date Pickers -->
+                <div class="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+                    <span class="text-gray-400 font-bold text-[10px] uppercase">From</span>
+                    <input type="date" name="start_date" id="sellerNdrStartDate" value="{{ request('start_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                    <span class="text-gray-300">|</span>
+                    <span class="text-gray-400 font-bold text-[10px] uppercase">To</span>
+                    <input type="date" name="end_date" id="sellerNdrEndDate" value="{{ request('end_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                </div>
                 
-                <select name="reason" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
+                <select name="reason" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none">
                     <option value="">All NDR Reasons</option>
                     <option value="Customer Unavailable" {{ request('reason') == 'Customer Unavailable' ? 'selected' : '' }}>Customer Unavailable</option>
                     <option value="Incorrect Address" {{ request('reason') == 'Incorrect Address' ? 'selected' : '' }}>Incorrect Address</option>
@@ -40,11 +58,11 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by AWB..." class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none w-44">
 
                 <button type="submit" class="px-3 py-2 bg-[#4338ca] text-white rounded-xl text-xs font-bold hover:bg-indigo-700">
-                    Search
+                    Filter
                 </button>
-                @if(request('search') || request('date') || request('reason'))
-                    <a href="{{ route('seller.ndr', ['tab' => $tab]) }}" class="px-3 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-200">
-                        Clear
+                @if(request('search') || request('start_date') || request('end_date') || request('quick_date') || request('date') || request('reason'))
+                    <a href="{{ route('seller.ndr', ['tab' => $tab]) }}" class="px-3 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold hover:bg-rose-100 flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-right"></i> Reset
                     </a>
                 @endif
             </form>

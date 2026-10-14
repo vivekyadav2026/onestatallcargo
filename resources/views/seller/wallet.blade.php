@@ -94,8 +94,89 @@
                 <!-- Transactions Ledger -->
                 <div x-show="view === 'transactions'">
                     @php
-                        $transactions = \App\Models\WalletTransaction::where('user_id', Auth::id())->where('status', 'success')->latest()->paginate(15);
+                        $txnQuery = \App\Models\WalletTransaction::where('user_id', Auth::id());
+                        
+                        $req = request();
+                        $startDate = $req->start_date;
+                        $endDate = $req->end_date;
+                        if ($req->filled('quick_date') && (!$startDate || !$endDate)) {
+                            $today = now()->toDateString();
+                            if ($req->quick_date === 'today') { $startDate = $today; $endDate = $today; }
+                            elseif ($req->quick_date === 'yesterday') { $y = now()->subDay()->toDateString(); $startDate = $y; $endDate = $y; }
+                            elseif ($req->quick_date === '7days') { $startDate = now()->subDays(6)->toDateString(); $endDate = $today; }
+                            elseif ($req->quick_date === '30days') { $startDate = now()->subDays(29)->toDateString(); $endDate = $today; }
+                            elseif ($req->quick_date === 'this_month') { $startDate = now()->startOfMonth()->toDateString(); $endDate = $today; }
+                        }
+
+                        if ($startDate && $endDate) {
+                            $txnQuery->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                        } elseif ($startDate) {
+                            $txnQuery->where('created_at', '>=', $startDate . ' 00:00:00');
+                        } elseif ($endDate) {
+                            $txnQuery->where('created_at', '<=', $endDate . ' 23:59:59');
+                        }
+
+                        if ($req->filled('type') && in_array($req->type, ['credit', 'debit'])) {
+                            $txnQuery->where('type', $req->type);
+                        }
+
+                        if ($req->filled('search')) {
+                            $s = trim($req->search);
+                            $txnQuery->where(function($q) use ($s) {
+                                $q->where('reference_id', 'like', "%{$s}%")->orWhere('description', 'like', "%{$s}%");
+                            });
+                        }
+
+                        $transactions = $txnQuery->latest()->paginate(15)->withQueryString();
                     @endphp
+
+                    <!-- Transactions Filter Bar -->
+                    <form action="{{ route('seller.wallet') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-wrap items-center justify-between gap-2.5">
+                        <div class="flex flex-wrap items-center gap-2 flex-1">
+                            <!-- Quick Date Preset -->
+                            <select name="quick_date" onchange="if(this.value && this.value !== 'custom'){ document.getElementById('sellerTxnStartDate').value=''; document.getElementById('sellerTxnEndDate').value=''; } this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                                <option value="">Date Range (All)</option>
+                                <option value="today" {{ request('quick_date') === 'today' ? 'selected' : '' }}>Today</option>
+                                <option value="yesterday" {{ request('quick_date') === 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                                <option value="7days" {{ request('quick_date') === '7days' ? 'selected' : '' }}>Last 7 Days</option>
+                                <option value="30days" {{ request('quick_date') === '30days' ? 'selected' : '' }}>Last 30 Days</option>
+                                <option value="this_month" {{ request('quick_date') === 'this_month' ? 'selected' : '' }}>This Month</option>
+                                <option value="custom" {{ (request('start_date') || request('end_date')) && !request('quick_date') ? 'selected' : '' }}>Custom Dates</option>
+                            </select>
+
+                            <!-- From & To Date Pickers -->
+                            <div class="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+                                <span class="text-gray-400 font-bold text-[10px] uppercase">From</span>
+                                <input type="date" name="start_date" id="sellerTxnStartDate" value="{{ request('start_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                                <span class="text-gray-300">|</span>
+                                <span class="text-gray-400 font-bold text-[10px] uppercase">To</span>
+                                <input type="date" name="end_date" id="sellerTxnEndDate" value="{{ request('end_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                            </div>
+
+                            <!-- Type Filter -->
+                            <select name="type" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                                <option value="">Type (All)</option>
+                                <option value="credit" {{ request('type') === 'credit' ? 'selected' : '' }}>Credits (+)</option>
+                                <option value="debit" {{ request('type') === 'debit' ? 'selected' : '' }}>Debits (-)</option>
+                            </select>
+
+                            <!-- Search Input -->
+                            <div class="relative flex items-center">
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Ref / Desc..." class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-36 sm:w-44 focus:border-[#4338ca]">
+                                <button type="submit" class="absolute right-2 text-gray-400 hover:text-[#4338ca]"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></button>
+                            </div>
+
+                            <button type="submit" class="px-3 py-1.5 bg-[#4338ca] hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-filter text-[10px]"></i> Filter
+                            </button>
+                        </div>
+
+                        @if(request('start_date') || request('end_date') || request('quick_date') || request('type') || request('search'))
+                        <a href="{{ route('seller.wallet') }}" class="px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1.5 hover:bg-rose-100 shadow-xs">
+                            <i class="fa-solid fa-rotate-right text-rose-500"></i> Reset
+                        </a>
+                        @endif
+                    </form>
                     <div class="overflow-x-auto overflow-y-auto max-h-[500px]">
                         <table class="w-full text-left text-sm whitespace-nowrap">
                             <thead class="bg-white sticky top-0 border-b border-gray-200 text-[11px] text-gray-500 font-bold uppercase tracking-wider z-10">

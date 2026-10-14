@@ -51,11 +51,47 @@ class HubAssignmentController extends Controller
         }
     }
 
-    public function pickups()
+    public function pickups(Request $request)
     {
         $scope = $this->getAuthScope();
         
         $shipmentsQuery = Shipment::whereIn('status', ['Pending', 'Manifested']);
+        
+        // Quick date preset resolution
+        if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['start_date' => $today, 'end_date' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+            }
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $shipmentsQuery->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->filled('start_date')) {
+            $shipmentsQuery->where('created_at', '>=', $request->start_date . ' 00:00:00');
+        } elseif ($request->filled('end_date')) {
+            $shipmentsQuery->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $shipmentsQuery->where(function($q) use ($search) {
+                $q->where('awb_number', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%")
+                  ->orWhere('receiver_name', 'like', "%{$search}%")
+                  ->orWhere('receiver_phone', 'like', "%{$search}%");
+            });
+        }
+
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
             ->orderBy('created_at', 'desc')
             ->paginate(15)->withQueryString();
@@ -71,11 +107,47 @@ class HubAssignmentController extends Controller
         return view('hub.assignments.pickups', compact('shipments', 'riders'));
     }
 
-    public function deliveries()
+    public function deliveries(Request $request)
     {
         $scope = $this->getAuthScope();
         
         $shipmentsQuery = Shipment::whereIn('status', ['Received', 'Out for Delivery']);
+
+        // Quick date preset resolution
+        if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['start_date' => $today, 'end_date' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+            }
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $shipmentsQuery->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->filled('start_date')) {
+            $shipmentsQuery->where('created_at', '>=', $request->start_date . ' 00:00:00');
+        } elseif ($request->filled('end_date')) {
+            $shipmentsQuery->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $shipmentsQuery->where(function($q) use ($search) {
+                $q->where('awb_number', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%")
+                  ->orWhere('receiver_name', 'like', "%{$search}%")
+                  ->orWhere('receiver_phone', 'like', "%{$search}%");
+            });
+        }
+
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
             ->orderBy('created_at', 'desc')
             ->paginate(15)->withQueryString();

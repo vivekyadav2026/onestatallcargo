@@ -19,13 +19,51 @@ class AdminShipmentController extends Controller
                   });
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        // Quick Date preset resolution
+        if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['start_date' => $today, 'end_date' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+            }
         }
+
+        // Date range filter
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+        } elseif ($request->filled('start_date')) {
+            $query->where('created_at', '>=', $request->start_date . ' 00:00:00');
+        } elseif ($request->filled('end_date')) {
+            $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
+        }
+
+        // Payment mode filter
+        if ($request->filled('payment_mode')) {
+            if ($request->payment_mode === 'cod') {
+                $query->where('is_cod', 1);
+            } elseif ($request->payment_mode === 'prepaid') {
+                $query->where('is_cod', 0);
+            }
+        }
+
+        // Courier partner filter
+        if ($request->filled('courier') && $request->courier !== 'all') {
+            $query->where('courier_partner', $request->courier);
+        }
+
+        $couriers = \App\Models\Courier::where('is_active', true)->pluck('name');
 
         $shipments = $query->paginate(15)->withQueryString();
 
-        return view('admin.shipments.index', compact('shipments'));
+        return view('admin.shipments.index', compact('shipments', 'couriers'));
     }
 
     public function create()

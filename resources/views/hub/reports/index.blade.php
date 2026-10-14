@@ -25,11 +25,11 @@
         <form action="{{ route('hub.reports.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Date From</label>
-                <input type="date" class="w-full sm:w-auto  name="date_from" value="{{ request('date_from') }}" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[var(--gold)]">
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[var(--gold)]">
             </div>
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Date To</label>
-                <input type="date" class="w-full sm:w-auto  name="date_to" value="{{ request('date_to') }}" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[var(--gold)]">
+                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[var(--gold)]">
             </div>
             <div class="flex gap-2 w-full sm:w-auto">
                 <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-[var(--gold)] text-gray-900 font-bold rounded-xl shadow-sm hover:bg-yellow-500 transition text-sm">

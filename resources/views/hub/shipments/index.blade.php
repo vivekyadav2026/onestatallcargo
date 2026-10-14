@@ -81,33 +81,70 @@
             </a>
         </div>
 
-        <!-- Single Line Compact Filters Row -->
-        <form action="{{ route('hub.shipments') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 overflow-x-auto md:overflow-visible">
+        <!-- Single Line Compact Filters Row with Date-Wise Presets & Pickers -->
+        <form action="{{ route('hub.shipments') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
             <input type="hidden" name="status" value="{{ request('status', 'new') }}">
             
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
-                <select name="date_filter" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-auto">
-                    <option value="created">Created Date</option>
-                    <option value="synced">Synced Date</option>
+            <div class="flex flex-wrap items-center gap-2 flex-1">
+                <!-- Quick Date Dropdown -->
+                <select name="quick_date" onchange="if(this.value && this.value !== 'custom'){ document.getElementById('hubStartDate').value=''; document.getElementById('hubEndDate').value=''; } this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                    <option value="">Date Range (All)</option>
+                    <option value="today" {{ request('quick_date') === 'today' ? 'selected' : '' }}>Today</option>
+                    <option value="yesterday" {{ request('quick_date') === 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                    <option value="7days" {{ request('quick_date') === '7days' ? 'selected' : '' }}>Last 7 Days</option>
+                    <option value="30days" {{ request('quick_date') === '30days' ? 'selected' : '' }}>Last 30 Days</option>
+                    <option value="this_month" {{ request('quick_date') === 'this_month' ? 'selected' : '' }}>This Month</option>
+                    <option value="custom" {{ (request('start_date') || request('end_date')) && !request('quick_date') ? 'selected' : '' }}>Custom Dates</option>
                 </select>
 
-                <div class="relative flex items-center w-full sm:w-auto">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Order ID / AWB / Mobile" class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-48 focus:border-[#4338ca]">
-                    <button type="submit" class="absolute right-2 text-gray-400 hover:text-[#4338ca]"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></button>
+                <!-- From & To Date Pickers -->
+                <div class="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+                    <span class="text-gray-400 font-bold text-[10px] uppercase">From</span>
+                    <input type="date" name="start_date" id="hubStartDate" value="{{ request('start_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                    <span class="text-gray-300">|</span>
+                    <span class="text-gray-400 font-bold text-[10px] uppercase">To</span>
+                    <input type="date" name="end_date" id="hubEndDate" value="{{ request('end_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
                 </div>
 
-                <select name="payment_mode" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none w-full sm:w-auto">
-                    <option value="">Payment Mode (All)</option>
+                <!-- Courier Partner Filter -->
+                <select name="courier" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                    <option value="all">Courier (All)</option>
+                    <option value="OneStall Cargo" {{ request('courier') === 'OneStall Cargo' ? 'selected' : '' }}>OneStall Cargo</option>
+                    @if(isset($couriers))
+                        @foreach($couriers as $c)
+                            @if($c !== 'OneStall Cargo')
+                                <option value="{{ $c }}" {{ request('courier') === $c ? 'selected' : '' }}>{{ $c }}</option>
+                            @endif
+                        @endforeach
+                    @endif
+                </select>
+
+                <!-- Payment Mode Filter -->
+                <select name="payment_mode" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                    <option value="">Payment (All)</option>
                     <option value="prepaid" {{ request('payment_mode') === 'prepaid' ? 'selected' : '' }}>Prepaid</option>
                     <option value="cod" {{ request('payment_mode') === 'cod' ? 'selected' : '' }}>COD</option>
                 </select>
+
+                <!-- Search Input -->
+                <div class="relative flex items-center">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Order ID / AWB / Mobile" class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-44 sm:w-52 focus:border-[#4338ca]">
+                    <button type="submit" class="absolute right-2 text-gray-400 hover:text-[#4338ca]"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></button>
+                </div>
+
+                <!-- Filter Submit Button -->
+                <button type="submit" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-filter text-[10px]"></i> Filter
+                </button>
             </div>
 
-            <div class="flex items-center gap-2 w-full md:w-auto shrink-0 justify-start md:justify-end mt-2 md:mt-0 flex-1 md:flex-none">
-                <a href="{{ route('hub.shipments') }}" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-50 shadow-sm flex-1 md:flex-none">
-                    <i class="fa-solid fa-rotate-right text-gray-400"></i> Reset Filters
-                </a>
-                <button type="button" onclick="window.print()" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-50 shadow-sm flex-1 md:flex-none">
+            <div class="flex items-center gap-2 shrink-0">
+                @if(request('start_date') || request('end_date') || request('quick_date') || request('search') || (request('courier') && request('courier') !== 'all') || request('payment_mode'))
+                    <a href="{{ route('hub.shipments', ['status' => request('status', 'new')]) }}" class="px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1.5 hover:bg-rose-100 shadow-xs">
+                        <i class="fa-solid fa-rotate-right text-rose-500"></i> Clear Filter
+                    </a>
+                @endif
+                <button type="button" onclick="window.print()" class="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 flex items-center gap-1.5 hover:bg-gray-50 shadow-xs">
                     <i class="fa-solid fa-download text-gray-400"></i> Export
                 </button>
             </div>

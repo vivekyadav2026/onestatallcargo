@@ -27,7 +27,7 @@ class HubWalletController extends Controller
         ];
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $scope = $this->getAuthScope();
         $user = $scope['user'];
@@ -35,8 +35,49 @@ class HubWalletController extends Controller
         
         $transactions = [];
         if (class_exists(WalletTransaction::class)) {
-            $transactions = WalletTransaction::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
+            $txnQuery = WalletTransaction::where('user_id', $user->id);
+
+            // Quick date preset resolution
+            if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+                $today = now()->toDateString();
+                if ($request->quick_date === 'today') {
+                    $request->merge(['start_date' => $today, 'end_date' => $today]);
+                } elseif ($request->quick_date === 'yesterday') {
+                    $yesterday = now()->subDay()->toDateString();
+                    $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+                } elseif ($request->quick_date === '7days') {
+                    $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+                } elseif ($request->quick_date === '30days') {
+                    $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+                } elseif ($request->quick_date === 'this_month') {
+                    $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+                }
+            }
+
+            // Date range filter
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $txnQuery->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
+            } elseif ($request->filled('start_date')) {
+                $txnQuery->where('created_at', '>=', $request->start_date . ' 00:00:00');
+            } elseif ($request->filled('end_date')) {
+                $txnQuery->where('created_at', '<=', $request->end_date . ' 23:59:59');
+            }
+
+            // Type filter (credit/debit)
+            if ($request->filled('type') && in_array($request->type, ['credit', 'debit'])) {
+                $txnQuery->where('type', $request->type);
+            }
+
+            // Search filter
+            if ($request->filled('search')) {
+                $search = trim($request->search);
+                $txnQuery->where(function($q) use ($search) {
+                    $q->where('reference_id', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
+
+            $transactions = $txnQuery->orderBy('created_at', 'desc')
                 ->paginate(15)->withQueryString();
         }
 

@@ -18,14 +18,38 @@
     </div>
 
     <!-- Filters -->
-    <form action="{{ route('admin.shipments.index') }}" method="GET" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-4 items-end">
-        <div class="flex-1 min-w-[200px]">
+    <form action="{{ route('admin.shipments.index') }}" method="GET" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap gap-3 items-end">
+        <div class="flex-1 min-w-[180px]">
             <label class="block text-xs font-bold text-gray-700 mb-1">Search AWB / Seller</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="AWB or Seller Name" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="AWB or Seller Name" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)]">
         </div>
-        <div class="w-48">
+
+        <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Quick Date</label>
+            <select name="quick_date" onchange="if(this.value && this.value !== 'custom'){ document.getElementById('adminStartDate').value=''; document.getElementById('adminEndDate').value=''; } this.form.submit()" class="px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)] bg-white">
+                <option value="">Date Range (All)</option>
+                <option value="today" {{ request('quick_date') === 'today' ? 'selected' : '' }}>Today</option>
+                <option value="yesterday" {{ request('quick_date') === 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                <option value="7days" {{ request('quick_date') === '7days' ? 'selected' : '' }}>Last 7 Days</option>
+                <option value="30days" {{ request('quick_date') === '30days' ? 'selected' : '' }}>Last 30 Days</option>
+                <option value="this_month" {{ request('quick_date') === 'this_month' ? 'selected' : '' }}>This Month</option>
+                <option value="custom" {{ (request('start_date') || request('end_date')) && !request('quick_date') ? 'selected' : '' }}>Custom Dates</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">From Date</label>
+            <input type="date" name="start_date" id="adminStartDate" value="{{ request('start_date') }}" class="px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)] bg-white">
+        </div>
+
+        <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">To Date</label>
+            <input type="date" name="end_date" id="adminEndDate" value="{{ request('end_date') }}" class="px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)] bg-white">
+        </div>
+
+        <div>
             <label class="block text-xs font-bold text-gray-700 mb-1">Status</label>
-            <select name="status" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[var(--gold)]">
+            <select name="status" class="px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)] bg-white">
                 <option value="">All Statuses</option>
                 <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
                 <option value="Pickup Scheduled" {{ request('status') == 'Pickup Scheduled' ? 'selected' : '' }}>Pickup Scheduled</option>
@@ -38,9 +62,32 @@
                 <option value="Cancelled" {{ request('status') == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
         </div>
-        <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-gray-900 text-white font-bold rounded-lg text-sm hover:bg-gray-800 transition">
-            Filter
-        </button>
+
+        @if(isset($couriers))
+        <div>
+            <label class="block text-xs font-bold text-gray-700 mb-1">Courier</label>
+            <select name="courier" class="px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[var(--gold)] bg-white">
+                <option value="all">All Couriers</option>
+                <option value="OneStall Cargo" {{ request('courier') === 'OneStall Cargo' ? 'selected' : '' }}>OneStall Cargo</option>
+                @foreach($couriers as $c)
+                    @if($c !== 'OneStall Cargo')
+                        <option value="{{ $c }}" {{ request('courier') === $c ? 'selected' : '' }}>{{ $c }}</option>
+                    @endif
+                @endforeach
+            </select>
+        </div>
+        @endif
+
+        <div class="flex gap-2">
+            <button type="submit" class="px-4 py-2 bg-gray-900 text-white font-bold rounded-lg text-xs hover:bg-black transition flex items-center gap-1.5">
+                <i class="fa-solid fa-filter"></i> Filter
+            </button>
+            @if(request('search') || request('status') || request('start_date') || request('end_date') || request('quick_date') || (request('courier') && request('courier') !== 'all'))
+                <a href="{{ route('admin.shipments.index') }}" class="px-3 py-2 bg-rose-50 text-rose-700 border border-rose-200 font-bold rounded-lg text-xs hover:bg-rose-100 transition flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </a>
+            @endif
+        </div>
     </form>
 
     <!-- Data Table -->

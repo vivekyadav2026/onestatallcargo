@@ -583,4 +583,124 @@ class HubAddressAndBookingTest extends TestCase
             'remarks' => 'Shipment assigned to Delhivery Air',
         ]);
     }
+
+    /**
+     * Test 13: Hub shipments filter by date range, quick_date preset, courier, and payment_mode.
+     */
+    public function test_hub_shipments_filter_by_date_and_attributes(): void
+    {
+        $todayShipment = Shipment::create([
+            'user_id' => $this->hubUser->id,
+            'awb_number' => 'OSCFILTERTODAY',
+            'order_id' => 'ORD-TODAY-01',
+            'shipment_type' => 'B2C',
+            'receiver_name' => 'Today Receiver',
+            'receiver_phone' => '9988776655',
+            'delivery_address' => 'Road 1',
+            'delivery_city' => 'Jaipur',
+            'delivery_pincode' => '302001',
+            'weight_kg' => 1.0,
+            'invoice_value' => 500.00,
+            'total_amount' => 70.00,
+            'is_cod' => true,
+            'courier_partner' => 'OneStall Cargo',
+            'status' => 'Manifested',
+            'created_at' => now(),
+        ]);
+
+        $pastShipment = Shipment::create([
+            'user_id' => $this->hubUser->id,
+            'awb_number' => 'OSCFILTERPAST',
+            'order_id' => 'ORD-PAST-01',
+            'shipment_type' => 'B2C',
+            'receiver_name' => 'Past Receiver',
+            'receiver_phone' => '9988776644',
+            'delivery_address' => 'Road 2',
+            'delivery_city' => 'Delhi',
+            'delivery_pincode' => '110001',
+            'weight_kg' => 1.0,
+            'invoice_value' => 500.00,
+            'total_amount' => 70.00,
+            'is_cod' => false,
+            'courier_partner' => 'Delhivery',
+            'status' => 'Manifested',
+        ]);
+        $pastShipment->created_at = now()->subDays(15);
+        $pastShipment->save();
+
+        // 1. Filter by quick_date = today
+        $resToday = $this->actingAs($this->hubUser)
+            ->get(route('hub.shipments', ['status' => 'all', 'quick_date' => 'today']));
+        $resToday->assertStatus(200);
+        $resToday->assertSee('OSCFILTERTODAY');
+        $resToday->assertDontSee('OSCFILTERPAST');
+
+        // 2. Filter by explicit start_date and end_date
+        $resRange = $this->actingAs($this->hubUser)
+            ->get(route('hub.shipments', [
+                'status' => 'all',
+                'start_date' => now()->subDays(20)->toDateString(),
+                'end_date' => now()->subDays(10)->toDateString(),
+            ]));
+        $resRange->assertStatus(200);
+        $resRange->assertSee('OSCFILTERPAST');
+        $resRange->assertDontSee('OSCFILTERTODAY');
+
+        // 3. Filter by courier
+        $resCourier = $this->actingAs($this->hubUser)
+            ->get(route('hub.shipments', ['status' => 'all', 'courier' => 'Delhivery']));
+        $resCourier->assertStatus(200);
+        $resCourier->assertSee('OSCFILTERPAST');
+        $resCourier->assertDontSee('OSCFILTERTODAY');
+
+        // 4. Filter by payment_mode = cod
+        $resCod = $this->actingAs($this->hubUser)
+            ->get(route('hub.shipments', ['status' => 'all', 'payment_mode' => 'cod']));
+        $resCod->assertStatus(200);
+        $resCod->assertSee('OSCFILTERTODAY');
+        $resCod->assertDontSee('OSCFILTERPAST');
+    }
+
+    /**
+     * Test 14: Hub wallet transactions filter by date range, quick_date, and type.
+     */
+    public function test_hub_wallet_filter_by_date_and_type(): void
+    {
+        \App\Models\WalletTransaction::create([
+            'user_id' => $this->hubUser->id,
+            'amount' => 500.00,
+            'type' => 'credit',
+            'status' => 'success',
+            'description' => 'Test Recharge Credit Today',
+            'reference_id' => 'TXN-CREDIT-TODAY',
+            'balance_after' => 500.00,
+            'created_at' => now(),
+        ]);
+
+        $pastTxn = \App\Models\WalletTransaction::create([
+            'user_id' => $this->hubUser->id,
+            'amount' => 120.00,
+            'type' => 'debit',
+            'status' => 'success',
+            'description' => 'Shipment Deduction Past',
+            'reference_id' => 'TXN-DEBIT-PAST',
+            'balance_after' => 380.00,
+        ]);
+        $pastTxn->created_at = now()->subDays(20);
+        $pastTxn->save();
+
+        // Filter by type = credit
+        $resCredit = $this->actingAs($this->hubUser)
+            ->get(route('hub.wallet.index', ['type' => 'credit']));
+        $resCredit->assertStatus(200);
+        $resCredit->assertSee('TXN-CREDIT-TODAY');
+        $resCredit->assertDontSee('TXN-DEBIT-PAST');
+
+        // Filter by quick_date = today
+        $resToday = $this->actingAs($this->hubUser)
+            ->get(route('hub.wallet.index', ['quick_date' => 'today']));
+        $resToday->assertStatus(200);
+        $resToday->assertSee('TXN-CREDIT-TODAY');
+        $resToday->assertDontSee('TXN-DEBIT-PAST');
+    }
 }

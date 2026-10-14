@@ -458,6 +458,23 @@ class SellerShipmentController extends Controller
             });
         }
 
+        // Quick Date preset resolution
+        if ($request->filled('quick_date') && (!$request->filled('start_date') || !$request->filled('end_date'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['start_date' => $today, 'end_date' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['start_date' => $yesterday, 'end_date' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['start_date' => now()->subDays(6)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['start_date' => now()->subDays(29)->toDateString(), 'end_date' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['start_date' => now()->startOfMonth()->toDateString(), 'end_date' => $today]);
+            }
+        }
+
         // Date range filter
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('created_at', [$request->start_date . ' 00:00:00', $request->end_date . ' 23:59:59']);
@@ -472,10 +489,12 @@ class SellerShipmentController extends Controller
             $query->where('courier_partner', $request->courier);
         }
 
+        $couriers = \App\Models\Courier::where('is_active', true)->pluck('name');
+
         $shipments = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         $shipments->appends($request->all());
 
-        return view('seller.shipments', compact('shipments', 'counts'));
+        return view('seller.shipments', compact('shipments', 'counts', 'couriers'));
     }
 
     public function updateEwayBill(Request $request)

@@ -154,6 +154,54 @@
                         <p class="text-xs text-gray-400 mt-0.5">Wallet recharges, booking deductions and adjustments</p>
                     </div>
                 </div>
+
+                <!-- Transactions Filter Bar -->
+                <form action="{{ route('hub.wallet.index') }}" method="GET" class="p-3 bg-[#f8fafc] border-b border-gray-100 flex flex-wrap items-center justify-between gap-2.5">
+                    <div class="flex flex-wrap items-center gap-2 flex-1">
+                        <!-- Quick Date Preset -->
+                        <select name="quick_date" onchange="if(this.value && this.value !== 'custom'){ document.getElementById('hubTxnStartDate').value=''; document.getElementById('hubTxnEndDate').value=''; } this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                            <option value="">Date Range (All)</option>
+                            <option value="today" {{ request('quick_date') === 'today' ? 'selected' : '' }}>Today</option>
+                            <option value="yesterday" {{ request('quick_date') === 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+                            <option value="7days" {{ request('quick_date') === '7days' ? 'selected' : '' }}>Last 7 Days</option>
+                            <option value="30days" {{ request('quick_date') === '30days' ? 'selected' : '' }}>Last 30 Days</option>
+                            <option value="this_month" {{ request('quick_date') === 'this_month' ? 'selected' : '' }}>This Month</option>
+                            <option value="custom" {{ (request('start_date') || request('end_date')) && !request('quick_date') ? 'selected' : '' }}>Custom Dates</option>
+                        </select>
+
+                        <!-- From & To Date Pickers -->
+                        <div class="flex items-center gap-1.5 bg-white border border-gray-200 rounded-xl px-2.5 py-1 text-xs shadow-xs">
+                            <span class="text-gray-400 font-bold text-[10px] uppercase">From</span>
+                            <input type="date" name="start_date" id="hubTxnStartDate" value="{{ request('start_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                            <span class="text-gray-300">|</span>
+                            <span class="text-gray-400 font-bold text-[10px] uppercase">To</span>
+                            <input type="date" name="end_date" id="hubTxnEndDate" value="{{ request('end_date') }}" class="font-semibold text-gray-700 outline-none text-xs bg-transparent">
+                        </div>
+
+                        <!-- Type Filter -->
+                        <select name="type" onchange="this.form.submit()" class="bg-white border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none">
+                            <option value="">Type (All)</option>
+                            <option value="credit" {{ request('type') === 'credit' ? 'selected' : '' }}>Credits (+)</option>
+                            <option value="debit" {{ request('type') === 'debit' ? 'selected' : '' }}>Debits (-)</option>
+                        </select>
+
+                        <!-- Search Input -->
+                        <div class="relative flex items-center">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Ref / Desc..." class="bg-white border border-gray-200 rounded-xl pl-2.5 pr-7 py-1.5 text-xs font-semibold text-gray-700 outline-none w-36 sm:w-44 focus:border-gray-900">
+                            <button type="submit" class="absolute right-2 text-gray-400 hover:text-gray-900"><i class="fa-solid fa-magnifying-glass text-[10px]"></i></button>
+                        </div>
+
+                        <button type="submit" class="px-3 py-1.5 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-filter text-[10px]"></i> Filter
+                        </button>
+                    </div>
+
+                    @if(request('start_date') || request('end_date') || request('quick_date') || request('type') || request('search'))
+                    <a href="{{ route('hub.wallet.index') }}" class="px-3 py-1.5 bg-rose-50 border border-rose-200 rounded-xl text-xs font-bold text-rose-700 flex items-center gap-1.5 hover:bg-rose-100 shadow-xs">
+                        <i class="fa-solid fa-rotate-right text-rose-500"></i> Reset
+                    </a>
+                    @endif
+                </form>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="bg-gray-50 text-[10px] font-extrabold uppercase text-gray-500 border-b border-gray-200">
