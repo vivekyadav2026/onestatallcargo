@@ -310,4 +310,34 @@ class FranchiseShipmentSlipDownloadTest extends TestCase
         // Must still be 403 Forbidden because authentication is derived strictly from Auth::user()
         $response->assertStatus(403);
     }
+
+    public function test_admin_shipments_index_shows_slip_and_invoice_buttons_and_can_download_by_slip_route_and_id(): void
+    {
+        // 1. Admin shipments index page contains direct slip and invoice links
+        $resIndex = $this->actingAs($this->adminUser)
+            ->get(route('admin.shipments.index'));
+        $resIndex->assertStatus(200);
+        $resIndex->assertSee(route('admin.shipments.label', $this->shipmentDistrict1->awb_number));
+        $resIndex->assertSee('Slip');
+        $resIndex->assertSee(route('admin.shipments.invoice', $this->shipmentDistrict1->awb_number));
+
+        // 2. Admin downloads slip via admin.shipments.slip route
+        $resSlip = $this->actingAs($this->adminUser)
+            ->get(route('admin.shipments.slip', $this->shipmentDistrict1->awb_number));
+        $resSlip->assertStatus(200);
+        $resSlip->assertSee($this->shipmentDistrict1->awb_number);
+        $resSlip->assertSee('Print / Save as PDF');
+
+        // 3. Admin downloads slip by numeric database ID
+        $resById = $this->actingAs($this->adminUser)
+            ->get(route('admin.shipments.label', $this->shipmentDistrict1->id));
+        $resById->assertStatus(200);
+        $resById->assertSee($this->shipmentDistrict1->awb_number);
+
+        // 4. Admin downloads commercial invoice
+        $resInvoice = $this->actingAs($this->adminUser)
+            ->get(route('admin.shipments.invoice', $this->shipmentDistrict1->awb_number));
+        $resInvoice->assertStatus(200);
+        $resInvoice->assertSee('Commercial Invoice');
+    }
 }

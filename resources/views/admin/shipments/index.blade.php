@@ -137,27 +137,37 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="#" @click.prevent='openOrderDetails({ 
-    awb_number: "{{ $shipment->awb_number }}", 
-    status: "{{ $shipment->status }}", 
-    seller_name: @json($shipment->user ? $shipment->user->name : "N/A"),
-    seller_email: @json($shipment->user ? $shipment->user->email : ""),
-    receiver_name: "{{ $shipment->receiver_name }}", 
-    receiver_phone: "{{ $shipment->receiver_phone }}", 
-    delivery_address: @json($shipment->delivery_address), 
-    delivery_city: "{{ $shipment->delivery_city }}", 
-    delivery_pincode: "{{ $shipment->delivery_pincode }}", 
-    invoice_value: {{ $shipment->invoice_value ?? 0 }}, 
-    total_amount: {{ $shipment->total_amount ?? 0 }}, 
-    cod_amount: {{ $shipment->cod_amount ?? 0 }}, 
-    weight_kg: {{ $shipment->weight_kg ?? 0.5 }}, 
-    is_cod: {{ $shipment->is_cod ? 1 : 0 }}, 
-    courier_partner: "{{ $shipment->courier_partner ?? "N/A" }}", 
-    shipment_type: "{{ $shipment->shipment_type ?? "B2C" }}",
-    product_name: @json($shipment->product_name ?? "Package Item"),
-    product_sku: @json($shipment->product_sku ?? "N/A"),
-    product_qty: {{ $shipment->product_qty ?? 1 }}
-})' class="text-indigo-600 hover:text-indigo-800 font-bold text-xs flex items-center justify-end gap-1"><i class="fa-solid fa-eye"></i> Details</a>
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <a href="{{ route('admin.shipments.label', $shipment->awb_number) }}" target="_blank" title="Print / Download Order Slip" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white border border-indigo-200 transition shadow-xs">
+                                        <i class="fa-solid fa-print"></i> Slip
+                                    </a>
+                                    <a href="{{ route('admin.shipments.invoice', $shipment->awb_number) }}" target="_blank" title="Download Tax Invoice" class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200 transition">
+                                        <i class="fa-solid fa-file-invoice text-gray-500"></i>
+                                    </a>
+                                    <button type="button" @click.prevent='openOrderDetails({ 
+                                        awb_number: "{{ $shipment->awb_number }}", 
+                                        status: "{{ $shipment->status }}", 
+                                        seller_name: @json($shipment->user ? $shipment->user->name : "N/A"),
+                                        seller_email: @json($shipment->user ? $shipment->user->email : ""),
+                                        receiver_name: "{{ $shipment->receiver_name }}", 
+                                        receiver_phone: "{{ $shipment->receiver_phone }}", 
+                                        delivery_address: @json($shipment->delivery_address), 
+                                        delivery_city: "{{ $shipment->delivery_city }}", 
+                                        delivery_pincode: "{{ $shipment->delivery_pincode }}", 
+                                        invoice_value: {{ $shipment->invoice_value ?? 0 }}, 
+                                        total_amount: {{ $shipment->total_amount ?? 0 }}, 
+                                        cod_amount: {{ $shipment->cod_amount ?? 0 }}, 
+                                        weight_kg: {{ $shipment->weight_kg ?? 0.5 }}, 
+                                        is_cod: {{ $shipment->is_cod ? 1 : 0 }}, 
+                                        courier_partner: "{{ $shipment->courier_partner ?? "N/A" }}", 
+                                        shipment_type: "{{ $shipment->shipment_type ?? "B2C" }}",
+                                        product_name: @json($shipment->product_name ?? "Package Item"),
+                                        product_sku: @json($shipment->product_sku ?? "N/A"),
+                                        product_qty: {{ $shipment->product_qty ?? 1 }}
+                                    })' title="View Shipment Details" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 transition">
+                                        <i class="fa-solid fa-eye text-gray-500"></i> Details
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -283,9 +293,17 @@
                         </span>
                     </template>
                     <template x-if="(activeOrder.status || '').toLowerCase() !== 'cancelled'">
-                        <a :href="`{{ url('admin/shipments') }}/${activeOrder.awb_number}/label`" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-print"></i> Print / Download Slip
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <a :href="`{{ url('admin/shipments') }}/${activeOrder.awb_number}/invoice`" target="_blank" class="px-3.5 py-2 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-xl transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-invoice text-gray-500"></i> Invoice
+                            </a>
+                            <a :href="`{{ url('admin/shipments') }}/${activeOrder.awb_number}/lr`" target="_blank" class="px-3.5 py-2 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-xl transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-truck text-gray-500"></i> LR
+                            </a>
+                            <a :href="`{{ url('admin/shipments') }}/${activeOrder.awb_number}/label`" target="_blank" class="px-4 py-2 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-black rounded-xl transition flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-print"></i> Print / Download Slip
+                            </a>
+                        </div>
                     </template>
                 </div>
 

@@ -5,7 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shipping Label - {{ $shipment->awb_number }}</title>
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background: #f3f4f6; display: flex; justify-content: center; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background: #f3f4f6; display: flex; flex-direction: column; align-items: center; }
+        .no-print-bar {
+            width: 100%;
+            max-width: 384px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            box-sizing: border-box;
+        }
+        .no-print-bar .info {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .no-print-bar .badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 9999px;
+            margin-left: 4px;
+        }
+        .no-print-bar .btns {
+            display: flex;
+            gap: 6px;
+        }
+        .btn-print {
+            cursor: pointer;
+            background: #1e1b4b;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-print:hover {
+            background: #312e81;
+        }
+        .btn-close {
+            cursor: pointer;
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .btn-close:hover {
+            background: #e5e7eb;
+        }
         .label-container { width: 100%; max-width: 384px; min-height: 576px; background: #fff; border: 2px solid #000; padding: 15px; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; }
         .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
@@ -26,6 +86,7 @@
         .footer { text-align: center; font-size: 9px; font-weight: bold; line-height: 1.3; margin-top: auto; word-wrap: break-word; }
         
         @media print {
+            .no-print, .no-print-bar { display: none !important; }
             body { padding: 0; background: #fff; display: block; }
             .label-container { border: none; width: 4in; height: 6in; max-width: 4in; min-height: 6in; margin: 0; padding: 0; box-shadow: none; }
             .barcode-bars { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -39,6 +100,20 @@
     </style>
 </head>
 <body onload="window.print()">
+    <div class="no-print-bar">
+        <div class="info">
+            {{ $shipment->awb_number }}
+            <span class="badge">{{ strtoupper($shipment->courier_partner ?? 'COURIER') }}</span>
+        </div>
+        <div class="btns">
+            <button type="button" onclick="window.print()" class="btn-print">
+                Print / Save as PDF
+            </button>
+            <button type="button" onclick="window.close()" class="btn-close">
+                Close
+            </button>
+        </div>
+    </div>
     <div class="label-container">
         <div class="header">
             <h1>ONESTALL CARGO</h1>

@@ -141,11 +141,22 @@ class AdminShipmentController extends Controller
         }
     }
 
+    /**
+     * Find shipment by AWB number or primary ID.
+     */
+    protected function findShipment(string|int $identifier): Shipment
+    {
+        return Shipment::with('user')
+            ->where('awb_number', $identifier)
+            ->orWhere('id', is_numeric($identifier) ? (int)$identifier : 0)
+            ->firstOrFail();
+    }
+
     public function printLabel(Request $request, $awb)
     {
-        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        $shipment = $this->findShipment($awb);
         
-        $settings = [
+        $settings = $shipment->user?->label_settings ?? [
             'label_type' => 'thermal',
             'enable_product_name' => true,
             'enable_consignee_contact' => true,
@@ -184,13 +195,13 @@ class AdminShipmentController extends Controller
 
     public function printLR(Request $request, $awb)
     {
-        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        $shipment = $this->findShipment($awb);
         return view('seller.lr', compact('shipment'));
     }
 
     public function printInvoice(Request $request, $awb)
     {
-        $shipment = Shipment::where('awb_number', $awb)->firstOrFail();
+        $shipment = $this->findShipment($awb);
         return view('seller.invoice', compact('shipment'));
     }
 }
