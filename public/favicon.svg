@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Crisp Rounded White App Tile Background for High-Contrast Visibility in Dark & Light Modes -->
+  <rect width="488" height="488" x="12" y="12" rx="115" fill="#FFFFFF" />
+  
+  <g transform="translate(18, 0)">
+    <!-- Top Speed Wing -->
+    <polygon points="50,222 245,222 225,262 76,262" fill="#F55D11" />
+
+    <!-- Bottom Speed Wing -->
+    <polygon points="84,282 205,282 186,320 110,320" fill="#F55D11" />
+
+    <!-- Bold Stylized OneStall Italic 'O' -->
+    <path fill-rule="evenodd" d="
+      M 315,120
+      C 415,120 465,185 440,295
+      C 415,405 345,445 235,445
+      C 140,445 105,385 130,285
+      C 155,175 220,120 315,120 Z
+
+      M 300,195
+      C 240,195 200,230 185,295
+      C 170,355 195,380 250,380
+      C 310,380 350,345 365,280
+      C 380,220 355,195 300,195 Z" 
+      fill="#09357A" />
+  </g>
+</svg>

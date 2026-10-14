@@ -94,11 +94,7 @@ class XpressbeesService implements CourierInterface
         $subtotal = round($baseFreight + $fsc, 2);
 
         // COD surcharge (dynamic from rate card)
-        $codCharge = 0;
-        if ($is_cod) {
-            $calcCod = $invoice_value > 0 ? ($invoice_value * $rateCard->cod_percent / 100) : 0;
-            $codCharge = round(max($rateCard->cod_min_charge, $calcCod), 2);
-        }
+        $codCharge = $rateCard->calculateCodCharge($invoice_value, $is_cod);
 
         $total = round($subtotal + $codCharge, 2);
 

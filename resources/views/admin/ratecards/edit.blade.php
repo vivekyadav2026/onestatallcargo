@@ -60,13 +60,17 @@
                 <div class="bg-blue-50 p-3 rounded">
                     <label class="block text-sm font-medium text-blue-900 mb-1">COD Minimum Charge (₹) <span class="text-red-500">*</span></label>
                     <input type="number" step="0.01" name="cod_min_charge" value="{{ old('cod_min_charge', $rateCard->cod_min_charge) }}" required class="w-full border border-blue-200 rounded px-3 py-2">
+                    <p class="text-xs text-blue-800 mt-1">Flat charge applied up to threshold or as minimum.</p>
+                </div>
+                <div class="bg-blue-50 p-3 rounded">
+                    <label class="block text-sm font-medium text-blue-900 mb-1">COD Threshold Amount (₹)</label>
+                    <input type="number" step="0.01" name="cod_threshold_amount" value="{{ old('cod_threshold_amount', $rateCard->cod_threshold_amount) }}" class="w-full border border-blue-200 rounded px-3 py-2">
+                    <p class="text-xs text-blue-800 mt-1">Up to this COD amount, only min charge applies. (0 = no threshold)</p>
                 </div>
                 <div class="bg-blue-50 p-3 rounded">
                     <label class="block text-sm font-medium text-blue-900 mb-1">COD Percentage (%) <span class="text-red-500">*</span></label>
                     <input type="number" step="0.01" name="cod_percent" value="{{ old('cod_percent', $rateCard->cod_percent) }}" required class="w-full border border-blue-200 rounded px-3 py-2">
-                </div>
-                <div class="bg-blue-50 p-3 rounded flex flex-col justify-center">
-                    <p class="text-xs text-blue-800">System will automatically apply whichever COD charge is higher.</p>
+                    <p class="text-xs text-blue-800 mt-1">Applied above threshold: max(min_charge, amount × %).</p>
                 </div>
 
                 <div class="bg-yellow-50 p-3 rounded">

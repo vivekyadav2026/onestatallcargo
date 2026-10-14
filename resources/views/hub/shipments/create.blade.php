@@ -57,7 +57,7 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">Add Order</h1>
         <div class="text-[11px] font-semibold text-gray-500">
-            <a href="{{ route('seller.dashboard') }}" class="hover:text-[#4338ca] transition">Dashboard</a> 
+            <a href="{{ route('hub.dashboard') }}" class="hover:text-[#4338ca] transition">Dashboard</a> 
             <span class="mx-1">/</span> 
             <span class="text-gray-900">Add Order</span>
         </div>
@@ -79,13 +79,15 @@
         </div>
     @endif
 
-    <form action="{{ route('seller.book.post') }}" method="POST" id="mainBookingForm">
+    <form action="{{ route('hub.shipments.store') }}" method="POST" id="mainBookingForm">
         @csrf
         <input type="hidden" name="mode" value="{{ $mode ?? 'create' }}">
         <input type="hidden" name="shipment_id" value="{{ ($mode ?? '') === 'edit' ? ($shipment->id ?? '') : '' }}">
         <input type="hidden" name="invoice_value" :value="totalOrderValue()">
         <input type="hidden" name="shipment_type" :value="shipmentType">
         <input type="hidden" name="is_cod" :value="paymentMode === 'COD' ? '1' : '0'">
+        <input type="hidden" name="payment_mode" :value="paymentMode">
+        <input type="hidden" name="cod_amount" :value="paymentMode === 'COD' ? totalOrderValue() : ''">
         <input type="hidden" name="ship_now" value="1">
         
         <!-- Custom Tabs mimicking BigShip -->
@@ -214,7 +216,7 @@
                 
                 <div class="w-48 mb-6">
                     <label class="block text-[11px] font-semibold text-gray-500 mb-1">Payment Mode <span class="text-red-500">*</span></label>
-                    <select x-model="paymentMode" :disabled="shipmentType === 'International'" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500 bg-white disabled:bg-gray-100 disabled:text-gray-500">
+                    <select name="payment_mode" x-model="paymentMode" :disabled="shipmentType === 'International'" class="w-full px-3 py-2 border border-gray-200 rounded text-xs outline-none focus:border-indigo-500 bg-white disabled:bg-gray-100 disabled:text-gray-500">
                         <option value="Prepaid">Prepaid</option>
                         <option value="COD">COD</option>
                     </select>
@@ -329,38 +331,42 @@
                         </div>
                         <input type="text" x-model="warehouseSearch" placeholder="Search by Warehouse Name/City Name/Pincode" class="w-full pl-10 pr-3 py-1.5 border border-gray-200 rounded text-[10px] outline-none focus:border-indigo-500">
                     </div>
-                    <a href="{{ route('hub.profile') }}?view=warehouses" class="bg-[#1e1b4b] hover:bg-indigo-950 text-white px-4 py-1.5 rounded text-[11px] font-bold flex items-center gap-2 transition shadow-sm">
-                        <i class="fa-solid fa-plus"></i> Add Warehouse
-                    </a>
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="openQuickWarehouseModal()" class="bg-[#1e1b4b] hover:bg-indigo-950 text-white px-3 py-1.5 rounded text-[11px] font-bold flex items-center gap-1.5 transition shadow-sm">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Add Warehouse
+                        </button>
+                        <a href="{{ route('hub.profile') }}?view=warehouses" target="_blank" class="text-[10px] text-gray-500 hover:text-indigo-600 underline font-semibold">
+                            Manage All
+                        </a>
+                    </div>
                 </div>
             </div>
             
             <div class="pl-2 md:pl-10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[250px] overflow-y-auto pr-2 mb-4">
-                    @forelse($warehouses as $wh)
-                        <label x-show="'{{ strtolower($wh->name . $wh->city . $wh->pincode) }}'.includes(warehouseSearch.toLowerCase())" class="border rounded p-4 cursor-pointer transition hover:border-[#1e1b4b] flex items-center gap-4" :class="selectedWarehouse == {{ $wh->id }} ? 'border-[#1e1b4b] bg-[#f8f9ff]' : 'border-gray-200'">
-                            <input type="radio" name="pickup_location" value="{{ $wh->id }}" x-model="selectedWarehouse" class="hidden">
-                            <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0" :class="selectedWarehouse == {{ $wh->id }} ? 'border-[#1e1b4b]' : 'border-gray-300'">
-                                <div class="w-2 h-2 bg-[#1e1b4b] rounded-full" x-show="selectedWarehouse == {{ $wh->id }}"></div>
+                    <template x-for="wh in warehouseList" :key="wh.id">
+                        <label x-show="!warehouseSearch || (wh.name + ' ' + wh.city + ' ' + wh.pincode).toLowerCase().includes(warehouseSearch.toLowerCase())" class="border rounded p-4 cursor-pointer transition hover:border-[#1e1b4b] flex items-center gap-4" :class="selectedWarehouse == wh.id ? 'border-[#1e1b4b] bg-[#f8f9ff]' : 'border-gray-200'">
+                            <input type="radio" name="pickup_location" :value="wh.id" x-model="selectedWarehouse" class="hidden">
+                            <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0" :class="selectedWarehouse == wh.id ? 'border-[#1e1b4b]' : 'border-gray-300'">
+                                <div class="w-2 h-2 bg-[#1e1b4b] rounded-full" x-show="selectedWarehouse == wh.id"></div>
                             </div>
                             <div class="flex flex-col w-full text-[11px]">
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start sm:items-center">
-                                    <div class="font-bold text-gray-900 text-center flex items-center justify-center">{{ $wh->name }}</div>
+                                    <div class="font-bold text-gray-900 text-center flex items-center justify-center" x-text="wh.name"></div>
                                     <div class="text-center text-gray-600 border-l border-r border-gray-200 flex flex-col justify-center">
                                         <span class="block text-gray-400">Contact Person</span>
-                                        <span class="font-bold text-gray-800">{{ $wh->phone }}</span>
+                                        <span class="font-bold text-gray-800" x-text="wh.phone"></span>
                                     </div>
                                     <div class="text-center text-gray-500 flex flex-col items-center justify-center px-2">
-                                        <span class="block truncate w-full" title="{{ $wh->address }}">{{ Str::limit($wh->address, 35) }}</span>
+                                        <span class="block truncate w-full" :title="wh.address" x-text="wh.address"></span>
                                     </div>
                                 </div>
                             </div>
                         </label>
-                    @empty
-                        <div class="col-span-2 text-center py-6 text-sm text-gray-500 font-semibold bg-gray-50 rounded">
-                            No warehouses found. Please add a warehouse first.
-                        </div>
-                    @endforelse
+                    </template>
+                    <div x-show="warehouseList.length === 0" class="col-span-2 text-center py-6 text-sm text-gray-500 font-semibold bg-gray-50 rounded">
+                        No warehouses found. Please add a warehouse first.
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2 py-4">
@@ -381,6 +387,68 @@
             
         </div>
     </form>
+
+    <!-- Modal: Quick Add Warehouse for Hub -->
+    <div x-show="showAddWarehouseModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4" x-transition.opacity>
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-100" @click.away="showAddWarehouseModal = false">
+            <div class="px-6 py-4 bg-[#1e1b4b] text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm">Add New Pickup Warehouse</h3>
+                <button type="button" @click="showAddWarehouseModal = false" class="text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-xmark fa-lg"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="saveQuickWarehouse()" class="p-6 space-y-4">
+                <div x-show="quickWhError" class="p-3 bg-red-50 text-red-700 text-xs font-semibold rounded-xl border border-red-200" x-text="quickWhError"></div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Warehouse Name <span class="text-red-500">*</span></label>
+                    <input type="text" x-model="quickWh.name" placeholder="e.g. Primary Hub Warehouse" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Contact Person <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="quickWh.contact_person" placeholder="Manager Name" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Mobile Number (10 Digits) <span class="text-red-500">*</span></label>
+                        <input type="tel" x-model="quickWh.phone" placeholder="9876543210" maxlength="10" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Full Address <span class="text-red-500">*</span></label>
+                    <textarea x-model="quickWh.address" rows="3" placeholder="Plot No, Street, Landmark" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Pincode (6 Digits) <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="quickWh.pincode" @input="fetchQuickWhPincode()" maxlength="6" placeholder="110001" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">City <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="quickWh.city" placeholder="City" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">State <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="quickWh.state" placeholder="State" required class="w-full px-3 py-2 border border-gray-300 rounded-xl text-xs outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex justify-end items-center gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" @click="showAddWarehouseModal = false" class="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-700 hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" :disabled="quickWhLoading" class="px-5 py-2 bg-[#1e1b4b] hover:bg-indigo-950 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-2 disabled:opacity-50">
+                        <span x-show="quickWhLoading"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                        <span>Save & Select</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -393,7 +461,78 @@ function bookingForm() {
         deliveryPincode: '{{ old('delivery_pincode', $shipment->delivery_pincode ?? '') }}',
         deliveryCity: '{{ old('delivery_city', $shipment->delivery_city ?? '') }}',
         deliveryState: '{{ old('delivery_state', $shipment->delivery_state ?? '') }}',
+        warehouseList: {!! json_encode($warehouses) !!},
         selectedWarehouse: {{ $warehouses->where('is_default', true)->first()->id ?? ($warehouses->first()->id ?? 'null') }},
+        showAddWarehouseModal: false,
+        quickWhLoading: false,
+        quickWhError: '',
+        quickWh: {
+            name: '',
+            contact_person: '{{ Auth::user()->name }}',
+            phone: '{{ Auth::user()->phone }}',
+            address: '',
+            pincode: '',
+            city: '',
+            state: ''
+        },
+        openQuickWarehouseModal() {
+            this.quickWhError = '';
+            this.quickWh = {
+                name: '',
+                contact_person: '{{ Auth::user()->name }}',
+                phone: '{{ Auth::user()->phone }}',
+                address: '',
+                pincode: '',
+                city: '',
+                state: ''
+            };
+            this.showAddWarehouseModal = true;
+        },
+        async fetchQuickWhPincode() {
+            if (this.quickWh.pincode && this.quickWh.pincode.length === 6) {
+                try {
+                    const res = await fetch('https://api.postalpincode.in/pincode/' + this.quickWh.pincode);
+                    const data = await res.json();
+                    if (data && data[0] && data[0].Status === 'Success') {
+                        this.quickWh.city = data[0].PostOffice[0].District;
+                        this.quickWh.state = data[0].PostOffice[0].State;
+                    }
+                } catch(e) {
+                    console.error('Pincode lookup error:', e);
+                }
+            }
+        },
+        async saveQuickWarehouse() {
+            this.quickWhLoading = true;
+            this.quickWhError = '';
+            try {
+                const res = await fetch('{{ route('hub.warehouses.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(this.quickWh)
+                });
+                const data = await res.json();
+                if (res.ok && data.success && data.warehouse) {
+                    this.warehouseList.unshift(data.warehouse);
+                    this.selectedWarehouse = data.warehouse.id;
+                    this.showAddWarehouseModal = false;
+                } else {
+                    let msg = data.message || 'Failed to save warehouse';
+                    if (data.errors) {
+                        msg = Object.values(data.errors).flat().join(' ');
+                    }
+                    this.quickWhError = msg;
+                }
+            } catch(e) {
+                this.quickWhError = 'Error: ' + e.message;
+            } finally {
+                this.quickWhLoading = false;
+            }
+        },
         deadWeight: {{ $initialWeight }},
         lengthCm: 10,
         widthCm: 10,

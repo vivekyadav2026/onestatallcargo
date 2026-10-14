@@ -41,11 +41,7 @@ class IndiaPostSpeedPostService implements CourierInterface
         $fsc_percent = $rateCard->fsc_percent / 100;
         $gstAmount = round($baseFreight * $fsc_percent, 2);
         
-        $codCharge = 0;
-        if ($is_cod) {
-            $calculatedCod = $invoice_value * ($rateCard->cod_percent / 100);
-            $codCharge = round(max($calculatedCod, $rateCard->cod_min_charge), 2);
-        }
+        $codCharge = $rateCard->calculateCodCharge($invoice_value, $is_cod);
 
         $total = $baseFreight + $gstAmount + $codCharge;
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class HubShipmentController extends Controller
@@ -95,19 +96,28 @@ class HubShipmentController extends Controller
             'mode' => 'nullable|string',
             'ship_now' => 'nullable',
             'shipment_type' => 'required|string',
-            'receiver_name' => 'required|string',
-            'receiver_phone' => 'required|string',
-            'delivery_address' => 'required|string',
-            'delivery_city' => 'required|string',
-            'delivery_pincode' => 'required|string',
-            'pickup_pincode' => 'nullable|string',
-            'pickup_address' => 'nullable|string',
-            'pickup_city' => 'nullable|string',
-            'destination_country' => 'nullable|string',
+            'order_id' => 'nullable|string|max:255',
+            'receiver_name' => 'required|string|max:255',
+            'receiver_phone' => 'required|string|max:20',
+            'receiver_email' => 'nullable|email|max:255',
+            'delivery_address' => 'required|string|max:1000',
+            'delivery_landmark' => 'nullable|string|max:255',
+            'delivery_city' => 'required|string|max:255',
+            'delivery_state' => 'nullable|string|max:255',
+            'delivery_pincode' => 'required|string|max:10',
+            'pickup_pincode' => 'nullable|string|max:10',
+            'pickup_address' => 'nullable|string|max:1000',
+            'pickup_city' => 'nullable|string|max:255',
+            'destination_country' => 'nullable|string|max:255',
             'customs_value' => 'nullable|numeric',
-            'hs_code' => 'nullable|string',
-            'vehicle_type' => 'nullable|string',
+            'hs_code' => 'nullable|string|max:50',
+            'vehicle_type' => 'nullable|string|max:255',
             'weight_kg' => 'required|numeric',
+            'length_cm' => 'nullable|numeric',
+            'width_cm' => 'nullable|numeric',
+            'height_cm' => 'nullable|numeric',
+            'payment_mode' => 'nullable|string',
+            'cod_amount' => 'nullable|numeric',
             'is_cod' => 'nullable|boolean',
             'invoice_value' => 'nullable|numeric',
         ]);
@@ -132,6 +142,8 @@ class HubShipmentController extends Controller
         }
 
         $isInternational = ($validated['shipment_type'] ?? '') === 'International';
+        $is_cod = ($request->input('payment_mode') === 'COD' || $request->input('is_cod') == '1');
+        $codOrInvoiceVal = (float)($request->input('cod_amount') ?? $validated['invoice_value'] ?? 0);
 
         // Auto-resolve pickup location / warehouse
         if (empty($validated['pickup_pincode']) && $request->filled('pickup_location')) {
@@ -180,8 +192,8 @@ class HubShipmentController extends Controller
                     (float)($request->input('length_cm', 10)),
                     (float)($request->input('width_cm', 10)),
                     (float)($request->input('height_cm', 10)),
-                    $validated['is_cod'] ?? false,
-                    (float)($validated['invoice_value'] ?? 0),
+                    $is_cod,
+                    $codOrInvoiceVal,
                     false, false, 0,
                     $routing['provider_id']
                 );
@@ -191,105 +203,114 @@ class HubShipmentController extends Controller
             }
         }
 
-        $is_cod = $validated['is_cod'] ?? false;
-        
-        if (!$isEdit) {
-            try {
-                app(\App\Services\WalletService::class)->deduct(
-                    $user->id, 
-                    $totalAmount, 
-                    'Shipment Booking Deduction', 
-                    $shipment->awb_number ?? null
-                );
-            } catch (\Exception $e) {
-                return back()->with('error', $e->getMessage());
-            }
-        }
-
-        // Pass calculated rate to shipment saving
-        $shipment->shipping_charge = $totalAmount;
-        $shipment->total_amount = $totalAmount;
-
-        $shipment->shipment_type = $validated['shipment_type'];
-        $shipment->receiver_name = $validated['receiver_name'];
-        $shipment->receiver_phone = $validated['receiver_phone'];
-        $shipment->delivery_address = $validated['delivery_address'];
-        $shipment->delivery_city = $validated['delivery_city'];
-        $shipment->delivery_pincode = $validated['delivery_pincode'];
-        $shipment->weight_kg = $validated['weight_kg'];
-        $shipment->is_cod = $is_cod;
-        $shipment->invoice_value = $validated['invoice_value'] ?? 0;
-        $shipment->total_amount = $totalAmount;
-
-        // Product details handling
-        $productNames = $request->input('product_name', []);
-        $productSkus = $request->input('product_sku', []);
-        $productQtys = $request->input('product_qty', []);
-        $productPrices = $request->input('product_price', []);
-
-        if (!empty($productNames) && is_array($productNames)) {
-            $filteredNames = array_filter($productNames);
-            $shipment->product_name = !empty($filteredNames) ? implode(', ', $filteredNames) : 'General Parcel';
-            $shipment->product_sku = implode(', ', array_filter($productSkus)) ?: 'N/A';
-            $shipment->product_qty = array_sum(array_map('intval', $productQtys)) ?: 1;
-
-            $items = [];
-            for ($i = 0; $i < count($productNames); $i++) {
-                if (!empty($productNames[$i])) {
-                    $items[] = [
-                        'name' => $productNames[$i],
-                        'price' => $productPrices[$i] ?? 0,
-                        'qty' => $productQtys[$i] ?? 1,
-                        'sku' => $productSkus[$i] ?? '',
-                    ];
+        try {
+            DB::transaction(function () use ($user, $isEdit, $shipment, $totalAmount, $validated, $request, $is_cod, $isInternational) {
+                if (!$isEdit) {
+                    app(\App\Services\WalletService::class)->deduct(
+                        $user->id, 
+                        $totalAmount, 
+                        'Shipment Booking Deduction', 
+                        $shipment->awb_number ?? null
+                    );
                 }
-            }
-            $shipment->product_details = json_encode($items);
-        } else {
-            $shipment->product_name = $shipment->product_name ?: 'General Parcel';
-        }
-        
-        if (!$isEdit) {
-            $shipment->status = 'Manifested';
-            app(\App\Services\ShipmentService::class)->assignRouting($shipment, $shipment->delivery_pincode);
-        }
-        
-        // B2B & Intl logic
-        if ($validated['shipment_type'] == 'B2B') {
-            $shipment->vehicle_type = $validated['vehicle_type'] ?? null;
-        }
-        if ($validated['shipment_type'] == 'International') {
-            $shipment->destination_country = $validated['destination_country'] ?? null;
-            $shipment->customs_value = $validated['customs_value'] ?? null;
-            $shipment->hs_code = $validated['hs_code'] ?? null;
-            $shipment->is_cod = false;
-        }
 
-        $shipment->save();
+                // Pass calculated rate to shipment saving
+                $shipment->shipping_charge = $totalAmount;
+                $shipment->total_amount = $totalAmount;
 
-        if (!$isEdit) {
-            \App\Models\ShipmentEvent::create([
-                'shipment_id' => $shipment->id,
-                'status' => 'Manifested',
-                'location' => $shipment->pickup_city ?? 'Origin',
-                'remarks' => 'Shipment Booked & Manifested successfully.'
-            ]);
+                $shipment->shipment_type = $validated['shipment_type'];
+                $shipment->receiver_name = $validated['receiver_name'];
+                $shipment->receiver_phone = $validated['receiver_phone'];
+                $shipment->delivery_address = $validated['delivery_address'];
+                $shipment->delivery_city = $validated['delivery_city'];
+                $shipment->delivery_pincode = $validated['delivery_pincode'];
+                $shipment->weight_kg = $validated['weight_kg'];
+                $shipment->length_cm = $request->input('length_cm');
+                $shipment->width_cm = $request->input('width_cm');
+                $shipment->height_cm = $request->input('height_cm');
+                $shipment->order_id = $request->input('order_id');
+                $shipment->receiver_email = $request->input('receiver_email');
+                $shipment->delivery_landmark = $request->input('delivery_landmark');
+                $shipment->delivery_state = $request->input('delivery_state');
+                $shipment->is_cod = $is_cod;
+                $shipment->payment_type = $is_cod ? 'COD' : 'Prepaid';
+                $shipment->cod_amount = $request->input('cod_amount') ?? ($is_cod ? ($validated['invoice_value'] ?? 0) : null);
+                $shipment->invoice_value = $validated['invoice_value'] ?? 0;
+
+                // Product details handling
+                $productNames = $request->input('product_name', []);
+                $productSkus = $request->input('product_sku', []);
+                $productQtys = $request->input('product_qty', []);
+                $productPrices = $request->input('product_price', []);
+
+                if (!empty($productNames) && is_array($productNames)) {
+                    $filteredNames = array_filter($productNames);
+                    $shipment->product_name = !empty($filteredNames) ? implode(', ', $filteredNames) : 'General Parcel';
+                    $shipment->product_sku = implode(', ', array_filter($productSkus)) ?: 'N/A';
+                    $shipment->product_qty = array_sum(array_map('intval', $productQtys)) ?: 1;
+
+                    $items = [];
+                    for ($i = 0; $i < count($productNames); $i++) {
+                        if (!empty($productNames[$i])) {
+                            $items[] = [
+                                'name' => $productNames[$i],
+                                'price' => $productPrices[$i] ?? 0,
+                                'qty' => $productQtys[$i] ?? 1,
+                                'sku' => $productSkus[$i] ?? '',
+                            ];
+                        }
+                    }
+                    $shipment->product_details = json_encode($items);
+                } else {
+                    $shipment->product_name = $shipment->product_name ?: 'General Parcel';
+                }
+                
+                if (!$isEdit) {
+                    $shipment->status = 'Manifested';
+                    app(\App\Services\ShipmentService::class)->assignRouting($shipment, $shipment->delivery_pincode);
+                }
+                
+                // B2B & Intl logic
+                if ($validated['shipment_type'] == 'B2B') {
+                    $shipment->vehicle_type = $validated['vehicle_type'] ?? null;
+                }
+                if ($validated['shipment_type'] == 'International') {
+                    $shipment->destination_country = $validated['destination_country'] ?? null;
+                    $shipment->customs_value = $validated['customs_value'] ?? null;
+                    $shipment->hs_code = $validated['hs_code'] ?? null;
+                    $shipment->is_cod = false;
+                    $shipment->payment_type = 'Prepaid';
+                }
+
+                $shipment->save();
+
+                if (!$isEdit) {
+                    \App\Models\ShipmentEvent::create([
+                        'shipment_id' => $shipment->id,
+                        'status' => 'Manifested',
+                        'location' => $shipment->pickup_city ?? 'Origin',
+                        'remarks' => 'Shipment Booked & Manifested successfully.'
+                    ]);
+                }
+            });
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
 
         $shipNow = !empty($validated['ship_now']) && $validated['ship_now'] == '1';
 
         if ($isEdit) {
             if ($shipNow) {
-                return redirect()->route('seller.label', $shipment->awb_number)->with('success', 'Order updated and label generated.');
+                return redirect()->route('hub.label', $shipment->awb_number)->with('success', 'Order updated and label generated.');
             }
-            return redirect()->route('seller.shipments.index')->with('success', 'Order updated successfully.');
+            return redirect()->route('hub.shipments')->with('success', 'Order updated successfully.');
         }
 
         if ($shipNow) {
-            return redirect()->route('seller.label', $shipment->awb_number)->with('success', "Shipment Booked! Forwarded to {$shipment->courier_partner}.");
+            return redirect()->route('hub.label', $shipment->awb_number)->with('success', "Shipment Booked! Forwarded to {$shipment->courier_partner}.");
         }
 
-        return redirect()->route('seller.shipments.index')->with('success', 'Order created successfully.');
+        return redirect()->route('hub.shipments')->with('success', 'Order created successfully.');
     }
 
     public function bulkCreate()

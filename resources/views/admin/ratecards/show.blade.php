@@ -95,7 +95,11 @@
                     </div>
                     <div class="p-3 bg-gray-50 rounded border">
                         <p class="text-gray-500 font-medium">COD Rule</p>
-                        <p class="font-bold text-lg">Max(₹{{ $rateCard->cod_min_charge }}, {{ $rateCard->cod_percent }}%)</p>
+                        @if(($rateCard->cod_threshold_amount ?? 0) > 0)
+                            <p class="font-bold text-sm text-gray-800">≤ ₹{{ number_format($rateCard->cod_threshold_amount, 0) }}: ₹{{ number_format($rateCard->cod_min_charge, 2) }}<br>> ₹{{ number_format($rateCard->cod_threshold_amount, 0) }}: Max(₹{{ number_format($rateCard->cod_min_charge, 2) }}, {{ $rateCard->cod_percent }}%)</p>
+                        @else
+                            <p class="font-bold text-lg">Max(₹{{ number_format($rateCard->cod_min_charge, 2) }}, {{ $rateCard->cod_percent }}%)</p>
+                        @endif
                     </div>
                     <div class="p-3 bg-gray-50 rounded border">
                         <p class="text-gray-500 font-medium">GST</p>

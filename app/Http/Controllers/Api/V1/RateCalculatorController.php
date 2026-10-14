@@ -175,13 +175,12 @@ class RateCalculatorController extends Controller
                         $pickupPin, $deliveryPin, $totalChargeableWeight, 10, 10, 10, $isCod, ($isCod && $codAmount > 0 ? $codAmount : $invoiceAmount)
                     );
                     $baseCharge = $rateRes['base_freight'] ?? 0.00;
-                    
                 } else {
+                    $codOrInvoice = ($isCod && $codAmount > 0 ? $codAmount : $invoiceAmount);
                     $rateRes = $this->pricingService->calculateExternalRate(
-                        $courier->id, $pickupPin, $deliveryPin, $totalChargeableWeight, $isCod, $invoiceAmount
+                        $courier->id, $pickupPin, $deliveryPin, $totalChargeableWeight, $isCod, $codOrInvoice
                     );
                     $baseCharge = $rateRes['base_freight'] ?? 0.00;
-                    
                 }
 
                 // Add-on components (Dynamic + Calculated)

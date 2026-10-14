@@ -47,8 +47,33 @@ class SettingsController extends Controller
         return response()->json(['success' => true, 'message' => 'Company details updated successfully']);
     }
 
+    public function getWarehouses()
+    {
+        $warehouses = Warehouse::where('user_id', Auth::id())
+            ->orderBy('is_default', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'warehouses' => $warehouses
+        ]);
+    }
+
     public function createWarehouse(Request $request)
     {
+        if ($request->has('phone')) {
+            $cleaned = preg_replace('/[^0-9]/', '', (string)$request->input('phone'));
+            if (strlen($cleaned) > 10 && str_starts_with($cleaned, '91')) {
+                $cleaned = substr($cleaned, -10);
+            }
+            $request->merge(['phone' => $cleaned]);
+        }
+        if ($request->has('pincode')) {
+            $cleanedPin = preg_replace('/[^0-9]/', '', (string)$request->input('pincode'));
+            $request->merge(['pincode' => $cleanedPin]);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'contact_person' => 'required|string|max:255',
@@ -79,6 +104,18 @@ class SettingsController extends Controller
     public function updateWarehouse(Request $request, $id)
     {
         $warehouse = Warehouse::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($request->has('phone')) {
+            $cleaned = preg_replace('/[^0-9]/', '', (string)$request->input('phone'));
+            if (strlen($cleaned) > 10 && str_starts_with($cleaned, '91')) {
+                $cleaned = substr($cleaned, -10);
+            }
+            $request->merge(['phone' => $cleaned]);
+        }
+        if ($request->has('pincode')) {
+            $cleanedPin = preg_replace('/[^0-9]/', '', (string)$request->input('pincode'));
+            $request->merge(['pincode' => $cleanedPin]);
+        }
 
         $request->validate([
             'name' => 'required|string|max:255',

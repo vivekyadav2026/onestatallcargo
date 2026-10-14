@@ -72,12 +72,8 @@ class PricingService
         $active_freight = $base_freight + $rto_charge + $dto_charge;
         $fsc_amount = $active_freight * ($rateCard->fsc_percent / 100);
 
-        // COD Calculation
-        $cod_charge = 0;
-        if ($is_cod) {
-            $calculated_cod = $invoice_value * ($rateCard->cod_percent / 100);
-            $cod_charge = max($rateCard->cod_min_charge, $calculated_cod);
-        }
+        // COD Calculation using unified RateCard method
+        $cod_charge = $rateCard->calculateCodCharge($invoice_value, $is_cod);
 
         // QC Charges (RVP)
         $qc_charge = 0;

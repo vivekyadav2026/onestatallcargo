@@ -364,6 +364,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipments/{id}/evidence', [\App\Http\Controllers\EvidenceController::class, 'getForShipment'])->name('hub.shipments.evidence');
         Route::get('/profile', [\App\Http\Controllers\HubDashboardController::class, 'profile'])->name('hub.profile');
         Route::post('/profile', [\App\Http\Controllers\HubDashboardController::class, 'updateProfile'])->name('hub.profile.update');
+        Route::get('/warehouses', [\App\Http\Controllers\SettingsController::class, 'getWarehouses'])->name('hub.warehouses.index');
+        Route::post('/warehouses', [\App\Http\Controllers\SettingsController::class, 'createWarehouse'])->name('hub.warehouses.store');
+        Route::put('/warehouses/{id}', [\App\Http\Controllers\SettingsController::class, 'updateWarehouse'])->name('hub.warehouses.update');
+        Route::delete('/warehouses/{id}', [\App\Http\Controllers\SettingsController::class, 'deleteWarehouse'])->name('hub.warehouses.delete');
+        Route::post('/warehouses/{id}/default', [\App\Http\Controllers\SettingsController::class, 'setDefaultWarehouse'])->name('hub.warehouses.default');
         
         // KYC Submission
         Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('hub.kyc.submit');
