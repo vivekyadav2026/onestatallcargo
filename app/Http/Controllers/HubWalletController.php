@@ -64,7 +64,7 @@ class HubWalletController extends Controller
                 ->where(function($q) {
                     $q->where('cod_remitted', 0)->orWhereNull('cod_remitted');
                 })
-                ->sum('total_amount'); // assuming total_amount holds COD value
+                ->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(cod_amount, invoice_value, 0)'));
                 
             // Total Earnings (e.g., 20% of shipping charge of delivered shipments in their scope)
             // Just a placeholder calculation for Franchise earnings
@@ -102,7 +102,7 @@ class HubWalletController extends Controller
                 $q->where('cod_remitted', 0)->orWhereNull('cod_remitted');
             });
 
-        $pendingCodAmount = (clone $deliveredQuery)->sum('total_amount');
+        $pendingCodAmount = (clone $deliveredQuery)->sum(\Illuminate\Support\Facades\DB::raw('COALESCE(cod_amount, invoice_value, 0)'));
 
         if ($pendingCodAmount <= 0) {
             return back()->with('error', 'No pending COD amount to remit.');
@@ -130,6 +130,6 @@ class HubWalletController extends Controller
             }
         });
 
-        return back()->with('success', 'COD Remittance of ?' . number_format($pendingCodAmount, 2) . ' successful.');
+        return back()->with('success', 'COD Remittance of ₹' . number_format($pendingCodAmount, 2) . ' successful.');
     }
 }

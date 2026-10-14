@@ -18,8 +18,8 @@ class AdminController extends Controller
         $yesterdayDelivered = Shipment::where('status', 'Delivered')->whereDate('updated_at', $yesterday)->count();
         $yesterdayRto = Shipment::whereIn('status', ['RTO Initiated', 'RTO Delivered'])->whereDate('updated_at', $yesterday)->count();
         $yesterdayNdr = Shipment::where('status', 'NDR')->whereDate('updated_at', $yesterday)->count();
-        $yesterdayRevenue = WalletTransaction::where('type', 'debit')->where('status', 'success')->whereDate('created_at', $yesterday)->sum('amount');
-        $yesterdaySettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'success')->whereDate('created_at', $yesterday)->sum('amount');
+        $yesterdayRevenue = WalletTransaction::where('type', 'debit')->where('status', '!=', 'failed')->whereDate('created_at', $yesterday)->sum('amount');
+        $yesterdaySettlements = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', true)->whereDate('updated_at', $yesterday)->sum(DB::raw('COALESCE(cod_amount, invoice_value, 0)'));
         
         $totalShipments = Shipment::count();
         $inTransit = Shipment::whereIn('status', ['Manifested', 'In Transit', 'Received', 'Out for Delivery'])->count();
@@ -29,8 +29,8 @@ class AdminController extends Controller
         $ndrCount = Shipment::where('status', 'NDR')->count();
         $rtoCount = Shipment::whereIn('status', ['RTO Initiated', 'RTO Delivered'])->count();
         
-        $totalRevenue = WalletTransaction::where('type', 'debit')->where('status', 'success')->sum('amount');
-        $totalSettlements = WalletTransaction::where('type', 'cod_remittance')->where('status', 'success')->sum('amount');
+        $totalRevenue = WalletTransaction::where('type', 'debit')->where('status', '!=', 'failed')->sum('amount');
+        $totalSettlements = Shipment::where('is_cod', true)->where('status', 'Delivered')->where('cod_remitted', true)->sum(DB::raw('COALESCE(cod_amount, invoice_value, 0)'));
 
         // Couriers performance
         $couriers = DB::table('shipments')

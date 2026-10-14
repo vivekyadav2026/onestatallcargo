@@ -58,7 +58,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('hub.shipments.index') }}?user_id={{ $seller->id }}" class="px-3 py-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold text-xs rounded-lg transition-colors">
+                                <a href="{{ route('hub.shipments') }}?user_id={{ $seller->id }}" class="px-3 py-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold text-xs rounded-lg transition-colors">
                                     View Shipments
                                 </a>
                             </td>

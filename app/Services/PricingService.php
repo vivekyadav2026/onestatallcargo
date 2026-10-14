@@ -17,7 +17,7 @@ class PricingService
         }
 
         if ($fulfillment_type === 'external' && $provider_id) {
-            return $this->calculateExternalRate($provider_id, $pickup_pin, $delivery_pin, max($physical_weight, ($l * $b * $h) / 5000));
+            return $this->calculateExternalRate($provider_id, $pickup_pin, $delivery_pin, max($physical_weight, ($l * $b * $h) / 5000), $is_cod, $invoice_value);
         }
 
         throw new \Exception("Invalid fulfillment type or provider");

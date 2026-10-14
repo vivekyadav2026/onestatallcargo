@@ -22,6 +22,20 @@ class EvidenceController extends Controller
             'remarks' => 'nullable|string'
         ]);
 
+        $user = auth()->user();
+        $shipment = Shipment::findOrFail($request->shipment_id);
+
+        // Authorize: Admin, Owner Seller, Assigned Rider, or Assigned Franchise Hub
+        $isAdmin = in_array($user->role, ['admin', 'super_admin', 'operations']);
+        $isOwner = $shipment->user_id === $user->id;
+        $isAssignedRider = $shipment->rider_id === $user->id;
+        $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
+        $isFranchise = $franchise && $shipment->franchise_id === $franchise->id;
+
+        if (!$isAdmin && !$isOwner && !$isAssignedRider && !$isFranchise) {
+            abort(403, 'Unauthorized to upload evidence for this shipment.');
+        }
+
         $file = $request->file('media_file');
         $extension = $file->getClientOriginalExtension();
         $mediaType = in_array(strtolower($extension), ['jpg', 'jpeg', 'png']) ? 'image' : 'video';
@@ -31,7 +45,7 @@ class EvidenceController extends Controller
 
         $evidence = MediaEvidence::create([
             'shipment_id' => $request->shipment_id,
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'type' => $request->type,
             'media_type' => $mediaType,
             'media_url' => '/storage/' . $path,
@@ -50,6 +64,19 @@ class EvidenceController extends Controller
      */
     public function getForShipment($shipment_id)
     {
+        $user = auth()->user();
+        $shipment = Shipment::findOrFail($shipment_id);
+
+        $isAdmin = in_array($user->role, ['admin', 'super_admin', 'operations']);
+        $isOwner = $shipment->user_id === $user->id;
+        $isAssignedRider = $shipment->rider_id === $user->id;
+        $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
+        $isFranchise = $franchise && $shipment->franchise_id === $franchise->id;
+
+        if (!$isAdmin && !$isOwner && !$isAssignedRider && !$isFranchise) {
+            abort(403, 'Unauthorized to view evidence for this shipment.');
+        }
+
         $evidences = MediaEvidence::with('user')->where('shipment_id', $shipment_id)->latest()->get();
         return response()->json([
             'success' => true,

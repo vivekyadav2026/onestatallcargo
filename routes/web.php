@@ -163,12 +163,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/shipments/create', [\App\Http\Controllers\AdminShipmentController::class, 'create'])->name('admin.shipments.create');
         Route::post('/shipments', [\App\Http\Controllers\AdminShipmentController::class, 'store'])->name('admin.shipments.store');
         
-        // Rate Cards
-        Route::post('/ratecards/{id}/duplicate', [\App\Http\Controllers\AdminRateCardController::class, 'duplicate'])->name('admin.ratecards.duplicate');
-        Route::post('/ratecards/{id}/activate', [\App\Http\Controllers\AdminRateCardController::class, 'activate'])->name('admin.ratecards.activate');
-        Route::post('/ratecards/{id}/preview', [\App\Http\Controllers\AdminRateCardController::class, 'preview'])->name('admin.ratecards.preview');
-        Route::resource('ratecards', \App\Http\Controllers\AdminRateCardController::class, ['as' => 'admin']);
-        
         Route::resource('serviceability', \App\Http\Controllers\AdminServiceabilityController::class, ['as' => 'admin']);
         Route::get('/pickups', [\App\Http\Controllers\AdminPickupController::class, 'index'])->name('admin.pickups.index');
         Route::post('/pickups/assign', [\App\Http\Controllers\AdminPickupController::class, 'assignRider'])->name('admin.pickups.assign');
@@ -188,10 +182,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/hubs/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggle'])->name('admin.hubs.toggle');
         Route::post('/hubs/franchise/{id}/approve', [\App\Http\Controllers\AdminHubController::class, 'approveFranchise'])->name('admin.hubs.approve_franchise');
         Route::post('/hubs/franchise/{id}/reject', [\App\Http\Controllers\AdminHubController::class, 'rejectFranchise'])->name('admin.hubs.reject_franchise');
-        
-        
-        Route::post('/couriers/{id}/update', [\App\Http\Controllers\AdminCourierController::class, 'update'])->name('admin.couriers.update');
-        Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
         
                 Route::get('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'index'])->name('admin.customers.index');
         Route::post('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'store'])->name('admin.customers.store');
@@ -214,7 +204,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/riders/{id}/update', [\App\Http\Controllers\AdminRiderController::class, 'update'])->name('admin.riders.update');
         Route::get('/riders/{id}/report', [\App\Http\Controllers\AdminRiderController::class, 'report'])->name('admin.riders.report');
         Route::post('/riders/{id}/delete', [\App\Http\Controllers\AdminRiderController::class, 'destroy'])->name('admin.riders.destroy');
-        Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         Route::post('/billing/remit/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remit'])->name('admin.billing.remit');
         Route::post('/billing/remit-early/{userId}', [\App\Http\Controllers\AdminBillingController::class, 'remitEarlyCod'])->name('admin.billing.remit-early');
         
@@ -253,15 +242,26 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/billing', [\App\Http\Controllers\AdminBillingController::class, 'index'])->name('admin.billing.index');
             Route::post('/billing/{id}/pay', [\App\Http\Controllers\AdminBillingController::class, 'recordPayment'])->name('admin.billing.pay');
             Route::get('/billing/invoices', [\App\Http\Controllers\AdminBillingController::class, 'invoices'])->name('admin.billing.invoices');
-            Route::get('/ratecards', [\App\Http\Controllers\AdminRateCardController::class, 'index'])->name('admin.ratecards.index');
-            Route::post('/ratecards', [\App\Http\Controllers\AdminRateCardController::class, 'store'])->name('admin.ratecards.store');
-            Route::get('/ratecards/create', [\App\Http\Controllers\AdminRateCardController::class, 'create'])->name('admin.ratecards.create');
-            Route::get('/ratecards/{id}/edit', [\App\Http\Controllers\AdminRateCardController::class, 'edit'])->name('admin.ratecards.edit');
-            Route::put('/ratecards/{id}', [\App\Http\Controllers\AdminRateCardController::class, 'update'])->name('admin.ratecards.update');
+            // Rate Cards
+            Route::post('/ratecards/{id}/duplicate', [\App\Http\Controllers\AdminRateCardController::class, 'duplicate'])->name('admin.ratecards.duplicate');
+            Route::post('/ratecards/{id}/activate', [\App\Http\Controllers\AdminRateCardController::class, 'activate'])->name('admin.ratecards.activate');
+            Route::post('/ratecards/{id}/preview', [\App\Http\Controllers\AdminRateCardController::class, 'preview'])->name('admin.ratecards.preview');
+            Route::resource('ratecards', \App\Http\Controllers\AdminRateCardController::class, ['as' => 'admin']);
+
+            // Rates (Legacy Rate Rules)
+            Route::get('/rates', [\App\Http\Controllers\AdminRateController::class, 'index'])->name('admin.rates.index');
+            Route::post('/rates', [\App\Http\Controllers\AdminRateController::class, 'store'])->name('admin.rates.store');
+            Route::put('/rates/{id}', [\App\Http\Controllers\AdminRateController::class, 'update'])->name('admin.rates.update');
+
+            // Couriers
             Route::get('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'index'])->name('admin.couriers.index');
             Route::post('/couriers', [\App\Http\Controllers\AdminCourierController::class, 'store'])->name('admin.couriers.store');
+            Route::post('/couriers/{id}/update', [\App\Http\Controllers\AdminCourierController::class, 'update'])->name('admin.couriers.update');
             Route::post('/couriers/{id}/toggle', [\App\Http\Controllers\AdminCourierController::class, 'toggle'])->name('admin.couriers.toggle');
+
+            // Integrations
             Route::get('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'index'])->name('admin.integrations');
+            Route::post('/integrations', [\App\Http\Controllers\AdminIntegrationController::class, 'save'])->name('admin.integrations.save');
         });
 
     });

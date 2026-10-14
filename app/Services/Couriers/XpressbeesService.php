@@ -57,8 +57,19 @@ class XpressbeesService implements CourierInterface
         $zoneIndex = $this->detectZone($pickup_pincode, $delivery_pincode);
         $zoneName = 'Zone ' . ($zoneIndex + 1);
 
-        // Fetch dynamic RateCard for Xpressbees (Courier ID 2)
-        $rateCard = RateCard::with('zones')->where('courier_id', 2)->where('is_active', true)->latest()->first();
+        // Fetch dynamic RateCard for Xpressbees
+        $courier = \App\Models\Courier::where('name', 'LIKE', '%Xpressbees%')->first();
+        $rateCard = RateCard::with('zones')
+            ->where('is_active', true)
+            ->where(function($q) use ($courier) {
+                if ($courier) {
+                    $q->where('courier_id', $courier->id);
+                } else {
+                    $q->where('courier_id', 2);
+                }
+            })
+            ->latest()
+            ->first();
         
         if (!$rateCard) {
             return ['status' => 'error', 'message' => 'Active rate card not found for Xpressbees'];

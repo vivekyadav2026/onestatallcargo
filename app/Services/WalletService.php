@@ -34,6 +34,7 @@ class WalletService
                 'amount' => $amount,
                 'description' => $description,
                 'reference_id' => $reference,
+                'status' => 'success',
                 'balance_after' => $user->wallet_balance
             ]);
 
@@ -64,6 +65,7 @@ class WalletService
                 'amount' => $amount,
                 'description' => $description,
                 'reference_id' => $reference,
+                'status' => 'success',
                 'balance_after' => $user->wallet_balance
             ]);
 

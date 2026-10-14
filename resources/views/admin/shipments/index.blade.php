@@ -10,7 +10,10 @@
             <p class="text-sm text-gray-500 mt-1">View and manage all B2B and B2C shipments</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.reports.export') }}" class="btn btn-secondary text-sm"><i class="fa-solid fa-download"></i> Export CSV</a>
+            <a href="{{ route('admin.shipments.create') }}" class="px-4 py-2 bg-[var(--gold)] text-gray-900 font-bold rounded-xl shadow-sm hover:bg-yellow-500 transition text-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Book Shipment
+            </a>
+            <a href="{{ route('admin.reports.export') }}" class="btn btn-secondary text-sm flex items-center gap-2"><i class="fa-solid fa-download"></i> Export CSV</a>
         </div>
     </div>
 

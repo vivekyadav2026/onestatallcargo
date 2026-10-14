@@ -89,16 +89,14 @@ class ShipmentApiController extends Controller
 
         $totalAmount = $rateData['total'];
 
-        if (!$validated['is_cod']) {
-            try {
-                app(\App\Services\WalletService::class)->deduct(
-                    $user->id,
-                    $totalAmount,
-                    'Shipment Booking Deduction'
-                );
-            } catch (\Exception $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()], 402);
-            }
+        try {
+            app(\App\Services\WalletService::class)->deduct(
+                $user->id,
+                $totalAmount,
+                'Shipment Booking Deduction'
+            );
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 402);
         }
 
         $validated['shipping_charge'] = $totalAmount;

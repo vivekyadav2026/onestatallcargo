@@ -128,25 +128,31 @@ class CashfreeController extends Controller
         ]);
 
         $orderId = $request->order_id;
-        $transaction = WalletTransaction::where('reference_id', $orderId)->firstOrFail();
+        $transaction = WalletTransaction::where('reference_id', $orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
 
         // If already processed
         if ($transaction->status === 'success') {
             return response()->json(['success' => true, 'message' => 'Already verified']);
         }
 
-        // Check if mock mode
-        if ($request->mock_mode) {
+        $appId = \App\Models\Setting::where('key', 'cashfree_app_id')->value('value');
+        $isTestMode = (empty($appId) || $appId === 'TEST_APP_ID') && app()->environment('local');
+
+        // Allow mock mode strictly in local environment when test keys are used
+        if ($request->mock_mode && $isTestMode) {
             $transaction->status = 'success';
             $transaction->save();
             
-            $user = $transaction->user;
-            $user->wallet_balance += $transaction->amount;
-            $user->save();
+            app(\App\Services\WalletService::class)->credit(
+                $transaction->user_id,
+                $transaction->amount,
+                'Wallet Recharge (Test Mode Verification)',
+                $transaction->reference_id
+            );
 
-            $transaction->balance_after = $user->wallet_balance;
-            $transaction->save();
-
+            $user = $transaction->user->fresh();
             return response()->json(['success' => true, 'new_balance' => $user->wallet_balance]);
         }
 
@@ -160,13 +166,14 @@ class CashfreeController extends Controller
                 $transaction->status = 'success';
                 $transaction->save();
 
-                $user = $transaction->user;
-                $user->wallet_balance += $transaction->amount;
-                $user->save();
+                app(\App\Services\WalletService::class)->credit(
+                    $transaction->user_id,
+                    $transaction->amount,
+                    'Wallet Recharge via Cashfree',
+                    $transaction->reference_id
+                );
 
-                $transaction->balance_after = $user->wallet_balance;
-                $transaction->save();
-
+                $user = $transaction->user->fresh();
                 return response()->json(['success' => true, 'new_balance' => $user->wallet_balance]);
             }
         }

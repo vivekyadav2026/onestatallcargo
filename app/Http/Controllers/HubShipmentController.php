@@ -87,7 +87,7 @@ class HubShipmentController extends Controller
         // KYC Check: Shipment cannot be booked/shipped without approved KYC
         $kyc = \App\Models\Kyc::where('user_id', $user->id)->first();
         if (!$kyc || $kyc->status !== 'approved') {
-            return redirect()->route('seller.settings', ['view' => 'kyc'])
+            return redirect()->route('hub.profile')
                 ->with('error', 'KYC Verification Required! Please complete and get your KYC approved before shipping orders.');
         }
         

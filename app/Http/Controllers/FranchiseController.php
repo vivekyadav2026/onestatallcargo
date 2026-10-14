@@ -11,7 +11,7 @@ class FranchiseController extends Controller
 {
     public function create()
     {
-        return view('franchise.register');
+        return view('franchise');
     }
 
     public function store(Request $request)

@@ -131,16 +131,20 @@ class ExternalCourierController extends Controller
 
         $shippingCharge = $rateData['total'];
 
-        if (!$validated['is_cod']) {
-            try {
-                app(\App\Services\WalletService::class)->deduct(
-                    $user->id,
-                    $shippingCharge,
-                    'External API Booking Deduction'
-                );
-            } catch (\Exception $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()], 402);
-            }
+        // Enforce KYC verification
+        $kyc = \App\Models\Kyc::where('user_id', $user->id)->first();
+        if (!$kyc || $kyc->status !== 'approved') {
+            return response()->json(['status' => 'error', 'message' => 'KYC Verification Required! Please complete and get your KYC approved before creating shipments.'], 403);
+        }
+
+        try {
+            app(\App\Services\WalletService::class)->deduct(
+                $user->id,
+                $shippingCharge,
+                'External API Booking Deduction: Order #' . $validated['order_id']
+            );
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Insufficient wallet balance: ' . $e->getMessage()], 402);
         }
 
         $validated['shipping_charge'] = $shippingCharge;

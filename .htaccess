@@ -1,10 +1,18 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # Block sensitive files directly
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|package\.(json|lock)|artisan|phpunit\.xml) - [F,L,NC]
+
     # Hide the "public" directory from the URL
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
+
+<FilesMatch "^\.(env|git|editorconfig|sqlite)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
 
 # Prevent directory listing
 Options -Indexes

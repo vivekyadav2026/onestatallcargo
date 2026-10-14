@@ -30,7 +30,7 @@ class AdminShipmentController extends Controller
 
     public function create()
     {
-        $sellers = \App\Models\User::where('user_type', 'seller')->get();
+        $sellers = \App\Models\User::whereIn('role', ['seller', 'aggregator', 'corporate', 'b2b_customer'])->get();
         return view('admin.shipments.create', compact('sellers'));
     }
 
@@ -81,16 +81,14 @@ class AdminShipmentController extends Controller
 
         $totalAmount = $rateData['total'];
 
-        if (!$validated['is_cod']) {
-            try {
-                app(\App\Services\WalletService::class)->deduct(
-                    $validated['user_id'],
-                    $totalAmount,
-                    'Admin Manual Booking Deduction'
-                );
-            } catch (\Exception $e) {
-                return back()->with('error', $e->getMessage());
-            }
+        try {
+            app(\App\Services\WalletService::class)->deduct(
+                $validated['user_id'],
+                $totalAmount,
+                'Admin Manual Booking Deduction'
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
 
         $validated['shipping_charge'] = $totalAmount;

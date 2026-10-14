@@ -138,7 +138,6 @@ class SellerShipmentController extends Controller
             'payment_mode' => 'nullable|string',
             'cod_amount' => 'nullable|numeric',
             'invoice_value' => 'nullable|numeric',
-            'cod_amount' => 'nullable|numeric',
         ]);
 
         $user = Auth::user();
@@ -161,6 +160,8 @@ class SellerShipmentController extends Controller
         }
 
         $isInternational = ($validated['shipment_type'] ?? '') === 'International';
+        $is_cod = ($request->input('payment_mode') === 'COD');
+        $codOrInvoiceVal = (float)($validated['cod_amount'] ?? $validated['invoice_value'] ?? 0);
 
         // Auto-resolve pickup location / warehouse
         if (empty($validated['pickup_pincode']) && $request->filled('pickup_location')) {
@@ -209,8 +210,8 @@ class SellerShipmentController extends Controller
                     (float)($request->input('length_cm', 10)),
                     (float)($request->input('width_cm', 10)),
                     (float)($request->input('height_cm', 10)),
-                    $validated['is_cod'] ?? false,
-                    (float)($validated['invoice_value'] ?? 0),
+                    $is_cod,
+                    $codOrInvoiceVal,
                     false, false, 0,
                     $routing['provider_id']
                 );
@@ -219,8 +220,6 @@ class SellerShipmentController extends Controller
                 $totalAmount = max(50, round((float)$validated['weight_kg'] * 60, 2));
             }
         }
-
-        $is_cod = ($request->input('payment_mode') === 'COD');
         
         if (!$isEdit) {
             try {

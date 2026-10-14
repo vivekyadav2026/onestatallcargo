@@ -57,8 +57,29 @@ class SellerWeightController extends Controller
 
         if ($validated['action'] === 'accept') {
             $discrepancy->status = 'accepted';
-            // Here you would also deduct from wallet:
-            // \App\Models\WalletTransaction::create([... deduction logic ...]);
+            try {
+                app(\App\Services\WalletService::class)->deduct(
+                    Auth::id(),
+                    $discrepancy->discrepancy_fee,
+                    'Accepted weight discrepancy charge for AWB ' . ($discrepancy->shipment->awb_number ?? 'N/A'),
+                    $discrepancy->shipment->awb_number ?? (string)$discrepancy->shipment_id
+                );
+            } catch (\Exception $e) {
+                // Deduct into negative balance if wallet is empty
+                $user = Auth::user();
+                $user->wallet_balance -= $discrepancy->discrepancy_fee;
+                $user->save();
+
+                \App\Models\WalletTransaction::create([
+                    'user_id' => $user->id,
+                    'type' => 'debit',
+                    'amount' => $discrepancy->discrepancy_fee,
+                    'description' => 'Accepted weight discrepancy charge for AWB ' . ($discrepancy->shipment->awb_number ?? 'N/A'),
+                    'reference_id' => $discrepancy->shipment->awb_number ?? (string)$discrepancy->shipment_id,
+                    'status' => 'success',
+                    'balance_after' => $user->wallet_balance
+                ]);
+            }
         } else {
             $discrepancy->status = 'disputed';
             if ($request->hasFile('evidence_image')) {

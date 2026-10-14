@@ -26,15 +26,30 @@ class AdminWeightController extends Controller
         $discrepancy->save();
 
         if ($validated['action'] === 'courier_won') {
-            // Deduct from seller wallet
-            WalletTransaction::create([
-                'user_id' => $discrepancy->user_id,
-                'type' => 'debit',
-                'amount' => $discrepancy->discrepancy_fee,
-                'description' => 'Weight discrepancy charge for AWB ' . ($discrepancy->shipment->awb_number ?? 'N/A'),
-                'reference_id' => $discrepancy->shipment_id,
-                'status' => 'completed'
-            ]);
+            try {
+                app(\App\Services\WalletService::class)->deduct(
+                    $discrepancy->user_id,
+                    $discrepancy->discrepancy_fee,
+                    'Weight discrepancy charge for AWB ' . ($discrepancy->shipment->awb_number ?? 'N/A'),
+                    $discrepancy->shipment->awb_number ?? (string)$discrepancy->shipment_id
+                );
+            } catch (\Exception $e) {
+                // If wallet balance was insufficient, allow negative balance adjustment
+                $user = \App\Models\User::find($discrepancy->user_id);
+                if ($user) {
+                    $user->wallet_balance -= $discrepancy->discrepancy_fee;
+                    $user->save();
+                    WalletTransaction::create([
+                        'user_id' => $user->id,
+                        'type' => 'debit',
+                        'amount' => $discrepancy->discrepancy_fee,
+                        'description' => 'Weight discrepancy charge for AWB ' . ($discrepancy->shipment->awb_number ?? 'N/A'),
+                        'reference_id' => $discrepancy->shipment->awb_number ?? (string)$discrepancy->shipment_id,
+                        'status' => 'success',
+                        'balance_after' => $user->wallet_balance
+                    ]);
+                }
+            }
         }
 
         return back()->with('success', 'Discrepancy resolved successfully.');

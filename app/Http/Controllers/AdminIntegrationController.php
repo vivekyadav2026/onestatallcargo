@@ -27,6 +27,8 @@ class AdminIntegrationController extends Controller {
             );
         }
 
+        Cache::forget('global_settings');
+
         return back()->with('success', 'Integration settings updated and saved securely.');
     }
 }
