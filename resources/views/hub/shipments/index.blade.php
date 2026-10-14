@@ -249,13 +249,33 @@
                             <td class="px-3 py-4 align-top text-right sticky right-0 bg-white group-hover:bg-gray-50 shadow-[-3px_0_6px_rgba(0,0,0,0.04)]" :class="openMenu ? 'z-[999]' : 'z-10'" x-data="{ openMenu: false }">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($isKycApproved)
-                                        @if(in_array(strtolower($shipment->status), ['new', 'manifested', 'booked']))
-                                            <form action="{{ route('hub.shipments.shipNow', $shipment->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                <button type="submit" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition">
-                                                    Ship Now
-                                                </button>
-                                            </form>
+                                        @php
+                                            $stLower = strtolower($shipment->status);
+                                        @endphp
+                                        @if(in_array($stLower, ['new', 'manifested', 'booked']))
+                                            <button type="button" @click.prevent="openCourierSelection({
+                                                id: {{ $shipment->id }},
+                                                awb_number: '{{ $shipment->awb_number }}',
+                                                weight_kg: {{ $shipment->weight_kg ?? 0.5 }},
+                                                length_cm: {{ $shipment->length_cm ?? 10 }},
+                                                width_cm: {{ $shipment->width_cm ?? 10 }},
+                                                height_cm: {{ $shipment->height_cm ?? 10 }},
+                                                pincode: '{{ $shipment->delivery_pincode }}'
+                                            })" class="px-3 py-1.5 bg-[#1e1b4b] hover:bg-black text-white text-xs font-bold rounded-lg shadow-sm transition">
+                                                Ship Now
+                                            </button>
+                                        @elseif($stLower === 'cancelled')
+                                            <span class="px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-lg shadow-sm border border-rose-200 inline-flex items-center">
+                                                <i class="fa-solid fa-ban mr-1"></i> Cancelled
+                                            </span>
+                                        @elseif($stLower === 'delivered')
+                                            <span class="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg shadow-sm border border-emerald-200 inline-flex items-center">
+                                                <i class="fa-solid fa-circle-check mr-1"></i> Delivered
+                                            </span>
+                                        @elseif($stLower === 'rto')
+                                            <span class="px-3 py-1.5 bg-orange-50 text-orange-700 text-xs font-bold rounded-lg shadow-sm border border-orange-200 inline-flex items-center">
+                                                <i class="fa-solid fa-rotate-left mr-1"></i> RTO
+                                            </span>
                                         @else
                                             <button type="button" disabled class="px-3 py-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg shadow-sm cursor-not-allowed border border-emerald-200">
                                                 <i class="fa-solid fa-check mr-1"></i> Shipped
@@ -495,6 +515,102 @@
             </div>
         </div>
     </div>
+    <!-- COURIER SELECTION MODAL -->
+    <div x-show="showCourierModal" style="display: none;" class="fixed inset-0 z-[100] overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div x-show="showCourierModal" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75" @click="showCourierModal = false"></div>
+            
+            <div x-show="showCourierModal" x-transition class="relative inline-block w-full max-w-4xl p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl">
+                
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-4">
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 tracking-tight">Select Courier for <span class="text-indigo-700" x-text="activeShipment.awb_number"></span></h3>
+                        <div class="text-xs text-gray-500 font-semibold mt-1">
+                            Dead Wt: <span x-text="activeShipment.weight_kg"></span>kg | Vol Wt: <span x-text="volumetricWeight()"></span>kg
+                            <span class="ml-2 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md font-bold">Charged Wt: <span x-text="chargeableWeight()"></span>kg</span>
+                        </div>
+                    </div>
+                    <button @click="showCourierModal = false" class="text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-full p-2 transition">
+                        <i class="fa-solid fa-xmark text-lg w-5 h-5 flex items-center justify-center"></i>
+                    </button>
+                </div>
+
+                <!-- Courier List -->
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <template x-if="isCalculating">
+                        <div class="py-10 text-center">
+                            <i class="fa-solid fa-circle-notch fa-spin text-indigo-600 text-3xl mb-3"></i>
+                            <p class="text-sm font-bold text-gray-500">Fetching live courier rates...</p>
+                        </div>
+                    </template>
+
+                    <template x-if="!isCalculating">
+                        <div>
+                            <template x-for="courier in courierRates" :key="courier.name">
+                                <div class="flex items-center justify-between p-4 border rounded-xl mb-3 transition" :class="selectedCourier.name === courier.name ? 'border-indigo-600 bg-indigo-50/30 shadow-md ring-1 ring-indigo-600' : 'border-gray-200 hover:border-indigo-300 hover:shadow-sm bg-white'">
+                                    
+                                    <div class="flex items-center gap-4 cursor-pointer flex-1" @click="selectedCourier = courier">
+                                        <div class="w-5 h-5 rounded-full border flex items-center justify-center shrink-0" :class="selectedCourier.name === courier.name ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'">
+                                            <div class="w-2 h-2 rounded-full bg-white" x-show="selectedCourier.name === courier.name"></div>
+                                        </div>
+                                        
+                                        <!-- Courier Logo -->
+                                        <div class="w-12 h-12 rounded bg-white border border-gray-100 flex items-center justify-center p-1 shrink-0 overflow-hidden shadow-sm">
+                                            <img :src="getLogo(courier.name)" :alt="courier.name" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?background=ffffff&color=000&name=' + encodeURIComponent(this.alt);">
+                                        </div>
+
+                                        <div>
+                                            <div class="font-black text-gray-900 text-base flex items-center gap-2">
+                                                <span x-text="courier.name"></span>
+                                                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] rounded uppercase tracking-wider" x-show="courier.recommended">Recommended</span>
+                                            </div>
+                                            <div class="text-xs font-semibold mt-1 flex items-center gap-2">
+                                                <span :class="(courier.transport_mode || '').toLowerCase() === 'air' ? 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1' : 'text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1'">
+                                                    <i class="fa-solid" :class="(courier.transport_mode || '').toLowerCase() === 'air' ? 'fa-plane' : 'fa-truck-fast'"></i>
+                                                    <span x-text="courier.transport_mode || 'Surface'"></span>
+                                                </span>
+                                                <span class="text-gray-400">|</span>
+                                                <span class="text-gray-500">Est. Delivery: <span x-text="courier.eta"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <div class="text-2xl font-black text-gray-900">&#8377;<span x-text="courier.rate"></span></div>
+                                        <div class="text-[10px] text-gray-400 font-bold uppercase mt-0.5">Shipping Fee</div>
+                                    </div>
+
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Footer Action -->
+                <div class="flex justify-between items-center mt-6 pt-5 border-t border-gray-100">
+                    <div class="text-sm font-bold text-gray-600">
+                        Wallet Balance: <span class="text-gray-900">&#8377;{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</span>
+                    </div>
+                    <div class="flex gap-3">
+                        <button @click="showCourierModal = false" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">Cancel</button>
+                        
+                        <form :action="`{{ url('hub/shipments') }}/${activeShipment.id}/ship-now`" method="POST" @submit="isSubmitting = true">
+                            @csrf
+                            <input type="hidden" name="courier_partner" :value="selectedCourier.name">
+                            <input type="hidden" name="shipping_charge" :value="selectedCourier.rate">
+                            
+                            <button type="submit" :disabled="!selectedCourier.name || isSubmitting" class="px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-md transition flex items-center gap-2" :class="(!selectedCourier.name || isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1e1b4b] hover:bg-black'">
+                                <span x-show="!isSubmitting">Confirm & Ship Order</span>
+                                <span x-show="isSubmitting"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -502,10 +618,67 @@
         Alpine.data('shipmentTable', () => ({
             selectedIds: [],
             allRowIds: [{{ $shipments->pluck('id')->implode(',') }}],
-            showOrderModal: false, activeOrder: {}, openOrderDetails(order) { this.activeOrder = order; this.showOrderModal = true; }, showEwayModal: false,
+            showOrderModal: false, 
+            activeOrder: {}, 
+            openOrderDetails(order) { this.activeOrder = order; this.showOrderModal = true; }, 
+            showEwayModal: false,
             showCommModal: false,
             currentAwb: '',
             ewayNumber: '',
+            
+            showCourierModal: false,
+            activeShipment: {},
+            courierRates: [],
+            selectedCourier: {},
+            isCalculating: false,
+            isSubmitting: false,
+            
+            openCourierSelection(shipment) {
+                this.activeShipment = shipment;
+                this.selectedCourier = {};
+                this.showCourierModal = true;
+                this.isCalculating = true;
+                
+                fetch(`/hub/shipments/${shipment.id}/couriers`)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.courierRates = data;
+                        if(data.length > 0) {
+                            let recommended = data.find(c => c.recommended);
+                            this.selectedCourier = recommended || data[0];
+                        }
+                        this.isCalculating = false;
+                    })
+                    .catch(err => {
+                        console.error('Error fetching couriers', err);
+                        this.isCalculating = false;
+                    });
+            },
+            
+            volumetricWeight() {
+                if(!this.activeShipment.length_cm) return 0;
+                return ((this.activeShipment.length_cm * this.activeShipment.width_cm * this.activeShipment.height_cm) / 5000).toFixed(2);
+            },
+            
+            chargeableWeight() {
+                let vWt = parseFloat(this.volumetricWeight());
+                let dWt = parseFloat(this.activeShipment.weight_kg || 0);
+                let max = Math.max(vWt, dWt);
+                return (Math.ceil(max * 2) / 2).toFixed(2);
+            },
+            
+            getLogo(name) {
+                let n = (name || '').toLowerCase();
+                if (n.includes('xpressbees')) return 'https://ship.onestallcargo.com/images/xpressbees.png';
+                if (n.includes('delhivery')) return 'https://upload.wikimedia.org/wikipedia/commons/9/90/Delhivery_Logo.png';
+                if (n.includes('blue dart')) return 'https://upload.wikimedia.org/wikipedia/commons/2/23/Blue_Dart_logo.png';
+                if (n.includes('ekart')) return 'https://upload.wikimedia.org/wikipedia/commons/6/65/Ekart_Logo.png';
+                if (n.includes('ecom express')) return 'https://upload.wikimedia.org/wikipedia/commons/3/30/Ecom_Express_Logo.png';
+                if (n.includes('india post')) return 'https://upload.wikimedia.org/wikipedia/commons/e/ec/India_Post_Logo.png';
+                if (n.includes('shadowfax')) return 'https://shadowfax.in/images/shadowfax-logo.svg';
+                if (n.includes('onestall')) return 'https://ui-avatars.com/api/?background=1e1b4b&color=fff&name=OS';
+                return 'https://ui-avatars.com/api/?background=f3f4f6&color=374151&name=' + encodeURIComponent(name);
+            },
             
             toggleAll(e) {
                 if (e.target.checked) {

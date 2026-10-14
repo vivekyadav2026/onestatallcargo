@@ -125,6 +125,37 @@
     </div>
     @endif
 
+    <!-- Dedicated Wallet & Quick Actions Banner -->
+    <div class="bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#0f172a] rounded-3xl p-6 text-white shadow-xl mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-5 border border-indigo-950 relative overflow-hidden">
+        <!-- Abstract BG glow -->
+        <div class="absolute right-0 top-0 w-48 h-48 bg-amber-400 opacity-5 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="w-14 h-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center text-3xl text-[var(--gold)] shrink-0 shadow-inner">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-gray-400">Prepaid Wallet Balance</span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">Active</span>
+                </div>
+                <div class="text-3xl lg:text-4xl font-black text-[var(--gold)] tracking-tight mt-0.5">
+                    ₹{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5">Wallet balance is required to deduct shipping charges when booking orders.</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 w-full md:w-auto relative z-10">
+            <a href="{{ route('hub.wallet.index') }}" class="flex-1 md:flex-none px-5 py-3 bg-[#FFD700] hover:bg-yellow-400 text-gray-950 text-xs font-black rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus text-xs"></i> Recharge Wallet
+            </a>
+            <a href="{{ route('hub.shipments.create') }}" class="flex-1 md:flex-none px-5 py-3 bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-2 border border-white/15">
+                <i class="fa-solid fa-pen-to-square text-xs"></i> New Booking
+            </a>
+        </div>
+    </div>
+
     <!-- Top Metrics Grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-8">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">

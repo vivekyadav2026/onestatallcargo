@@ -834,7 +834,7 @@
 
     <!-- ==================== TAB 5: WALLET TRANSACTIONS ==================== -->
     @if($activeTab === 'wallet')
-        <div class="space-y-6">
+        <div class="space-y-6" x-data="{ showCreditModal: false, creditAmount: 500, creditRemarks: '' }">
             <!-- Wallet Balance Card Banner (Enterprise SaaS Style) -->
             <div class="bg-white rounded-2xl border border-gray-200 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -848,10 +848,59 @@
                         Account User: <span class="font-semibold text-gray-800">{{ $franchise->user->name ?? $franchise->owner_name }} ({{ $franchise->user->email ?? $franchise->email }})</span>
                     </div>
                 </div>
-                <div class="shrink-0">
+                <div class="shrink-0 flex items-center gap-3">
+                    <button type="button" @click="showCreditModal = true" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-[#1e1b4b] text-white hover:bg-black shadow-sm transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Credit Wallet
+                    </button>
                     <span class="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 inline-flex items-center gap-1.5">
                         <i class="fa-solid fa-shield-halved text-gray-400"></i> Earnings Segregated From COD
                     </span>
+                </div>
+            </div>
+
+            <!-- Credit Wallet Modal -->
+            <div x-show="showCreditModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm flex items-center justify-center p-4" x-transition.opacity>
+                <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100" @click.away="showCreditModal = false">
+                    <div class="px-6 py-4 bg-[#1e1b4b] text-white flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-amber-400"></i>
+                            <h3 class="font-bold text-sm">Credit Franchise Wallet</h3>
+                        </div>
+                        <button type="button" @click="showCreditModal = false" class="text-gray-300 hover:text-white">
+                            <i class="fa-solid fa-xmark fa-lg"></i>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('admin.franchises.wallet.credit', $franchise->id) }}" method="POST" class="p-6 space-y-4">
+                        @csrf
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 leading-relaxed">
+                            <strong>Note:</strong> Crediting this wallet will allow <strong>{{ $franchise->company_name }}</strong> to book shipments immediately. An audit log with your name will be permanently recorded.
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Credit Amount (₹) <span class="text-red-500">*</span></label>
+                            <input type="number" name="amount" x-model.number="creditAmount" min="1" step="0.01" required placeholder="500" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm font-bold text-gray-900 outline-none focus:border-[#1e1b4b]">
+                            <div class="flex gap-2 mt-2">
+                                <button type="button" @click="creditAmount = 500" class="px-2.5 py-1 text-[11px] font-bold bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">+ ₹500</button>
+                                <button type="button" @click="creditAmount = 1000" class="px-2.5 py-1 text-[11px] font-bold bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">+ ₹1,000</button>
+                                <button type="button" @click="creditAmount = 5000" class="px-2.5 py-1 text-[11px] font-bold bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">+ ₹5,000</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Remarks / Audit Note</label>
+                            <input type="text" name="remarks" x-model="creditRemarks" placeholder="e.g. Promotional Credit / Deposit Topup" maxlength="255" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs outline-none focus:border-[#1e1b4b]">
+                        </div>
+
+                        <div class="flex justify-end items-center gap-3 pt-3 border-t border-gray-100">
+                            <button type="button" @click="showCreditModal = false" class="px-4 py-2 border border-gray-300 rounded-xl text-xs font-bold text-gray-700 hover:bg-gray-50 transition">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-5 py-2 bg-[#1e1b4b] hover:bg-black text-white rounded-xl text-xs font-bold shadow-sm transition inline-flex items-center gap-1.5">
+                                <i class="fa-solid fa-check text-[10px]"></i> Confirm Credit
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

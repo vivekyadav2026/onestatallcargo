@@ -43,6 +43,7 @@ class HubWalletController extends Controller
         // Calculate Pending COD Remittance
         $pendingCod = 0;
         $totalEarnings = 0;
+        $pendingEarnings = 0;
         
         if ($franchise) {
             $pincodes = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : (json_decode($franchise->serviceable_pincodes, true) ?? []);

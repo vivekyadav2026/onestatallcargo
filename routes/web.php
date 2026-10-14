@@ -194,6 +194,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/franchises/{id}/edit', [\App\Http\Controllers\AdminHubController::class, 'editFranchise'])->name('admin.franchises.edit');
         Route::post('/franchises/{id}/update', [\App\Http\Controllers\AdminHubController::class, 'updateFranchise'])->name('admin.franchises.update');
         Route::post('/franchises/{id}/toggle', [\App\Http\Controllers\AdminHubController::class, 'toggleFranchise'])->name('admin.franchises.toggle');
+        Route::post('/franchises/{id}/wallet/credit', [\App\Http\Controllers\AdminHubController::class, 'creditFranchiseWallet'])->name('admin.franchises.wallet.credit');
         
                 Route::get('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'index'])->name('admin.customers.index');
         Route::post('/customers', [\App\Http\Controllers\AdminCustomerController::class, 'store'])->name('admin.customers.store');
@@ -353,6 +354,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/shipments/book', [\App\Http\Controllers\HubShipmentController::class, 'store'])->name('hub.shipments.store');
         Route::post('/shipments/bulk-cancel', [\App\Http\Controllers\HubShipmentController::class, 'bulkCancel'])->name('hub.shipments.bulk-cancel');
         Route::post('/shipments/eway-bill', [\App\Http\Controllers\HubShipmentController::class, 'updateEwayBill'])->name('hub.shipments.eway');
+        Route::get('/shipments/{id}/couriers', [\App\Http\Controllers\HubShipmentController::class, 'getCouriers'])->name('hub.shipments.couriers');
         Route::post('/shipments/{id}/ship-now', [\App\Http\Controllers\HubShipmentController::class, 'shipNowAction'])->name('hub.shipments.shipNow');
         Route::post('/shipments/{id}/cancel', [\App\Http\Controllers\HubShipmentController::class, 'cancel'])->name('hub.shipments.cancel');
         Route::get('/shipments/label/{awb}', [\App\Http\Controllers\HubShipmentController::class, 'printLabel'])->name('hub.label');
@@ -392,7 +394,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/ndr/{id}/action', [\App\Http\Controllers\HubNdrController::class, 'action'])->name('hub.ndr.action');
 
         // Hub Wallet / Commissions
-                        Route::get('/wallet', [\App\Http\Controllers\HubWalletController::class, 'index'])->name('hub.wallet.index');
+        Route::get('/wallet', [\App\Http\Controllers\HubWalletController::class, 'index'])->name('hub.wallet.index');
+        Route::post('/wallet/recharge', [\App\Http\Controllers\CashfreeController::class, 'initiateRecharge'])->name('hub.wallet.recharge');
+        Route::post('/wallet/verify', [\App\Http\Controllers\CashfreeController::class, 'verifyRecharge'])->name('hub.wallet.verify');
         Route::get('/customers', [\App\Http\Controllers\HubCustomerController::class, 'index'])->name('hub.customers.index');
                 Route::post('/customers', [\App\Http\Controllers\HubCustomerController::class, 'store'])->name('hub.customers.store');
                 Route::get('/sellers', [\App\Http\Controllers\HubSellerController::class, 'index'])->name('hub.sellers.index');

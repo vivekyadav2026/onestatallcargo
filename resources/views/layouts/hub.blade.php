@@ -49,6 +49,12 @@
             <a href="{{ route('hub.shipments.create') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.shipments.create') ? 'bg-gray-800 text-white' : '' }}">
                 <i class="fa-solid fa-pen-to-square w-5"></i> New Booking
             </a>
+            <a href="{{ route('hub.wallet.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.wallet.*') ? 'bg-gray-800 text-white' : '' }}">
+                <span class="flex items-center gap-3">
+                    <i class="fa-solid fa-wallet w-5 text-amber-400"></i> Wallet & Recharge
+                </span>
+                <span class="text-[11px] font-black text-[var(--gold)]">₹{{ number_format(Auth::user()->wallet_balance ?? 0, 0) }}</span>
+            </a>
 
             <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">Operations</div>
 
@@ -73,7 +79,7 @@
 
             <div class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest mb-3 ml-2 mt-6">Finance & Network</div>
 
-            <a href="{{ route('hub.wallet.index') ?? '#' }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+            <a href="{{ route('hub.wallet.index') ?? '#' }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition {{ request()->routeIs('hub.wallet.*') ? 'bg-gray-800 text-white' : '' }}">
                 <i class="fa-solid fa-wallet w-5"></i> Earnings & COD
             </a>
             <a href="{{ route('hub.customers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
@@ -130,8 +136,15 @@
                 <h2 class="text-lg lg:text-xl font-extrabold text-gray-900 truncate max-w-[150px] lg:max-w-xs">{{ Auth::user()->name }}</h2>
                 <span class="hidden sm:inline-block px-2.5 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold uppercase rounded-full">Franchise Partner</span>
             </div>
-            <div class="text-xs lg:text-sm font-bold text-gray-500 flex items-center gap-1 lg:gap-2">
-                <i class="fa-solid fa-location-dot"></i> <span class="hidden sm:inline">Your Hub Network</span>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('hub.wallet.index') }}" class="px-3.5 py-1.5 bg-gray-900 hover:bg-black text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition">
+                    <i class="fa-solid fa-wallet text-[var(--gold)]"></i>
+                    <span>₹{{ number_format(Auth::user()->wallet_balance ?? 0, 2) }}</span>
+                    <span class="px-1.5 py-0.5 bg-amber-400/20 text-amber-300 text-[10px] rounded uppercase font-black">+ Recharge</span>
+                </a>
+                <div class="text-xs lg:text-sm font-bold text-gray-500 hidden md:flex items-center gap-1.5 pl-2 border-l border-gray-200">
+                    <i class="fa-solid fa-location-dot"></i> <span class="hidden sm:inline">Your Hub Network</span>
+                </div>
             </div>
         </header>
         

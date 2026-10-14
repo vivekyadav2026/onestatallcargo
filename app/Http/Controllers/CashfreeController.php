@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Str;
 
@@ -84,6 +86,8 @@ class CashfreeController extends Controller
             ]);
         }
 
+        $returnRoute = $user->role === 'franchise' ? route('hub.wallet.index') : route('seller.wallet');
+
         // Real Cashfree API Call
         $payload = [
             'order_id' => $orderId,
@@ -97,7 +101,7 @@ class CashfreeController extends Controller
             ],
             'order_meta' => [
                 // If user is redirected on mobile, they come back to wallet page to verify
-                'return_url' => str_replace('http://', 'https://', route('seller.wallet') . '?order_id={order_id}'),
+                'return_url' => str_replace('http://', 'https://', $returnRoute . '?order_id={order_id}'),
                 'notify_url' => str_replace('http://', 'https://', url('/api/webhooks/cashfree')) // for background verification
             ]
         ];
@@ -128,60 +132,67 @@ class CashfreeController extends Controller
         ]);
 
         $orderId = $request->order_id;
-        $transaction = WalletTransaction::where('reference_id', $orderId)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        // If already processed
-        if ($transaction->status === 'success') {
-            return response()->json(['success' => true, 'message' => 'Already verified']);
-        }
-
+        $userId = auth()->id();
         $appId = \App\Models\Setting::where('key', 'cashfree_app_id')->value('value');
-        $isTestMode = (empty($appId) || $appId === 'TEST_APP_ID') && app()->environment('local');
+        $isTestMode = (empty($appId) || $appId === 'TEST_APP_ID') && (app()->environment('local') || app()->environment('testing'));
 
-        // Allow mock mode strictly in local environment when test keys are used
-        if ($request->mock_mode && $isTestMode) {
-            $transaction->status = 'success';
-            $transaction->save();
-            
-            app(\App\Services\WalletService::class)->credit(
-                $transaction->user_id,
-                $transaction->amount,
-                'Wallet Recharge (Test Mode Verification)',
-                $transaction->reference_id
-            );
+        return DB::transaction(function () use ($orderId, $userId, $request, $isTestMode) {
+            $transaction = WalletTransaction::where('reference_id', $orderId)
+                ->where('user_id', $userId)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            $user = $transaction->user->fresh();
-            return response()->json(['success' => true, 'new_balance' => $user->wallet_balance]);
-        }
+            // Strict Idempotency: If already processed, return success without double crediting
+            if ($transaction->status === 'success') {
+                $user = User::find($userId);
+                return response()->json([
+                    'success' => true, 
+                    'message' => 'Already verified',
+                    'new_balance' => $user->wallet_balance ?? 0
+                ]);
+            }
 
-        // Real Cashfree Verify Call
-        $response = Http::withHeaders($this->getHeaders())
-            ->get($this->getBaseUrl() . '/orders/' . $orderId);
+            $isPaid = false;
+            $description = 'Wallet Recharge via Cashfree';
 
-        if ($response->successful()) {
-            $data = $response->json();
-            if (isset($data['order_status']) && $data['order_status'] === 'PAID') {
+            // Allow mock mode strictly in local environment when test keys are used
+            if ($request->mock_mode && $isTestMode) {
+                $isPaid = true;
+                $description = 'Wallet Recharge (Test Mode Verification)';
+            } else {
+                // Real Cashfree Verify Call
+                $response = Http::withHeaders($this->getHeaders())
+                    ->get($this->getBaseUrl() . '/orders/' . $orderId);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (isset($data['order_status']) && $data['order_status'] === 'PAID') {
+                        $isPaid = true;
+                    }
+                }
+            }
+
+            if ($isPaid) {
+                $user = User::lockForUpdate()->findOrFail($userId);
+                $user->wallet_balance += (float)$transaction->amount;
+                $user->save();
+
                 $transaction->status = 'success';
+                $transaction->description = $description;
+                $transaction->balance_after = $user->wallet_balance;
                 $transaction->save();
 
-                app(\App\Services\WalletService::class)->credit(
-                    $transaction->user_id,
-                    $transaction->amount,
-                    'Wallet Recharge via Cashfree',
-                    $transaction->reference_id
-                );
-
-                $user = $transaction->user->fresh();
-                return response()->json(['success' => true, 'new_balance' => $user->wallet_balance]);
+                return response()->json([
+                    'success' => true,
+                    'new_balance' => $user->wallet_balance
+                ]);
             }
-        }
 
-        $transaction->status = 'failed';
-        $transaction->save();
+            $transaction->status = 'failed';
+            $transaction->save();
 
-        return response()->json(['success' => false, 'message' => 'Payment not verified']);
+            return response()->json(['success' => false, 'message' => 'Payment not verified']);
+        });
     }
 
     public function generateCodLink(Request $request)

@@ -282,9 +282,8 @@ class HubAddressAndBookingTest extends TestCase
         $response = $this->actingAs($this->hubUser)
             ->post(route('hub.shipments.store'), $bookingData);
 
-        // Check redirect is to hub label or hub shipments (NOT seller routes)
-        $response->assertStatus(302);
-        $this->assertStringContainsString('/hub/shipments', $response->headers->get('Location'));
+        // Check redirect is to hub shipments list (Orders table)
+        $response->assertRedirect(route('hub.shipments'));
 
         // Verify shipment record in database
         $shipment = Shipment::where('order_id', 'HUB-ORD-1001')->first();
@@ -359,8 +358,7 @@ class HubAddressAndBookingTest extends TestCase
         $response = $this->actingAs($this->hubUser)
             ->post(route('hub.shipments.store'), $bookingData);
 
-        $response->assertStatus(302);
-        $this->assertStringContainsString('/hub/shipments', $response->headers->get('Location'));
+        $response->assertRedirect(route('hub.shipments'));
 
         $shipment = Shipment::where('order_id', 'HUB-COD-2002')->first();
         $this->assertNotNull($shipment);
@@ -490,6 +488,99 @@ class HubAddressAndBookingTest extends TestCase
             'order_id' => 'SELLER-REGRESSION-01',
             'user_id' => $seller->id,
             'receiver_name' => 'Deepak Gupta',
+        ]);
+    }
+
+    /**
+     * Test 11: Hub Ship Now action marks shipment as Pickup Scheduled without print redirection.
+     */
+    public function test_hub_ship_now_action_schedules_pickup_without_triggering_print(): void
+    {
+        $shipment = Shipment::create([
+            'user_id' => $this->hubUser->id,
+            'awb_number' => 'OSCSHIPNOW01',
+            'order_id' => 'HUB-SHIP-NOW-01',
+            'shipment_type' => 'B2C',
+            'receiver_name' => 'Kavita Singh',
+            'receiver_phone' => '9829123456',
+            'delivery_address' => 'Station Road',
+            'delivery_city' => 'Jaipur',
+            'delivery_pincode' => '302001',
+            'weight_kg' => 1.0,
+            'invoice_value' => 500.00,
+            'total_amount' => 70.00,
+            'status' => 'Manifested',
+        ]);
+
+        $response = $this->actingAs($this->hubUser)
+            ->from(route('hub.shipments'))
+            ->post(route('hub.shipments.shipNow', $shipment->id));
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('hub.shipments'));
+        $response->assertSessionHas('success', 'Shipment successfully marked as Pickup Scheduled.');
+
+        $shipment->refresh();
+        $this->assertEquals('Pickup Scheduled', $shipment->status);
+
+        $this->assertDatabaseHas('shipment_events', [
+            'shipment_id' => $shipment->id,
+            'status' => 'Pickup Scheduled',
+            'remarks' => 'Shipment successfully marked for pickup.',
+        ]);
+    }
+
+    /**
+     * Test 12: Hub can fetch available couriers and ship now with courier selection.
+     */
+    public function test_hub_get_couriers_and_ship_now_with_courier_selection(): void
+    {
+        $shipment = Shipment::create([
+            'user_id' => $this->hubUser->id,
+            'awb_number' => 'OSCSHIPNOW02',
+            'order_id' => 'HUB-SHIP-NOW-02',
+            'shipment_type' => 'B2C',
+            'receiver_name' => 'Amit Sharma',
+            'receiver_phone' => '9829988776',
+            'delivery_address' => 'MI Road',
+            'delivery_city' => 'Jaipur',
+            'delivery_pincode' => '302001',
+            'weight_kg' => 1.0,
+            'invoice_value' => 600.00,
+            'total_amount' => 70.00,
+            'status' => 'Manifested',
+        ]);
+
+        // 1. Fetch live couriers for shipment
+        $courierRes = $this->actingAs($this->hubUser)
+            ->getJson(route('hub.shipments.couriers', $shipment->id));
+
+        $courierRes->assertStatus(200);
+        $this->assertIsArray($courierRes->json());
+
+        // 2. Ship Now with selected courier and rate
+        $this->hubUser->update(['wallet_balance' => 200.00]);
+
+        $response = $this->actingAs($this->hubUser)
+            ->from(route('hub.shipments'))
+            ->post(route('hub.shipments.shipNow', $shipment->id), [
+                'courier_partner' => 'Delhivery Air',
+                'shipping_charge' => 90.00,
+            ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect(route('hub.shipments'));
+        $response->assertSessionHas('success', 'Shipment successfully assigned to Delhivery Air and marked for pickup.');
+
+        $shipment->refresh();
+        $this->assertEquals('Pickup Scheduled', $shipment->status);
+        $this->assertEquals('Delhivery Air', $shipment->courier_partner);
+        $this->assertEquals(90.00, (float)$shipment->shipping_charge);
+
+        $this->assertDatabaseHas('shipment_events', [
+            'shipment_id' => $shipment->id,
+            'status' => 'Pickup Scheduled',
+            'remarks' => 'Shipment assigned to Delhivery Air',
         ]);
     }
 }

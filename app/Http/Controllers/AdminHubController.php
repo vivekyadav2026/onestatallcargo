@@ -722,4 +722,30 @@ class AdminHubController extends Controller
 
         return back()->with('success', 'Franchise Manager created successfully! You can now assign them to a hub or franchise.');
     }
+
+    public function creditFranchiseWallet(Request $request, $id)
+    {
+        $franchise = Franchise::findOrFail($id);
+        
+        $request->validate([
+            'amount' => 'required|numeric|min:1|max:1000000',
+            'remarks' => 'nullable|string|max:255'
+        ]);
+
+        $amount = (float)$request->amount;
+        $admin = \Illuminate\Support\Facades\Auth::user();
+        $adminName = $admin ? $admin->name : 'Admin';
+        $remarks = $request->input('remarks') ?: 'Admin Manual Wallet Credit';
+        $auditDescription = "{$remarks} (Authorized by {$adminName})";
+        $reference = 'ADMIN_CREDIT_' . strtoupper(\Illuminate\Support\Str::random(8));
+
+        app(\App\Services\WalletService::class)->credit(
+            $franchise->user_id,
+            $amount,
+            $auditDescription,
+            $reference
+        );
+
+        return back()->with('success', 'Wallet successfully credited with ₹' . number_format($amount, 2));
+    }
 }
