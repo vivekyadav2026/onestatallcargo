@@ -23,10 +23,19 @@ class HubRiderController extends Controller
 
         $hubs = Hub::where('is_active', true)
             ->where(function($q) use ($user) {
-                $q->where('manager_id', $user->id);
+                if ($user->isAdmin()) {
+                    // Admins see all active hubs
+                } else {
+                    $q->where('manager_id', $user->id);
+                }
             })->get();
 
-        if (!$franchise && $hubs->isEmpty()) {
+        $isAuthorized = $user->isAdmin()
+            || in_array($user->role, ['super_admin', 'admin', 'franchise'])
+            || $franchise
+            || !$hubs->isEmpty();
+
+        if (!$isAuthorized) {
             abort(403, 'You are not a Franchise owner or Hub Manager.');
         }
 

@@ -301,6 +301,22 @@
                                                 <div class="text-xs text-blue-600 font-semibold mt-0.5">
                                                     <i class="fa-solid fa-map-pin mr-1 text-[10px]"></i> District: {{ $distF->district ?? 'N/A' }}
                                                 </div>
+                                                @php
+                                                    $pins = is_array($distF->serviceable_pincodes) ? $distF->serviceable_pincodes : json_decode($distF->serviceable_pincodes, true);
+                                                @endphp
+                                                @if(!empty($pins) && is_array($pins))
+                                                    <div class="text-[11px] text-gray-600 font-mono mt-1 flex flex-wrap gap-1 items-center">
+                                                        <span class="text-gray-400 font-sans text-[10px] font-bold uppercase">PIN:</span>
+                                                        @foreach(array_slice($pins, 0, 5) as $pin)
+                                                            <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] border border-gray-200">{{ $pin }}</span>
+                                                        @endforeach
+                                                        @if(count($pins) > 5)
+                                                            <span class="text-gray-400 text-[10px] font-sans font-medium">+{{ count($pins) - 5 }} more</span>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <div class="text-[10px] text-gray-400 mt-0.5 font-mono">No pincodes assigned</div>
+                                                @endif
                                             </div>
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $distF->status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100' }}">
                                                 {{ $distF->status }}
@@ -464,6 +480,22 @@
                                             <div class="text-[10px] text-amber-600 font-semibold">
                                                 <i class="fa-solid fa-map-pin text-[9px] mr-0.5"></i> {{ $distF->district ?? 'N/A' }} ({{ $distF->state ?? 'N/A' }})
                                             </div>
+                                            @php
+                                                $pins = is_array($distF->serviceable_pincodes) ? $distF->serviceable_pincodes : json_decode($distF->serviceable_pincodes, true);
+                                            @endphp
+                                            @if(!empty($pins) && is_array($pins))
+                                                <div class="text-[10px] text-gray-600 font-mono mt-0.5 flex flex-wrap gap-1 items-center">
+                                                    <span class="text-gray-400 font-sans text-[9px] font-bold uppercase">PIN:</span>
+                                                    @foreach(array_slice($pins, 0, 4) as $pin)
+                                                        <span class="bg-gray-100 text-gray-700 px-1 py-0.2 rounded text-[10px] border border-gray-200">{{ $pin }}</span>
+                                                    @endforeach
+                                                    @if(count($pins) > 4)
+                                                        <span class="text-gray-400 text-[9px] font-sans font-medium">+{{ count($pins) - 4 }} more</span>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <div class="text-[10px] text-gray-400 mt-0.5 font-mono">No pincodes</div>
+                                            @endif
                                         </td>
                                         <td class="px-5 py-3.5">
                                             <div class="font-semibold text-gray-800">{{ $distF->owner_name }}</div>
@@ -530,6 +562,22 @@
                                                 <div class="text-xs text-amber-600 font-semibold mt-0.5">
                                                     <i class="fa-solid fa-map-pin mr-1 text-[10px]"></i> District: {{ $distF->district ?? 'N/A' }} ({{ $distF->state ?? 'N/A' }})
                                                 </div>
+                                                @php
+                                                    $pins = is_array($distF->serviceable_pincodes) ? $distF->serviceable_pincodes : json_decode($distF->serviceable_pincodes, true);
+                                                @endphp
+                                                @if(!empty($pins) && is_array($pins))
+                                                    <div class="text-[11px] text-gray-600 font-mono mt-1 flex flex-wrap gap-1 items-center">
+                                                        <span class="text-gray-400 font-sans text-[10px] font-bold uppercase">PIN:</span>
+                                                        @foreach(array_slice($pins, 0, 5) as $pin)
+                                                            <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[10px] border border-gray-200">{{ $pin }}</span>
+                                                        @endforeach
+                                                        @if(count($pins) > 5)
+                                                            <span class="text-gray-400 text-[10px] font-sans font-medium">+{{ count($pins) - 5 }} more</span>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <div class="text-[10px] text-gray-400 mt-0.5 font-mono">No pincodes assigned</div>
+                                                @endif
                                             </div>
                                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider {{ $distF->status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100' }}">
                                                 {{ $distF->status }}
@@ -929,6 +977,10 @@
                                 <div>
                                     <label class="block font-semibold text-gray-700 mb-1">District Name</label>
                                     <input type="text" name="district" placeholder="District name" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-gray-700 mb-1">Serviceable Pincodes (Comma-separated)</label>
+                                    <textarea name="serviceable_pincodes" rows="2" placeholder="e.g. 302001, 302002, 302015" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg outline-none text-xs font-mono" :value="approveApp.serviceable_pincodes ? (Array.isArray(approveApp.serviceable_pincodes) ? approveApp.serviceable_pincodes.join(', ') : approveApp.serviceable_pincodes) : ''"></textarea>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>

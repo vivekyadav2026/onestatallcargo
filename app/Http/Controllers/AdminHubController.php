@@ -601,6 +601,7 @@ class AdminHubController extends Controller
             'franchise_level' => 'required|in:state,district',
             'parent_franchise_id' => 'nullable|required_if:franchise_level,district|exists:franchises,id',
             'district' => 'nullable|required_if:franchise_level,district|string|max:100',
+            'serviceable_pincodes' => 'nullable|string',
             'delivery_commission_type' => 'nullable|in:flat,per_kg,percent',
             'delivery_commission_rate' => 'nullable|numeric|min:0',
             'pickup_commission_type' => 'nullable|in:flat,per_kg,percent',
@@ -626,6 +627,11 @@ class AdminHubController extends Controller
                 $franchise->state_royalty_type = $validated['state_royalty_type'] ?? 'percent';
                 $franchise->state_royalty_rate = $validated['state_royalty_rate'] ?? 0;
             } else {
+                if (!empty($validated['serviceable_pincodes'])) {
+                    $pincodesArray = array_values(array_filter(array_unique(array_map('trim', explode(',', $validated['serviceable_pincodes'])))));
+                    $franchise->serviceable_pincodes = $pincodesArray;
+                }
+
                 $franchise->delivery_commission_type = $validated['delivery_commission_type'] ?? 'flat';
                 $franchise->delivery_commission_rate = $validated['delivery_commission_rate'] ?? 0;
                 $franchise->pickup_commission_type = $validated['pickup_commission_type'] ?? 'flat';

@@ -13,10 +13,19 @@ class HubCustomerController extends Controller
     private function getAuthScope()
     {
         $user = Auth::user();
+        if (!$user) {
+            abort(401, 'Unauthenticated');
+        }
+
         $franchise = Franchise::where('user_id', $user->id)->first();
         $isHubManager = Hub::where('manager_id', $user->id)->exists();
         
-        if (!$franchise && !$isHubManager) {
+        $isAuthorized = $user->isAdmin()
+            || in_array($user->role, ['super_admin', 'admin', 'franchise'])
+            || $franchise
+            || $isHubManager;
+
+        if (!$isAuthorized) {
             abort(403, 'Unauthorized');
         }
 

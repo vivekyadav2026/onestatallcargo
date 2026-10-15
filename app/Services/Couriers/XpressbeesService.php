@@ -126,16 +126,17 @@ class XpressbeesService implements CourierInterface
      */
     private function getToken(): string
     {
-        return Cache::remember('xb_token_' . md5($this->credentials['username']), 86000, function () {
+        $cacheKey = 'xb_token_' . md5($this->credentials['username'] ?? 'default');
+        return Cache::remember($cacheKey, 3000, function () use ($cacheKey) {
             $tokenEndpoint = $this->credentials['endpoints']['token'] ?? 'https://userauthapis.xbees.in/api/auth/generateToken';
             
             $payload = [
-                'username' => $this->credentials['username'],
-                'password' => $this->credentials['password'],
-                'secretkey' => $this->credentials['secret_key']
+                'username' => $this->credentials['username'] ?? '',
+                'password' => $this->credentials['password'] ?? '',
+                'secretkey' => $this->credentials['secret_key'] ?? ''
             ];
 
-            $response = Http::post($tokenEndpoint, $payload);
+            $response = Http::timeout(8)->post($tokenEndpoint, $payload);
             
             if ($response->successful()) {
                 $data = $response->json();
@@ -152,10 +153,14 @@ class XpressbeesService implements CourierInterface
             $url = $this->credentials['endpoints']['serviceability'] ?? 'https://xbmasterapi.xbees.in/expose/get/serviceabilitypincode/details';
             $token = $this->getToken();
             
-            $response = Http::withHeaders([
+            $response = Http::timeout(5)->withHeaders([
                 'Token' => $token,
-                'XBkey' => $this->credentials['xb_key'] ?? ''
+                'XBkey' => $this->credentials['xb_key'] ?? '',
+                'Content-Type' => 'application/json'
             ])->post($url, [
+                'BusinessUnit' => 'ECOM',
+                'BusinessFlow' => 'FORWARD',
+                'BusinessService' => 'SD',
                 'pinCode' => $pincode
             ]);
 
@@ -164,9 +169,12 @@ class XpressbeesService implements CourierInterface
                 if (isset($data['status']) && $data['status'] === true) {
                     return true;
                 }
+                if (isset($data['ReturnCode']) && $data['ReturnCode'] === 100) {
+                    return true;
+                }
             }
         } catch (\Exception $e) {
-            // Fallback
+            // Fallback gracefully
         }
         
         $prefix = substr(trim($pincode), 0, 2);
@@ -185,7 +193,7 @@ class XpressbeesService implements CourierInterface
 
             // Step 1: Generate AWB Batch
             $awbUrl = $this->credentials['endpoints']['awb_series'] ?? 'https://xbclientapi.xbees.in/POSTShipmentService.svc/AWBNumberSeriesGeneration';
-            $awbGenResponse = Http::withHeaders($headers)->post($awbUrl, [
+            $awbGenResponse = Http::timeout(10)->withHeaders($headers)->post($awbUrl, [
                 'BusinessUnit' => 'ECOM',
                 'ServiceType' => 'FORWARD',
                 'DeliveryType' => ($shipmentDetails['is_cod'] ?? false) ? 'COD' : 'PREPAID',
@@ -200,7 +208,7 @@ class XpressbeesService implements CourierInterface
 
             // Step 2: Fetch AWB from Batch
             $awbFetchUrl = 'https://xbclientapi.xbees.in/TrackingService.svc/GetAWBNumberGeneratedSeries';
-            $awbFetchResponse = Http::withHeaders($headers)->post($awbFetchUrl, [
+            $awbFetchResponse = Http::timeout(10)->withHeaders($headers)->post($awbFetchUrl, [
                 'BusinessUnit' => 'ECOM',
                 'ServiceType' => 'FORWARD',
                 'BatchID' => $batchId
@@ -307,7 +315,7 @@ class XpressbeesService implements CourierInterface
                 ]
             ];
 
-            $manifestResponse = Http::withHeaders($headers)->post($manifestUrl, $manifestPayload);
+            $manifestResponse = Http::timeout(12)->withHeaders($headers)->post($manifestUrl, $manifestPayload);
 
             if ($manifestResponse->successful()) {
                 return [
@@ -329,7 +337,7 @@ class XpressbeesService implements CourierInterface
             $token = $this->getToken();
             $trackUrl = $this->credentials['endpoints']['tracking_status'] ?? 'https://apishipmenttracking.xbees.in/GetCurrentShipmentStatus';
             
-            $response = Http::withHeaders([
+            $response = Http::timeout(8)->withHeaders([
                 'Token' => $token,
                 'XBkey' => $this->credentials['xb_key'] ?? ''
             ])->post($trackUrl, [

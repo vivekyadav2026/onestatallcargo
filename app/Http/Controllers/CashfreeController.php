@@ -46,7 +46,7 @@ class CashfreeController extends Controller
     public function initiateRecharge(Request $request)
     {
         $user = auth()->user();
-        if (!$user->isKycApproved()) {
+        if (!$user->isAdmin() && !$user->isKycApproved()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Please complete your KYC verification to recharge your wallet.'

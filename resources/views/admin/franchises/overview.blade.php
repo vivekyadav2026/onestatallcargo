@@ -284,6 +284,20 @@
                                                 District: <span class="font-semibold text-gray-800">{{ $subDist->district ?? 'N/A' }}</span> • 
                                                 Manager: {{ $subDist->owner_name }} ({{ $subDist->phone }})
                                             </div>
+                                            @php
+                                                $subPins = is_array($subDist->serviceable_pincodes) ? $subDist->serviceable_pincodes : json_decode($subDist->serviceable_pincodes, true);
+                                            @endphp
+                                            @if(!empty($subPins) && is_array($subPins))
+                                                <div class="text-[11px] text-gray-500 font-mono mt-1 flex flex-wrap gap-1 items-center">
+                                                    <span class="text-gray-400 font-sans text-[10px] font-bold uppercase">PIN:</span>
+                                                    @foreach(array_slice($subPins, 0, 6) as $sp)
+                                                        <span class="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded border border-gray-200 text-[10px]">{{ $sp }}</span>
+                                                    @endforeach
+                                                    @if(count($subPins) > 6)
+                                                        <span class="text-gray-400 text-[10px] font-sans font-medium">+{{ count($subPins) - 6 }} more</span>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <a href="{{ route('admin.franchises.overview', $subDist->id) }}" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-xs transition inline-flex items-center gap-1 border border-blue-100">
@@ -383,6 +397,15 @@
                             <div>
                                 <span class="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Assigned District</span>
                                 <span class="font-bold text-gray-900 text-sm mt-0.5 block">{{ $franchise->district ?? 'N/A' }}</span>
+                                @php
+                                    $fPins = is_array($franchise->serviceable_pincodes) ? $franchise->serviceable_pincodes : json_decode($franchise->serviceable_pincodes, true);
+                                @endphp
+                                @if(!empty($fPins) && is_array($fPins))
+                                    <div class="text-xs text-gray-600 font-mono mt-1">
+                                        <span class="text-gray-400 font-sans text-[10px] font-bold uppercase block">Pincodes:</span>
+                                        {{ implode(', ', array_slice($fPins, 0, 8)) }}{{ count($fPins) > 8 ? ' +' . (count($fPins) - 8) . ' more' : '' }}
+                                    </div>
+                                @endif
                             </div>
                         @endif
                         <div>

@@ -259,7 +259,18 @@
                     @foreach($subordinateDistricts as $dist)
                         <tr class="hover:bg-purple-50/30 transition">
                             <td class="px-5 py-3 font-bold text-gray-900">{{ $dist->company_name }}</td>
-                            <td class="px-5 py-3 font-bold text-blue-600">{{ $dist->district ?? $dist->city }}</td>
+                            <td class="px-5 py-3">
+                                <div class="font-bold text-blue-600">{{ $dist->district ?? $dist->city }}</div>
+                                @php
+                                    $distPins = is_array($dist->serviceable_pincodes) ? $dist->serviceable_pincodes : json_decode($dist->serviceable_pincodes, true);
+                                @endphp
+                                @if(!empty($distPins) && is_array($distPins))
+                                    <div class="text-[10px] text-gray-500 font-mono mt-0.5 flex flex-wrap gap-1 items-center">
+                                        <span class="text-gray-400 font-sans text-[9px] font-bold uppercase">PIN:</span>
+                                        {{ implode(', ', array_slice($distPins, 0, 4)) }}{{ count($distPins) > 4 ? ' +' . (count($distPins) - 4) . ' more' : '' }}
+                                    </div>
+                                @endif
+                            </td>
                             <td class="px-5 py-3 text-gray-600">{{ $dist->owner_name }} ({{ $dist->phone }})</td>
                             <td class="px-5 py-3 font-bold">{{ $dist->shipments_count }}</td>
                             <td class="px-5 py-3 font-bold text-green-600">{{ $dist->delivered_count }}</td>

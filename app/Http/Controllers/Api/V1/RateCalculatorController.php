@@ -127,16 +127,14 @@ class RateCalculatorController extends Controller
         $routing = app(\App\Services\ServiceabilityService::class)->determineRouting($deliveryPin);
         $isOneStallServiceable = ($routing['fulfillment_type'] === 'onestall');
 
-        // Fetch active couriers based on OneStall availability
+        // Rule: Agar OneStall platform available hai to KEVAl OneStall show hoga, agar nahi hai to 3rd party
         if ($isOneStallServiceable) {
-            // Show ONLY OneStall if OneStall covers this route
             $activeCouriers = Courier::where('is_active', true)
                 ->where(function($q) {
                     $q->where('name', 'LIKE', '%OneStall%')
                       ->orWhere('name', 'LIKE', '%Onestall%');
                 })->get();
 
-            // If OneStall courier record not in couriers table, create virtual OneStall courier
             if ($activeCouriers->isEmpty()) {
                 $activeCouriers = collect([
                     (object) [
@@ -150,7 +148,7 @@ class RateCalculatorController extends Controller
                 ]);
             }
         } else {
-            // If OneStall is NOT available for this route, show all other 3rd party active couriers
+            // Agar OneStall nahi hai to 3rd party couriers (Xpressbees, etc.) show honge
             $activeCouriers = Courier::where('is_active', true)
                 ->where('name', 'NOT LIKE', '%OneStall%')
                 ->where('name', 'NOT LIKE', '%Onestall%')

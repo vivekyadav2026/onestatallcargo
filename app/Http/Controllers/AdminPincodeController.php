@@ -51,6 +51,20 @@ class AdminPincodeController extends Controller
             }
         }
 
+        $franchise = Franchise::find($request->franchise_id);
+        if ($franchise) {
+            $existingPins = is_array($franchise->serviceable_pincodes) 
+                ? $franchise->serviceable_pincodes 
+                : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+            if (!is_array($existingPins)) {
+                $existingPins = is_string($franchise->serviceable_pincodes) ? array_map('trim', explode(',', $franchise->serviceable_pincodes)) : [];
+            }
+            $cleanPins = array_values(array_filter(array_map('trim', $pincodesArray)));
+            $merged = array_values(array_unique(array_filter(array_merge($existingPins, $cleanPins))));
+            $franchise->serviceable_pincodes = $merged;
+            $franchise->save();
+        }
+
         return back()->with('success', "{$count} Pincode(s) successfully mapped to Franchise.");
     }
 
@@ -66,6 +80,7 @@ class AdminPincodeController extends Controller
         $header = array_shift($data); // Assume Header: Pincode, City, State
 
         $count = 0;
+        $importedPins = [];
         foreach ($data as $row) {
             if (empty($row[0])) continue;
 
@@ -82,7 +97,21 @@ class AdminPincodeController extends Controller
                     'is_active' => true
                 ]
             );
+            $importedPins[] = $pin;
             $count++;
+        }
+
+        $franchise = Franchise::find($request->franchise_id);
+        if ($franchise && !empty($importedPins)) {
+            $existingPins = is_array($franchise->serviceable_pincodes) 
+                ? $franchise->serviceable_pincodes 
+                : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+            if (!is_array($existingPins)) {
+                $existingPins = is_string($franchise->serviceable_pincodes) ? array_map('trim', explode(',', $franchise->serviceable_pincodes)) : [];
+            }
+            $merged = array_values(array_unique(array_filter(array_merge($existingPins, $importedPins))));
+            $franchise->serviceable_pincodes = $merged;
+            $franchise->save();
         }
 
         return back()->with('success', "Bulk uploaded and mapped {$count} pincodes successfully.");
@@ -91,6 +120,20 @@ class AdminPincodeController extends Controller
     public function destroy($id)
     {
         $pincode = ServiceablePincode::findOrFail($id);
+        if ($pincode->franchise_id) {
+            $franchise = Franchise::find($pincode->franchise_id);
+            if ($franchise) {
+                $existingPins = is_array($franchise->serviceable_pincodes) 
+                    ? $franchise->serviceable_pincodes 
+                    : (json_decode($franchise->serviceable_pincodes, true) ?? []);
+                if (!is_array($existingPins)) {
+                    $existingPins = is_string($franchise->serviceable_pincodes) ? array_map('trim', explode(',', $franchise->serviceable_pincodes)) : [];
+                }
+                $updated = array_values(array_diff($existingPins, [$pincode->pincode]));
+                $franchise->serviceable_pincodes = $updated;
+                $franchise->save();
+            }
+        }
         $pincode->delete();
         return back()->with('success', 'Pincode mapping removed.');
     }

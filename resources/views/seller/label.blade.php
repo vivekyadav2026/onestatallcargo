@@ -140,7 +140,11 @@
                 <strong>FROM:</strong>
                 {{ optional($shipment->user)->company_name ?? optional($shipment->user)->name ?? 'OneStall Shipper' }}<br>
                 {{ $shipment->pickup_address ?? 'Origin Hub' }}<br>{{ $shipment->pickup_city ?? 'City' }} - {{ $shipment->pickup_pincode ?? '000000' }}<br>
-                Ph: {{ optional($shipment->user)->phone ?? 'N/A' }}
+                @if(Auth::check() && Auth::user()->isAdmin())
+                    Ph: {{ optional($shipment->user)->phone ?? 'N/A' }}
+                @else
+                    Ph: **********
+                @endif
             </div>
         </div>
         

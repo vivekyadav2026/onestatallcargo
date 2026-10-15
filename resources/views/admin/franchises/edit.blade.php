@@ -231,6 +231,14 @@
                                     <div>
                                         <div class="font-bold text-xs text-gray-900">{{ $child->company_name }}</div>
                                         <div class="text-[10px] text-gray-500">District: {{ $child->district ?? 'N/A' }} | Owner: {{ $child->owner_name }}</div>
+                                        @php
+                                            $cPins = is_array($child->serviceable_pincodes) ? $child->serviceable_pincodes : json_decode($child->serviceable_pincodes, true);
+                                        @endphp
+                                        @if(!empty($cPins) && is_array($cPins))
+                                            <div class="text-[10px] text-gray-500 font-mono mt-0.5">
+                                                <span class="text-gray-400 font-sans text-[9px] font-bold uppercase">PIN:</span> {{ implode(', ', array_slice($cPins, 0, 5)) }}{{ count($cPins) > 5 ? ' +' . (count($cPins) - 5) . ' more' : '' }}
+                                            </div>
+                                        @endif
                                     </div>
                                     <a href="{{ route('admin.franchises.edit', $child->id) }}" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800">
                                         Edit <i class="fa-solid fa-arrow-right text-[9px]"></i>

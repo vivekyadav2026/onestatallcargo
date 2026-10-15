@@ -25,8 +25,8 @@ class SellerShipmentController extends Controller
         
         $results = [];
 
+        // 1. If OneStall platform is available for this location, show ONLY OneStall Cargo
         if ($serviceability['fulfillment_type'] === 'onestall') {
-            // Only show Onestall
             try {
                 $rate = $pricing->calculateOneStallRate(
                     $shipment->pickup_pincode ?? '110001', 
@@ -46,7 +46,6 @@ class SellerShipmentController extends Controller
                     'recommended' => true
                 ];
             } catch (\Exception $e) {
-                // Fallback to basic rate
                 $chargeableWeight = max($physicalWeight, ($l * $w * $h) / 5000);
                 $results[] = [
                     'name' => 'OneStall Cargo',
@@ -58,12 +57,11 @@ class SellerShipmentController extends Controller
                 ];
             }
         } else {
-            // Show only active 3rd party
+            // 2. If OneStall is NOT available, show third-party couriers (Xpressbees, etc.)
             $couriers = \App\Models\Courier::where('is_active', true)->where('name', '!=', 'Onestall Cargo')->get();
             
             foreach ($couriers as $c) {
                 try {
-                    // Fetch real volumetric divisor from RateCard
                     $rc = \App\Models\RateCard::where('courier_id', $c->id)->where('is_active', true)->latest()->first();
                     $volDivisor = $rc ? $rc->volumetric_divisor : 5000;
                     $cw = max($physicalWeight, ($l * $w * $h) / $volDivisor);
@@ -86,11 +84,10 @@ class SellerShipmentController extends Controller
                         'recommended' => false
                     ];
                 } catch (\Exception $e) {
-                    continue; // Skip couriers that fail pricing calculation instead of dummy fallback
+                    continue;
                 }
             }
             
-            // Mark the cheapest as recommended
             if (count($results) > 0) {
                 usort($results, fn($a, $b) => $a['rate'] <=> $b['rate']);
                 $results[0]['recommended'] = true;
