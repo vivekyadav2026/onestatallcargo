@@ -752,7 +752,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.bank') }}', {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(this.bank)
                 });
                 let data = await res.json();
@@ -769,7 +769,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.password') }}', {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(this.pwd)
                 });
                 let data = await res.json();
@@ -835,6 +835,11 @@ function settingsManager() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
 
+        resetWhForm() {
+            this.newWh = { id: null, name: '', contact_person: '', phone: '', address_1: '', address_2: '', landmark: '', city: '', state: '', pincode: '' };
+            this.showAddWarehouse = false;
+        },
+
         async saveWarehouse() {
             this.loading = true;
             
@@ -858,7 +863,7 @@ function settingsManager() {
 
                 let res = await fetch(url, {
                     method: method,
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify(payload)
                 });
                 let data = await res.json();
@@ -910,7 +915,7 @@ function settingsManager() {
             try {
                 let res = await fetch('{{ route('seller.settings.api-keys') }}', {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ token_name: this.newTokenName })
                 });
                 let data = await res.json();

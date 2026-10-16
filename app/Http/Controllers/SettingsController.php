@@ -60,8 +60,20 @@ class SettingsController extends Controller
         ]);
     }
 
+    private function ensureJsonParsed(Request $request): void
+    {
+        if (empty($request->all()) && !empty($request->getContent())) {
+            $data = json_decode($request->getContent(), true);
+            if (is_array($data)) {
+                $request->merge($data);
+            }
+        }
+    }
+
     public function createWarehouse(Request $request)
     {
+        $this->ensureJsonParsed($request);
+
         if ($request->has('phone')) {
             $cleaned = preg_replace('/[^0-9]/', '', (string)$request->input('phone'));
             if (strlen($cleaned) > 10 && str_starts_with($cleaned, '91')) {
@@ -103,6 +115,8 @@ class SettingsController extends Controller
 
     public function updateWarehouse(Request $request, $id)
     {
+        $this->ensureJsonParsed($request);
+
         $warehouse = Warehouse::where('user_id', Auth::id())->findOrFail($id);
 
         if ($request->has('phone')) {
@@ -168,6 +182,8 @@ class SettingsController extends Controller
 
     public function generateApiKey(Request $request)
     {
+        $this->ensureJsonParsed($request);
+
         $request->validate([
             'token_name' => 'required|string|max:255'
         ]);
@@ -192,6 +208,8 @@ class SettingsController extends Controller
 
     public function updateBankDetails(Request $request)
     {
+        $this->ensureJsonParsed($request);
+
         $request->validate([
             'bank_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:50',
@@ -211,6 +229,8 @@ class SettingsController extends Controller
 
     public function updatePassword(Request $request)
     {
+        $this->ensureJsonParsed($request);
+
         $request->validate([
             'current_password' => 'required',
             'new_password' => 'required|min:6|confirmed',
