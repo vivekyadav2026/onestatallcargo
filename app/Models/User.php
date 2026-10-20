@@ -94,4 +94,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Shipment::class, 'user_id');
     }
+
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class);
+    }
 }

@@ -7,7 +7,15 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Registered Sellers</h1>
-            <p class="text-sm text-gray-500 mt-1">View active E-commerce Sellers and B2B Brands operating in your network area</p>
+            <p class="text-sm text-gray-500 mt-1">
+                @if(isset($franchise) && $franchise && $franchise->isState())
+                    View active E-commerce Sellers and B2B Brands operating in <span class="font-bold text-gray-700">{{ $franchise->state }} State</span>
+                @elseif(isset($franchise) && $franchise && $franchise->isDistrict())
+                    View active E-commerce Sellers and B2B Brands operating in <span class="font-bold text-gray-700">{{ $franchise->district ?? $franchise->city }} District</span>
+                @else
+                    View active E-commerce Sellers and B2B Brands operating in your network area
+                @endif
+            </p>
         </div>
         <div class="flex items-center gap-3">
             <form action="{{ route('hub.sellers.index') }}" method="GET" class="flex items-center gap-2">
@@ -46,7 +54,17 @@
                                 <div class="text-[11px] text-gray-500"><i class="fa-solid fa-phone text-[9px] mr-1"></i> {{ $seller->phone ?? 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-gray-800">{{ $seller->company_city ?? 'City Not Set' }}</div>
+                                <div class="font-bold text-gray-800">
+                                    @if($seller->company_city && $seller->company_state)
+                                        {{ $seller->company_city }}, {{ $seller->company_state }}
+                                    @elseif($seller->company_city)
+                                        {{ $seller->company_city }}
+                                    @elseif($seller->company_state)
+                                        {{ $seller->company_state }}
+                                    @else
+                                        City Not Set
+                                    @endif
+                                </div>
                                 <div class="text-[11px] font-mono text-gray-500">PIN: {{ $seller->company_pincode ?? 'N/A' }}</div>
                             </td>
                             <td class="px-6 py-4">
@@ -67,8 +85,14 @@
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center text-gray-400">
                                 <div class="text-3xl mb-3"><i class="fa-solid fa-store-slash"></i></div>
-                                <p>No registered sellers found in your service area.</p>
-                                <p class="text-xs mt-1">Sellers appear here automatically when they book shipments from your assigned pincodes.</p>
+                                <p class="font-semibold text-gray-600">No registered sellers found in your service area.</p>
+                                <p class="text-xs mt-1">
+                                    @if(isset($franchise) && $franchise && $franchise->isState())
+                                        Only sellers registered in {{ $franchise->state }} or shipping from {{ $franchise->state }} will appear here.
+                                    @else
+                                        Sellers appear here automatically when they register or book shipments from your assigned pincodes.
+                                    @endif
+                                </p>
                             </td>
                         </tr>
                     @endforelse
