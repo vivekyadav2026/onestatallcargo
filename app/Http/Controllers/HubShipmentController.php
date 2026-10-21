@@ -313,7 +313,7 @@ class HubShipmentController extends Controller
     {
         $user = Auth::user();
         if (!$user->isKycApproved()) {
-            return redirect()->route('seller.settings', ['view' => 'kyc'])->with('error', 'KYC Verification Required!');
+            return redirect()->route('hub.profile', ['view' => 'kyc'])->with('error', 'KYC Verification Required!');
         }
 
         $request->validate([

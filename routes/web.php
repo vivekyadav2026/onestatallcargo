@@ -342,6 +342,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/integrations/{id}/sync', [\App\Http\Controllers\SellerIntegrationController::class, 'sync'])->name('seller.integrations.sync');
         Route::post('/integrations/{id}/disconnect', [\App\Http\Controllers\SellerIntegrationController::class, 'disconnect'])->name('seller.integrations.disconnect');
         Route::post('/api-keys/generate', [\App\Http\Controllers\SellerApiController::class, 'generate'])->name('seller.api-keys.generate');
+
+        // Seller Monthly Reports & GST Billing
+        Route::get('/reports', [\App\Http\Controllers\SellerReportController::class, 'index'])->name('seller.reports.index');
+        Route::get('/reports/monthly-csv', [\App\Http\Controllers\SellerReportController::class, 'exportMonthlyCsv'])->name('seller.reports.monthly-csv');
+        Route::get('/reports/gst-invoice', [\App\Http\Controllers\SellerReportController::class, 'gstInvoice'])->name('seller.reports.gst-invoice');
     });
 
         // HUB PORTAL (Requires Franchise Role)
@@ -375,6 +380,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/warehouses/{id}/default', [\App\Http\Controllers\SettingsController::class, 'setDefaultWarehouse'])->name('hub.warehouses.default');
         
         // KYC Submission
+        Route::get('/kyc', function() { return redirect()->route('hub.profile', ['view' => 'kyc']); })->name('hub.kyc.index');
         Route::post('/kyc/submit', [\App\Http\Controllers\KycController::class, 'submit'])->name('hub.kyc.submit');
         Route::post('/scan', [\App\Http\Controllers\HubDashboardController::class, 'scan'])->name('hub.scan');
         
@@ -383,6 +389,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post("/fleet", [\App\Http\Controllers\HubRiderController::class, "store"])->name("hub.fleet.store");
         Route::post("/fleet/{id}/update", [\App\Http\Controllers\HubRiderController::class, "update"])->name("hub.fleet.update");
         Route::get('/fleet/{id}/report', [\App\Http\Controllers\HubRiderController::class, 'report'])->name('hub.fleet.report');
+        Route::get('/fleet/{id}/runsheet', [\App\Http\Controllers\HubRiderController::class, 'printRunSheet'])->name('hub.fleet.runsheet');
+        Route::get('/fleet/{id}/runsheet/csv', [\App\Http\Controllers\HubRiderController::class, 'exportRunSheetCsv'])->name('hub.fleet.runsheet.csv');
         Route::post("/fleet/{id}/delete", [\App\Http\Controllers\HubRiderController::class, "destroy"])->name("hub.fleet.destroy");
 
         

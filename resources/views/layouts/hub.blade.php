@@ -109,10 +109,23 @@
         </div>
         
         <div class="px-4 pb-2 pt-2 border-t border-gray-700/50">
+            <a href="{{ route('hub.profile') }}?view=kyc" class="flex items-center justify-between px-3 py-2.5 rounded-xl {{ (request()->routeIs('hub.profile*') && request('view') === 'kyc') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-id-card w-5"></i> KYC Verification
+                </div>
+                @php $hubUserKyc = Auth::user()->kyc; @endphp
+                @if($hubUserKyc && $hubUserKyc->status === 'approved')
+                    <span class="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase rounded">Active</span>
+                @elseif($hubUserKyc && $hubUserKyc->status === 'pending')
+                    <span class="px-1.5 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-black uppercase rounded">Review</span>
+                @else
+                    <span class="px-1.5 py-0.5 bg-red-500/20 text-red-400 text-[9px] font-black uppercase rounded">Pending</span>
+                @endif
+            </a>
             <a href="{{ route('hub.integrations') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ request()->routeIs('hub.integrations*') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
                 <i class="fa-solid fa-plug w-5"></i> Integrations
             </a>
-            <a href="{{ route('hub.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white font-bold transition">
+            <a href="{{ route('hub.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl {{ (request()->routeIs('hub.profile*') && request('view') !== 'kyc') ? 'bg-gray-800 text-white' : 'text-gray-400' }} hover:bg-gray-800 hover:text-white font-bold transition">
                 <i class="fa-solid fa-gear w-5"></i> Settings
             </a>
         </div>

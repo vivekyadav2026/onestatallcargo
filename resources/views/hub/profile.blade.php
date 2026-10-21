@@ -20,6 +20,16 @@
             <button type="button" @click="tab = 'warehouses'" :class="tab === 'warehouses' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'" class="px-4 py-2 rounded-lg text-xs font-bold transition">
                 <i class="fa-solid fa-warehouse mr-1.5"></i> Pickup Warehouses ({{ $warehouses->count() }})
             </button>
+            <button type="button" @click="tab = 'kyc'" :class="tab === 'kyc' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'" class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-id-card mr-1"></i> KYC Verification
+                @if(isset($kyc) && $kyc && $kyc->status === 'approved')
+                    <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase rounded">Approved</span>
+                @elseif(isset($kyc) && $kyc && $kyc->status === 'pending')
+                    <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[9px] font-black uppercase rounded">Review</span>
+                @else
+                    <span class="px-1.5 py-0.5 bg-red-100 text-red-700 text-[9px] font-black uppercase rounded">Pending</span>
+                @endif
+            </button>
         </div>
     </div>
 
@@ -29,7 +39,7 @@
         </div>
     @endif
     
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
         <div class="p-4 bg-red-50 text-red-700 font-bold rounded-xl border border-red-200">
             @foreach($errors->all() as $error)
                 <p><i class="fa-solid fa-circle-exclamation mr-2"></i>{{ $error }}</p>
@@ -276,13 +286,238 @@
             </form>
         </div>
     </div>
+
+    <!-- TAB 3: KYC Verification -->
+    <div x-show="tab === 'kyc'" style="display: none;" class="space-y-6">
+        
+        @if(isset($kyc) && $kyc && $kyc->status === 'approved')
+            <div class="bg-green-50/80 border border-green-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-green-100 text-green-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-green-200">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-gray-900">Franchise KYC Verified & Approved</h3>
+                        <p class="text-xs text-gray-600 mt-1">Your identity and franchise business credentials are verified. Hub operations, bookings, and wallet settlements are fully active.</p>
+                        <div class="flex flex-wrap gap-4 mt-3 text-xs text-gray-600 font-medium">
+                            <span class="bg-white/80 px-2.5 py-1 rounded-md border border-green-200"><strong>Type:</strong> {{ $kyc->business_type }}</span>
+                            <span class="bg-white/80 px-2.5 py-1 rounded-md border border-green-200"><strong>{{ $kyc->document_type }}:</strong> {{ $kyc->document_number }}</span>
+                            <span class="bg-white/80 px-2.5 py-1 rounded-md border border-green-200"><strong>PAN:</strong> {{ $kyc->pan_number }}</span>
+                            @if($kyc->gst_number)
+                                <span class="bg-white/80 px-2.5 py-1 rounded-md border border-green-200"><strong>GSTIN:</strong> {{ $kyc->gst_number }}</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <span class="px-3.5 py-1.5 bg-green-100 text-green-800 border border-green-300 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-circle-check"></i> Approved
+                </span>
+            </div>
+        @elseif(isset($kyc) && $kyc && $kyc->status === 'pending')
+            <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-amber-200">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-gray-900">KYC Verification Under Review</h3>
+                        <p class="text-xs text-gray-600 mt-1">Our compliance team is verifying your uploaded documents. Verification typically takes 2–4 hours.</p>
+                        <div class="flex flex-wrap gap-4 mt-3 text-xs text-gray-600 font-medium">
+                            <span class="bg-white/80 px-2.5 py-1 rounded-md border border-amber-200"><strong>Document:</strong> {{ $kyc->document_type }} ({{ $kyc->document_number }})</span>
+                            <span class="bg-white/80 px-2.5 py-1 rounded-md border border-amber-200"><strong>PAN:</strong> {{ $kyc->pan_number }}</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="px-3.5 py-1.5 bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-hourglass-half"></i> Under Review
+                </span>
+            </div>
+        @elseif(isset($kyc) && $kyc && $kyc->status === 'rejected')
+            <div class="bg-red-50/80 border border-red-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-red-100 text-red-700 rounded-xl flex items-center justify-center text-xl shrink-0 border border-red-200">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-red-900">KYC Verification Rejected</h3>
+                        <p class="text-xs text-red-700 mt-1"><strong>Reason:</strong> {{ $kyc->rejection_reason ?? 'Document quality or mismatch issue. Please re-upload clear copies.' }}</p>
+                        <p class="text-[11px] text-gray-600 mt-1">Please review the reason above and re-submit your corrected documents below.</p>
+                    </div>
+                </div>
+                <span class="px-3.5 py-1.5 bg-red-100 text-red-800 border border-red-300 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-ban"></i> Action Required
+                </span>
+            </div>
+        @endif
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
+            <div class="mb-6 pb-4 border-b border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-[#1e1b4b] flex items-center justify-center">
+                        <i class="fa-solid fa-file-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-gray-900 text-lg">Franchise KYC Verification</h3>
+                        <p class="text-xs text-gray-500">Provide official identity and business registration documents to activate full hub functionalities</p>
+                    </div>
+                </div>
+            </div>
+
+            <form action="{{ route('hub.kyc.submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                
+                <!-- Section 1: Business Details -->
+                <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80">
+                    <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-[#1e1b4b] text-white flex items-center justify-center text-[10px]">1</span> Business & Identity Details
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Business Type <span class="text-red-500">*</span></label>
+                            <select name="business_type" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-medium text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                                <option value="Proprietorship" {{ (old('business_type', $kyc->business_type ?? '') === 'Proprietorship') ? 'selected' : '' }}>Sole Proprietorship</option>
+                                <option value="Partnership" {{ (old('business_type', $kyc->business_type ?? '') === 'Partnership') ? 'selected' : '' }}>Partnership</option>
+                                <option value="Private Limited" {{ (old('business_type', $kyc->business_type ?? '') === 'Private Limited') ? 'selected' : '' }}>Private Limited (Pvt Ltd)</option>
+                                <option value="LLP" {{ (old('business_type', $kyc->business_type ?? '') === 'LLP') ? 'selected' : '' }}>LLP</option>
+                                <option value="Individual" {{ (old('business_type', $kyc->business_type ?? '') === 'Individual') ? 'selected' : '' }}>Individual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Document Type <span class="text-red-500">*</span></label>
+                            <select name="document_type" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-medium text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                                <option value="Aadhaar" {{ (old('document_type', $kyc->document_type ?? '') === 'Aadhaar') ? 'selected' : '' }}>Aadhaar Card</option>
+                                <option value="Voter ID" {{ (old('document_type', $kyc->document_type ?? '') === 'Voter ID') ? 'selected' : '' }}>Voter ID Card</option>
+                                <option value="Passport" {{ (old('document_type', $kyc->document_type ?? '') === 'Passport') ? 'selected' : '' }}>Passport</option>
+                                <option value="GST" {{ (old('document_type', $kyc->document_type ?? '') === 'GST') ? 'selected' : '' }}>GST Certificate</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Document Number <span class="text-red-500">*</span></label>
+                            <input type="text" name="document_number" value="{{ old('document_number', $kyc->document_number ?? '') }}" placeholder="Enter ID Number" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 uppercase outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">PAN Number <span class="text-red-500">*</span></label>
+                            <input type="text" maxlength="10" name="pan_number" value="{{ old('pan_number', $kyc->pan_number ?? $user->pan_number ?? '') }}" placeholder="ABCDE1234F" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 uppercase outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-gray-200/60">
+                        <div class="max-w-xs">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">GST Number (Optional)</label>
+                            <input type="text" maxlength="15" name="gst_number" value="{{ old('gst_number', $kyc->gst_number ?? $user->gstin ?? '') }}" placeholder="22AAAAA0000A1Z5" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 uppercase outline-none focus:border-indigo-600 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Document File Uploads -->
+                <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80">
+                    <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-[#1e1b4b] text-white flex items-center justify-center text-[10px]">2</span> Upload Documents (Max 4MB: JPG, PNG, PDF)
+                    </h4>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" x-data="{
+                        files: { id_front: null, id_back: null, pan_doc: null, gst_doc: null },
+                        handleFile(e, type) {
+                            if(e.target.files.length > 0) {
+                                this.files[type] = e.target.files[0].name;
+                            }
+                        }
+                    }">
+                        <!-- ID Front -->
+                        <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-600 hover:bg-indigo-50/20 transition-all group">
+                            <input type="file" name="id_front" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'id_front')">
+                            <i class="fa-solid fa-id-card text-gray-400 text-xl mb-2 group-hover:text-indigo-600 transition"></i>
+                            <span class="text-[11px] font-bold text-gray-700">ID Front <span class="text-red-500">*</span></span>
+                            <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.id_front ? files.id_front : '{{ !empty($kyc->id_front_path) ? 'Uploaded' : 'Select File' }}'"></span>
+                            @if(!empty($kyc->id_front_path))
+                                <div class="absolute top-2 right-2 text-emerald-600 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                            @endif
+                        </label>
+                        
+                        <!-- ID Back -->
+                        <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-600 hover:bg-indigo-50/20 transition-all group">
+                            <input type="file" name="id_back" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'id_back')">
+                            <i class="fa-solid fa-id-card-clip text-gray-400 text-xl mb-2 group-hover:text-indigo-600 transition"></i>
+                            <span class="text-[11px] font-bold text-gray-700">ID Back</span>
+                            <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.id_back ? files.id_back : '{{ !empty($kyc->id_back_path) ? 'Uploaded' : 'Select File' }}'"></span>
+                            @if(!empty($kyc->id_back_path))
+                                <div class="absolute top-2 right-2 text-emerald-600 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                            @endif
+                        </label>
+
+                        <!-- PAN -->
+                        <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-600 hover:bg-indigo-50/20 transition-all group">
+                            <input type="file" name="pan_doc" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'pan_doc')">
+                            <i class="fa-solid fa-credit-card text-gray-400 text-xl mb-2 group-hover:text-indigo-600 transition"></i>
+                            <span class="text-[11px] font-bold text-gray-700">PAN Card</span>
+                            <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.pan_doc ? files.pan_doc : '{{ !empty($kyc->pan_doc_path) ? 'Uploaded' : 'Select File' }}'"></span>
+                            @if(!empty($kyc->pan_doc_path))
+                                <div class="absolute top-2 right-2 text-emerald-600 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                            @endif
+                        </label>
+
+                        <!-- GST -->
+                        <label class="relative flex flex-col items-center justify-center p-4 bg-white border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-600 hover:bg-indigo-50/20 transition-all group">
+                            <input type="file" name="gst_doc" accept="image/*,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" @change="handleFile($event, 'gst_doc')">
+                            <i class="fa-solid fa-file-invoice text-gray-400 text-xl mb-2 group-hover:text-indigo-600 transition"></i>
+                            <span class="text-[11px] font-bold text-gray-700">GST Certificate</span>
+                            <span class="text-[9px] text-gray-400 mt-0.5 truncate w-full text-center px-1" x-text="files.gst_doc ? files.gst_doc : '{{ !empty($kyc->gst_doc_path) ? 'Uploaded' : 'Optional' }}'"></span>
+                            @if(!empty($kyc->gst_doc_path))
+                                <div class="absolute top-2 right-2 text-emerald-600 text-xs"><i class="fa-solid fa-circle-check"></i></div>
+                            @endif
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Section 3: Bank Details for COD Remittance & Settlements -->
+                <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80">
+                    <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-[#1e1b4b] text-white flex items-center justify-center text-[10px]">3</span> Bank Settlement Account
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Bank Name</label>
+                            <input type="text" name="bank_name" value="{{ old('bank_name', $user->bank_name ?? '') }}" placeholder="e.g. HDFC Bank" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-medium text-gray-800 outline-none focus:border-indigo-600 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Account Number</label>
+                            <input type="text" name="account_number" value="{{ old('account_number', $user->account_number ?? '') }}" placeholder="e.g. 501002345678" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-indigo-600 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">IFSC Code</label>
+                            <input type="text" maxlength="11" name="ifsc_code" value="{{ old('ifsc_code', $user->ifsc_code ?? '') }}" placeholder="HDFC0001234" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 uppercase outline-none focus:border-indigo-600 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Account Holder Name</label>
+                            <input type="text" name="account_holder_name" value="{{ old('account_holder_name', $user->account_holder_name ?? $user->name ?? '') }}" placeholder="Account Name" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-medium text-gray-800 outline-none focus:border-indigo-600 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end items-center gap-3 pt-4 border-t border-gray-100">
+                    <button type="submit" class="px-8 py-3 bg-[#1e1b4b] hover:bg-black text-white font-extrabold rounded-xl text-sm shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>{{ (isset($kyc) && $kyc && $kyc->status === 'approved') ? 'Update KYC Details' : 'Submit KYC for Verification' }}</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
 function hubProfileData() {
     const params = new URLSearchParams(window.location.search);
+    const viewParam = params.get('view');
+    const hasKycNotice = {{ (session('error') && str_contains(session('error'), 'KYC')) ? 'true' : 'false' }};
+    let initialTab = 'profile';
+    if (viewParam === 'kyc' || hasKycNotice) {
+        initialTab = 'kyc';
+    } else if (viewParam === 'warehouses') {
+        initialTab = 'warehouses';
+    }
     return {
-        tab: params.get('view') === 'warehouses' ? 'warehouses' : 'profile',
+        tab: initialTab,
         showWhModal: false,
         whLoading: false,
         whError: '',

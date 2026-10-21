@@ -287,8 +287,9 @@ class HubDashboardController extends Controller
         $user = Auth::user();
         $franchise = \App\Models\Franchise::where('user_id', $user->id)->first();
         $hub = \App\Models\Hub::where('manager_id', $user->id)->first();
+        $kyc = \App\Models\Kyc::where('user_id', $user->id)->first();
         
-        return view('hub.profile', compact('user', 'franchise', 'hub'));
+        return view('hub.profile', compact('user', 'franchise', 'hub', 'kyc'));
     }
 
     public function updateProfile(Request $request)

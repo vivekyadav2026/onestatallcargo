@@ -178,6 +178,13 @@
                 <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap">Tools & Rate Calc</span>
             </a>
 
+            <a href="{{ route('seller.reports.index') }}" class="sidebar-item {{ request()->routeIs('seller.reports*') ? 'active' : '' }}" title="Monthly Reports & GST Bills">
+                <div class="icon-box">
+                    <i class="fa-solid fa-file-invoice text-base"></i>
+                </div>
+                <span x-show="sidebarHover || isPinned || mobileSidebarOpen" x-transition.opacity class="ml-3 whitespace-nowrap">Reports & GST Bills</span>
+            </a>
+
             <a href="{{ route('seller.wallet') }}" class="sidebar-item {{ request()->routeIs('seller.wallet') ? 'active' : '' }}" title="Billing">
                 <div class="icon-box">
                     <i class="fa-solid fa-wallet text-base"></i>

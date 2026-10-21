@@ -53,8 +53,8 @@
                                     <label class="block text-xs font-bold text-gray-700 mb-1">Assign Hub</label>
                                     <select name="hub_id" class="w-full px-4 py-2 border border-gray-300 rounded-xl outline-none focus:border-[var(--gold)]">
                                         <option value="">-- No Hub --</option>
-                                        @foreach($hubs as $hub)
-                                        <option value="{{ $hub->id }}">{{ $hub->name }} ({{ $hub->city }})</option>
+                                        @foreach(($hubs ?? (isset($hub) ? [$hub] : [])) as $h)
+                                        <option value="{{ $h->id }}" {{ (isset($hub) && $hub->id == $h->id) ? 'selected' : '' }}>{{ $h->name }} ({{ $h->city }})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -128,7 +128,9 @@
                                         </div>
                                     </div>
                                 </td>
-                        <td class="px-4 py-3 text-right flex justify-end gap-2">
+                        <td class="px-4 py-3 text-right flex justify-end gap-2 items-center">
+                            <a href="{{ route('hub.fleet.report', $rider->id) }}" class="text-indigo-600 font-bold hover:underline text-xs bg-indigo-50 px-2 py-1 rounded" title="View Daily Report"><i class="fa-solid fa-chart-pie mr-1"></i>Report</a>
+                            <a href="{{ route('hub.fleet.runsheet', $rider->id) }}" target="_blank" class="text-emerald-700 font-bold hover:underline text-xs bg-emerald-50 px-2 py-1 rounded" title="Print Run Sheet"><i class="fa-solid fa-print mr-1"></i>DRS</a>
                             <button @click="viewRider = {{ $rider->id }}" class="text-gray-600 font-bold hover:underline text-xs bg-gray-100 px-2 py-1 rounded">View</button>
                             <button @click="editRider = {{ $rider->id }}" class="text-blue-600 font-bold hover:underline text-xs bg-blue-50 px-2 py-1 rounded">Edit</button>
                             <form action="{{ route('hub.fleet.destroy', $rider->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this rider?');">

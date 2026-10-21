@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Shipment;
 use App\Models\Franchise;
 use App\Models\Hub;
+use App\Models\Shipment;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -83,8 +83,28 @@ class HubReportController extends Controller
         return $query;
     }
 
+    private function resolveQuickDate(Request $request): void
+    {
+        if ($request->filled('quick_date') && (!$request->filled('date_from') || !$request->filled('date_to'))) {
+            $today = now()->toDateString();
+            if ($request->quick_date === 'today') {
+                $request->merge(['date_from' => $today, 'date_to' => $today]);
+            } elseif ($request->quick_date === 'yesterday') {
+                $yesterday = now()->subDay()->toDateString();
+                $request->merge(['date_from' => $yesterday, 'date_to' => $yesterday]);
+            } elseif ($request->quick_date === '7days') {
+                $request->merge(['date_from' => now()->subDays(6)->toDateString(), 'date_to' => $today]);
+            } elseif ($request->quick_date === '30days') {
+                $request->merge(['date_from' => now()->subDays(29)->toDateString(), 'date_to' => $today]);
+            } elseif ($request->quick_date === 'this_month') {
+                $request->merge(['date_from' => now()->startOfMonth()->toDateString(), 'date_to' => $today]);
+            }
+        }
+    }
+
     public function index(Request $request)
     {
+        $this->resolveQuickDate($request);
         $query = $this->getScopedQuery();
 
         if ($request->filled('date_from')) {
@@ -94,48 +114,56 @@ class HubReportController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        // Generate Reports Data
+        // Summary Aggregates
         $totalBookings = (clone $query)->count();
-        $delivered = (clone $query)->where('status', 'Delivered')->count();
-        $rto = (clone $query)->where('status', 'RTO')->count();
-        $ndr = (clone $query)->where('status', 'NDR')->count();
+        $delivered     = (clone $query)->where('status', 'Delivered')->count();
+        $inTransit     = (clone $query)->whereIn('status', ['In Transit', 'Out for Delivery', 'Manifested', 'Received', 'Pickup Scheduled'])->count();
+        $rto           = (clone $query)->where(function($q) {
+            $q->where('status', 'RTO')->orWhere('status', 'LIKE', 'RTO%');
+        })->count();
+        $ndr           = (clone $query)->where('status', 'NDR')->count();
         
         // Pickups vs Deliveries logic
         $scope = $this->getAuthScope();
-        if ($scope['franchise']) {
-            if ($scope['franchise']->isState()) {
-                $districtIds = $scope['franchise']->districtFranchises()->pluck('id')->toArray();
-                $myPickups = (clone $query)->where(function($q) use ($scope, $districtIds) {
-                    $q->where('pickup_franchise_id', $scope['franchise']->id);
+        $franchise = $scope['franchise'];
+        $hub = $scope['hub'];
+        $districtIds = [];
+        $pincodes = [];
+
+        if ($franchise) {
+            if ($franchise->isState()) {
+                $districtIds = $franchise->districtFranchises()->pluck('id')->toArray();
+                $myPickups = (clone $query)->where(function($q) use ($franchise, $districtIds) {
+                    $q->where('pickup_franchise_id', $franchise->id);
                     if (!empty($districtIds)) {
                         $q->orWhereIn('pickup_franchise_id', $districtIds);
                     }
                 })->count();
 
-                $myDeliveries = (clone $query)->where(function($q) use ($scope, $districtIds) {
-                    $q->where('franchise_id', $scope['franchise']->id);
+                $myDeliveries = (clone $query)->where(function($q) use ($franchise, $districtIds) {
+                    $q->where('franchise_id', $franchise->id);
                     if (!empty($districtIds)) {
                         $q->orWhereIn('franchise_id', $districtIds);
                     }
                 })->count();
             } else {
-                $p = $scope['franchise']->serviceable_pincodes;
+                $p = $franchise->serviceable_pincodes;
                 $pincodes = is_array($p) ? $p : (json_decode($p, true) ?? []);
-                if(!is_array($pincodes)) $pincodes = $pincodes ? [$pincodes] : [];
+                if (!is_array($pincodes)) { $pincodes = $pincodes ? [$pincodes] : []; }
 
-                $myPickups = (clone $query)->where(function($q) use ($pincodes, $scope) {
-                    $q->where('pickup_franchise_id', $scope['franchise']->id);
+                $myPickups = (clone $query)->where(function($q) use ($franchise, $pincodes) {
+                    $q->where('pickup_franchise_id', $franchise->id);
                     if (!empty($pincodes)) { $q->orWhereIn('pickup_pincode', $pincodes); }
                 })->count();
 
-                $myDeliveries = (clone $query)->where(function($q) use ($pincodes, $scope) {
-                    $q->where('franchise_id', $scope['franchise']->id);
+                $myDeliveries = (clone $query)->where(function($q) use ($franchise, $pincodes) {
+                    $q->where('franchise_id', $franchise->id);
                     if (!empty($pincodes)) { $q->orWhereIn('delivery_pincode', $pincodes); }
                 })->count();
             }
         } else {
-            $myPickups = (clone $query)->where('pickup_city', $scope['hub']?->city)->count();
-            $myDeliveries = (clone $query)->where('delivery_city', $scope['hub']?->city)->count();
+            $myPickups = (clone $query)->where('pickup_city', $hub?->city)->count();
+            $myDeliveries = (clone $query)->where('delivery_city', $hub?->city)->count();
         }
 
         // Pending COD calculated using merchandise COD value
@@ -144,11 +172,96 @@ class HubReportController extends Controller
             ->where(function($q) { $q->where('cod_remitted', 0)->orWhereNull('cod_remitted'); })
             ->sum(DB::raw('COALESCE(cod_amount, invoice_value, 0)')) ?? 0;
 
-        return view('hub.reports.index', compact('totalBookings', 'delivered', 'rto', 'ndr', 'myPickups', 'myDeliveries', 'pendingCod'));
+        // Filterable Table Query
+        $tableQuery = clone $query;
+
+        if ($request->filled('status')) {
+            if ($request->status === 'RTO') {
+                $tableQuery->where(function($q) {
+                    $q->where('status', 'RTO')->orWhere('status', 'LIKE', 'RTO%');
+                });
+            } else {
+                $tableQuery->where('status', $request->status);
+            }
+        }
+
+        if ($request->filled('payment_mode')) {
+            if ($request->payment_mode === 'COD') {
+                $tableQuery->where(function($q) { $q->where('is_cod', 1)->orWhere('payment_type', 'COD'); });
+            } elseif ($request->payment_mode === 'Prepaid') {
+                $tableQuery->where(function($q) { $q->where('is_cod', 0)->where('payment_type', '!=', 'COD'); });
+            }
+        }
+
+        if ($request->filled('flow')) {
+            if ($request->flow === 'pickup') {
+                if ($franchise) {
+                    if ($franchise->isState()) {
+                        $tableQuery->where(function($q) use ($franchise, $districtIds) {
+                            $q->where('pickup_franchise_id', $franchise->id);
+                            if (!empty($districtIds)) { $q->orWhereIn('pickup_franchise_id', $districtIds); }
+                        });
+                    } else {
+                        $tableQuery->where(function($q) use ($franchise, $pincodes) {
+                            $q->where('pickup_franchise_id', $franchise->id);
+                            if (!empty($pincodes)) { $q->orWhereIn('pickup_pincode', $pincodes); }
+                        });
+                    }
+                } elseif ($hub) {
+                    $tableQuery->where('pickup_city', $hub->city);
+                }
+            } elseif ($request->flow === 'delivery') {
+                if ($franchise) {
+                    if ($franchise->isState()) {
+                        $tableQuery->where(function($q) use ($franchise, $districtIds) {
+                            $q->where('franchise_id', $franchise->id);
+                            if (!empty($districtIds)) { $q->orWhereIn('franchise_id', $districtIds); }
+                        });
+                    } else {
+                        $tableQuery->where(function($q) use ($franchise, $pincodes) {
+                            $q->where('franchise_id', $franchise->id);
+                            if (!empty($pincodes)) { $q->orWhereIn('delivery_pincode', $pincodes); }
+                        });
+                    }
+                } elseif ($hub) {
+                    $tableQuery->where('delivery_city', $hub->city);
+                }
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $tableQuery->where(function($q) use ($search) {
+                $q->where('awb_number', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%")
+                  ->orWhere('receiver_name', 'like', "%{$search}%")
+                  ->orWhere('receiver_phone', 'like', "%{$search}%")
+                  ->orWhere('delivery_city', 'like', "%{$search}%")
+                  ->orWhere('delivery_pincode', 'like', "%{$search}%");
+            });
+        }
+
+        $shipments = $tableQuery->with(['user', 'assignedRider'])->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
+
+        return view('hub.reports.index', compact(
+            'totalBookings',
+            'delivered',
+            'inTransit',
+            'rto',
+            'ndr',
+            'myPickups',
+            'myDeliveries',
+            'pendingCod',
+            'shipments',
+            'franchise',
+            'hub',
+            'pincodes'
+        ));
     }
 
     public function exportCsv(Request $request)
     {
+        $this->resolveQuickDate($request);
         $query = $this->getScopedQuery();
 
         if ($request->filled('date_from')) {
@@ -158,11 +271,41 @@ class HubReportController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $fileName = 'hub_shipments_report_' . date('Y-m-d') . '.csv';
+        if ($request->filled('status')) {
+            if ($request->status === 'RTO') {
+                $query->where(function($q) {
+                    $q->where('status', 'RTO')->orWhere('status', 'LIKE', 'RTO%');
+                });
+            } else {
+                $query->where('status', $request->status);
+            }
+        }
+
+        if ($request->filled('payment_mode')) {
+            if ($request->payment_mode === 'COD') {
+                $query->where(function($q) { $q->where('is_cod', 1)->orWhere('payment_type', 'COD'); });
+            } elseif ($request->payment_mode === 'Prepaid') {
+                $query->where(function($q) { $q->where('is_cod', 0)->where('payment_type', '!=', 'COD'); });
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function($q) use ($search) {
+                $q->where('awb_number', 'like', "%{$search}%")
+                  ->orWhere('order_id', 'like', "%{$search}%")
+                  ->orWhere('receiver_name', 'like', "%{$search}%")
+                  ->orWhere('receiver_phone', 'like', "%{$search}%")
+                  ->orWhere('delivery_city', 'like', "%{$search}%")
+                  ->orWhere('delivery_pincode', 'like', "%{$search}%");
+            });
+        }
+
+        $fileName = 'hub_shipments_report_' . date('Y-m-d_His') . '.csv';
 
         $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$fileName",
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=\"{$fileName}\"",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
             "Expires"             => "0"
@@ -170,27 +313,50 @@ class HubReportController extends Controller
 
         $callback = function() use ($query) {
             $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
             
             fputcsv($file, [
-                'ID', 'AWB Number', 'Customer/Seller Name', 'Receiver Name', 
-                'Receiver Phone', 'City', 'Pincode', 
-                'Type', 'COD Amount', 'Status', 'Date'
+                'ID',
+                'AWB Number',
+                'Order ID',
+                'Sender / Store Name',
+                'Receiver Name',
+                'Receiver Phone',
+                'Delivery Address',
+                'Destination City',
+                'Pincode',
+                'Weight (KG)',
+                'Payment Mode',
+                'Invoice Value (INR)',
+                'COD Amount (INR)',
+                'Freight Charge (INR)',
+                'Current Status',
+                'Booking Date'
             ]);
 
-            $query->with('user')->orderBy('created_at', 'desc')->chunk(500, function($shipments) use ($file) {
+            $query->with('user')->orderBy('created_at', 'desc')->chunk(300, function($shipments) use ($file) {
                 foreach ($shipments as $s) {
+                    $isCod = ($s->payment_type === 'COD' || $s->is_cod);
+                    $codAmount = $isCod ? ($s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value) : 0.00;
+                    $freight = $s->shipping_charge ?? $s->total_amount ?? 0.00;
+
                     fputcsv($file, [
                         $s->id,
                         $s->awb_number,
-                        $s->user->name ?? 'Unknown',
+                        $s->order_id ?? 'N/A',
+                        optional($s->user)->company_name ?: optional($s->user)->name ?: 'Client Store',
                         $s->receiver_name,
                         $s->receiver_phone,
+                        $s->delivery_address,
                         $s->delivery_city,
                         $s->delivery_pincode,
-                        ($s->payment_type === 'COD' || $s->is_cod) ? 'COD' : 'Prepaid',
-                        $s->total_amount ?? $s->invoice_value,
+                        $s->weight_kg,
+                        $isCod ? 'COD' : 'Prepaid',
+                        number_format((float) ($s->invoice_value ?? 0), 2, '.', ''),
+                        number_format((float) $codAmount, 2, '.', ''),
+                        number_format((float) $freight, 2, '.', ''),
                         $s->status,
-                        $s->created_at->format('Y-m-d H:i')
+                        $s->created_at ? $s->created_at->format('Y-m-d H:i') : ''
                     ]);
                 }
             });

@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\Rider;
 use App\Models\Hub;
 use App\Models\Franchise;
+use App\Models\Shipment;
+use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Validation\Rule;
 
 class HubRiderController extends Controller
@@ -81,7 +84,12 @@ class HubRiderController extends Controller
             });
         }
         
-        return view('hub.fleet.index', compact('riders', 'hub'));
+        $hubs = \App\Models\Hub::where('manager_id', $hubManagerId)->get();
+        if ($hubs->isEmpty() && $hub) {
+            $hubs = collect([$hub]);
+        }
+
+        return view('hub.fleet.index', compact('riders', 'hub', 'hubs'));
     }
 
     public function store(Request $request)
@@ -201,29 +209,270 @@ class HubRiderController extends Controller
 
     public function report(Request $request, $id)
     {
-        $rider = Rider::with('user')->findOrFail($id);
+        $scope = $this->getAuthScope();
+        $rider = Rider::with(['user', 'hub', 'franchise'])->findOrFail($id);
+        $this->authorizeRiderAccess($rider, $scope);
+
+        $selectedDate = $this->resolveDate($request->query('date'));
+        $data = $this->getDailyRunData($rider, $selectedDate);
+
+        return view('hub.fleet.report', array_merge($data, [
+            'rider' => $rider,
+            'selectedDate' => $selectedDate,
+        ]));
+    }
+
+    public function printRunSheet(Request $request, $id)
+    {
+        $scope = $this->getAuthScope();
+        $rider = Rider::with(['user', 'hub', 'franchise'])->findOrFail($id);
+        $this->authorizeRiderAccess($rider, $scope);
+
+        $selectedDate = $this->resolveDate($request->query('date'));
+        $data = $this->getDailyRunData($rider, $selectedDate);
+
+        $hubName = $rider->hub ? $rider->hub->name : ($rider->franchise ? ($rider->franchise->company_name ?? $rider->franchise->name ?? 'Franchise Hub') : 'Central Logistics Hub');
+        $hubCity = $rider->hub ? $rider->hub->city : ($rider->franchise ? $rider->franchise->city : '');
+        $hubState = $rider->hub ? $rider->hub->state : ($rider->franchise ? $rider->franchise->state : '');
+        $runSheetNumber = 'DRS-' . Carbon::parse($selectedDate)->format('Ymd') . '-' . str_pad($rider->id, 4, '0', STR_PAD_LEFT);
+
+        return view('hub.fleet.runsheet', array_merge($data, [
+            'rider'          => $rider,
+            'selectedDate'   => $selectedDate,
+            'hubName'        => $hubName,
+            'hubCity'        => $hubCity,
+            'hubState'       => $hubState,
+            'runSheetNumber' => $runSheetNumber,
+            'authScope'      => $scope,
+        ]));
+    }
+
+    public function exportRunSheetCsv(Request $request, $id)
+    {
+        $scope = $this->getAuthScope();
+        $rider = Rider::with(['user', 'hub', 'franchise'])->findOrFail($id);
+        $this->authorizeRiderAccess($rider, $scope);
+
+        $selectedDate = $this->resolveDate($request->query('date'));
+        $data = $this->getDailyRunData($rider, $selectedDate);
+
+        $cleanDate = Carbon::parse($selectedDate)->format('Ymd');
+        $filename = "DRS_{$cleanDate}_Rider_{$rider->id}_{$rider->user->name}.csv";
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $callback = function () use ($rider, $selectedDate, $data) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Run Sheet Header Info
+            fputcsv($file, ['DAILY RUN SHEET & HANDOVER MANIFEST (DRS)']);
+            fputcsv($file, ['Rider Name', $rider->user->name, 'Phone', $rider->user->phone]);
+            fputcsv($file, ['Vehicle Type', $rider->vehicle_type ?? 'N/A', 'Vehicle No', $rider->vehicle_number ?? 'N/A']);
+            fputcsv($file, ['Date', $selectedDate, 'Generated At', now()->format('d-m-Y H:i:s')]);
+            fputcsv($file, []);
+
+            // Summary Metrics
+            fputcsv($file, ['SUMMARY METRICS']);
+            fputcsv($file, ['Total Parcels Given for Delivery', $data['totalGiven']]);
+            fputcsv($file, ['Delivered Successfully', $data['totalDeliveries']]);
+            fputcsv($file, ['Pending Out for Delivery', $data['totalPendingDeliveries']]);
+            fputcsv($file, ['Undelivered / Returned to Hub', $data['totalReturnedToHub']]);
+            fputcsv($file, ['Pickups Collected & Received at Hub', $data['totalPickupsReceived']]);
+            fputcsv($file, ['Total Physical Parcels Received at Hub', $data['totalParcelsReceivedAtHub']]);
+            fputcsv($file, ['Hard Cash Collected (Hub Deposit)', number_format($data['totalCash'], 2, '.', '')]);
+            fputcsv($file, ['UPI Digital Collected', number_format($data['totalUpi'], 2, '.', '')]);
+            fputcsv($file, []);
+
+            // SECTION 1: Parcels Given for Delivery
+            fputcsv($file, ['SECTION 1: PARCELS GIVEN FOR DELIVERY (DISPATCH / OUT FOR DELIVERY)']);
+            fputcsv($file, [
+                'Sl No', 'AWB Number', 'Order ID', 'Customer Name', 'Customer Phone',
+                'Delivery Address', 'City', 'Pincode', 'Payment Mode', 'COD Amount (INR)',
+                'Current Status', 'Payment Method', 'Updated Time'
+            ]);
+
+            $sl = 1;
+            foreach ($data['givenForDelivery'] as $s) {
+                $codAmt = $s->is_cod ? ($s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value) : 0;
+                fputcsv($file, [
+                    $sl++,
+                    $s->awb_number,
+                    $s->order_id ?? 'N/A',
+                    $s->receiver_name,
+                    $s->receiver_phone,
+                    $s->delivery_address,
+                    $s->delivery_city,
+                    $s->delivery_pincode,
+                    $s->is_cod ? 'COD' : 'Prepaid',
+                    number_format((float) $codAmt, 2, '.', ''),
+                    $s->status,
+                    $s->payment_type ?? 'N/A',
+                    $s->updated_at ? $s->updated_at->format('h:i A') : '',
+                ]);
+            }
+            fputcsv($file, []);
+
+            // SECTION 2: Pickups Received at Hub
+            fputcsv($file, ['SECTION 2: PICKUPS RECEIVED AT HUB (INWARD FROM SELLERS)']);
+            fputcsv($file, [
+                'Sl No', 'AWB Number', 'Sender / Store', 'Pickup Address',
+                'Destination City', 'Weight (KG)', 'Status', 'Received Time'
+            ]);
+
+            $sl = 1;
+            foreach ($data['receivedPickups'] as $s) {
+                fputcsv($file, [
+                    $sl++,
+                    $s->awb_number,
+                    $s->user ? ($s->user->company_name ?: $s->user->name) : 'Sender',
+                    $s->pickup_address ?? 'Registered Pickup',
+                    $s->delivery_city,
+                    $s->weight_kg,
+                    $s->status,
+                    $s->updated_at ? $s->updated_at->format('h:i A') : '',
+                ]);
+            }
+            fputcsv($file, []);
+
+            // SECTION 3: Undelivered / NDR Parcels Returned to Hub
+            fputcsv($file, ['SECTION 3: UNDELIVERED / NDR PARCELS RETURNED TO HUB']);
+            fputcsv($file, [
+                'Sl No', 'AWB Number', 'Customer Name', 'City',
+                'NDR Reason', 'Return Custody Status', 'Time'
+            ]);
+
+            $sl = 1;
+            foreach ($data['returnedToHub'] as $s) {
+                fputcsv($file, [
+                    $sl++,
+                    $s->awb_number,
+                    $s->receiver_name,
+                    $s->delivery_city,
+                    $s->ndr_reason ?? 'Failed Delivery Attempt',
+                    'Returned to Hub Inventory',
+                    $s->updated_at ? $s->updated_at->format('h:i A') : '',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    private function getDailyRunData(Rider $rider, string $selectedDate): array
+    {
         $userId = $rider->user->id;
+        $date = Carbon::parse($selectedDate)->toDateString();
+        $isToday = ($date === today()->toDateString());
 
-        $selectedDate = $request->query('date', today()->toDateString());
+        // 1. Parcels Given For Delivery (दिए गए पार्सल)
+        $givenForDelivery = Shipment::with('user')
+            ->where('rider_id', $userId)
+            ->where(function ($q) use ($date, $isToday) {
+                $q->whereDate('updated_at', $date);
+                if ($isToday) {
+                    $q->orWhere(function ($sub) use ($date) {
+                        $sub->where('status', 'Out for Delivery')
+                            ->whereDate('created_at', '<=', $date);
+                    });
+                }
+            })
+            ->whereIn('status', ['Out for Delivery', 'Delivered', 'NDR', 'RTO Initiated', 'RTO Delivered'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        $shipments = \App\Models\Shipment::where('rider_id', $userId)
-                        ->where('status', 'Delivered')
-                        ->whereDate('updated_at', $selectedDate)
-                        ->orderBy('updated_at', 'desc')
-                        ->get();
+        $deliveredShipments = $givenForDelivery->where('status', 'Delivered');
+        $outForDeliveryShipments = $givenForDelivery->where('status', 'Out for Delivery');
+        $returnedToHub = $givenForDelivery->whereIn('status', ['NDR', 'RTO Initiated', 'RTO Delivered']);
 
-        $totalDeliveries = $shipments->count();
+        // 2. Pickups Collected by Rider & Handed over to Hub (रिसीव किए गए पिकअप)
+        $receivedPickups = Shipment::with('user')
+            ->where('rider_id', $userId)
+            ->whereIn('status', ['In Transit', 'Received', 'Manifested'])
+            ->whereDate('updated_at', $date)
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        $totalCash = $shipments->where('is_cod', 1)->filter(function($s) {
-            return empty($s->payment_type) || $s->payment_type === 'Cash';
-        })->sum(function($s) {
+        // 3. Cash Reconciliation
+        $totalCash = $deliveredShipments->where('is_cod', 1)->filter(function ($s) {
+            return empty($s->payment_type) || strcasecmp($s->payment_type, 'Cash') === 0;
+        })->sum(function ($s) {
             return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
         });
 
-        $totalUpi = $shipments->where('payment_type', 'UPI')->sum(function($s) {
+        $totalUpi = $deliveredShipments->where('payment_type', 'UPI')->sum(function ($s) {
             return $s->cod_amount > 0 ? $s->cod_amount : $s->invoice_value;
         });
 
-        return view('hub.fleet.report', compact('rider', 'shipments', 'selectedDate', 'totalDeliveries', 'totalCash', 'totalUpi'));
+        $totalDeliveries = $deliveredShipments->count();
+        $totalPendingDeliveries = $outForDeliveryShipments->count();
+        $totalReturnedToHub = $returnedToHub->count();
+        $totalPickupsReceived = $receivedPickups->count();
+        $totalParcelsReceivedAtHub = $totalPickupsReceived + $totalReturnedToHub;
+        $totalGiven = $givenForDelivery->count();
+        $totalCodCollected = $totalCash + $totalUpi;
+
+        // Keep backwards compatible $shipments variable for existing delivered view
+        $shipments = $deliveredShipments;
+
+        return compact(
+            'givenForDelivery',
+            'deliveredShipments',
+            'outForDeliveryShipments',
+            'returnedToHub',
+            'receivedPickups',
+            'shipments',
+            'totalGiven',
+            'totalDeliveries',
+            'totalPendingDeliveries',
+            'totalReturnedToHub',
+            'totalPickupsReceived',
+            'totalParcelsReceivedAtHub',
+            'totalCash',
+            'totalUpi',
+            'totalCodCollected'
+        );
+    }
+
+    private function resolveDate(?string $date): string
+    {
+        if ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $date;
+        }
+        return today()->toDateString();
+    }
+
+    private function authorizeRiderAccess(Rider $rider, array $scope): void
+    {
+        $user = $scope['user'];
+        if ($user->isAdmin()) {
+            return;
+        }
+
+        if ($scope['franchise_id']) {
+            $allowedFranchiseIds = [$scope['franchise_id']];
+            $currentFranchise = Franchise::find($scope['franchise_id']);
+            if ($currentFranchise && ($currentFranchise->franchise_level === 'state' || ($currentFranchise->type ?? null) === 'state')) {
+                $subIds = Franchise::where('parent_franchise_id', $currentFranchise->id)->pluck('id')->toArray();
+                $allowedFranchiseIds = array_merge($allowedFranchiseIds, $subIds);
+            }
+
+            if (!in_array($rider->franchise_id, $allowedFranchiseIds)) {
+                abort(403, 'Unauthorized access to rider.');
+            }
+        } else {
+            $allowedHubIds = $scope['hubs']->pluck('id')->toArray();
+            if ($rider->franchise_id !== null || !in_array($rider->hub_id, $allowedHubIds)) {
+                abort(403, 'Unauthorized access to rider.');
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@
     $kycPending = $kyc && $kyc->status === 'pending';
 @endphp
 
-<div x-data="{ showKycModal: {{ $errors->any() ? 'true' : 'false' }} }" class="space-y-6">
+<div class="space-y-6">
 
     @if(session('success'))
         <div class="p-4 bg-green-50 text-green-700 font-bold rounded-xl border border-green-200 text-sm">
@@ -51,9 +51,13 @@
             </div>
         </div>
         @if(!$kycPending)
-            <button @click="showKycModal = true" class="whitespace-nowrap px-6 py-3 bg-[#FFD700] hover:bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-sm transition">
-                Submit Documents
-            </button>
+            <a href="{{ route('hub.profile') }}?view=kyc" class="whitespace-nowrap px-6 py-3 bg-[#FFD700] hover:bg-yellow-500 text-gray-900 font-bold rounded-xl shadow-sm transition inline-flex items-center gap-2">
+                <i class="fa-solid fa-id-card"></i> Complete KYC Now
+            </a>
+        @else
+            <a href="{{ route('hub.profile') }}?view=kyc" class="whitespace-nowrap px-5 py-2.5 bg-white/20 hover:bg-white/30 text-white font-bold rounded-xl transition inline-flex items-center gap-2 text-xs">
+                <i class="fa-solid fa-eye"></i> View KYC Status
+            </a>
         @endif
     </div>
     @endif
@@ -381,78 +385,8 @@
         </div>
     </div>
 </div>
-
-<!-- KYC Modal -->
-<div x-show="showKycModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-        <div x-show="showKycModal" x-transition.opacity class="fixed inset-0 bg-gray-900 bg-opacity-40 backdrop-blur-sm transition-opacity" @click="showKycModal = false" aria-hidden="true"></div>
-        <div x-show="showKycModal" 
-            x-transition:enter="ease-out duration-300"
-            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-            class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-            <form action="{{ route('hub.kyc.submit') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="bg-white px-6 pt-6 pb-6">
-                    <div class="flex justify-between items-center mb-5">
-                        <h3 class="text-lg font-extrabold text-gray-900" id="modal-title">Franchise KYC Submission</h3>
-                        <button type="button" @click="showKycModal = false" class="text-gray-400 hover:text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
-                    </div>
-                    @if($errors->any()) <div class='mb-4 p-3 bg-red-50 text-red-700 text-xs font-bold rounded-lg border border-red-200'><ul class='list-disc pl-4'>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div> @endif <div class='space-y-4'>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Business Type</label>
-                                <select name="business_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
-                                    <option value="Proprietorship">Proprietorship</option>
-                                    <option value="Partnership">Partnership</option>
-                                    <option value="Private Limited">Private Limited</option>
-                                    <option value="LLP">LLP</option>
-                                    <option value="ONC">ONC</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Document Type</label>
-                                <select name="document_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
-                                    <option value="Aadhaar">Aadhaar</option>
-                                    <option value="Voter ID">Voter ID</option>
-                                    <option value="Passport">Passport</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Document Number</label>
-                                <input type="text" name="document_number" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">PAN Number</label>
-                                <input type="text" name="pan_number" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none uppercase">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">ID Front Image</label>
-                                <input type="file" name="id_front" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">ID Back Image</label>
-                                <input type="file" name="id_back" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">PAN Card Image</label>
-                                <input type="file" name="pan_doc" accept="image/*,.pdf" class="w-full px-2 py-1 text-xs border border-gray-300 rounded-lg outline-none">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 rounded-b-2xl">
-                    <button type="button" @click="showKycModal = false" class="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-bold rounded-lg text-sm">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-black text-white font-bold rounded-lg text-sm">Submit KYC</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 </div>
 
-<!-- Add AlpineJS -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {

@@ -124,10 +124,16 @@
                             </span>
                         </td>
                         <td class="px-4 py-3 text-xs">
-                            @if($shipment->rider_id)
-                                {{ optional(\App\Models\User::find($shipment->rider_id))->name ?? 'Deleted' }}
+                            @if($shipment->rider_id && ($rUser = $shipment->assignedRider))
+                                <div class="font-bold text-gray-900">{{ $rUser->name }}</div>
+                                @if($rUser->rider)
+                                    <div class="flex gap-2 mt-0.5">
+                                        <a href="{{ route('hub.fleet.report', $rUser->rider->id) }}" class="text-[10px] text-indigo-600 font-bold hover:underline"><i class="fa-solid fa-chart-pie mr-0.5"></i>Report</a>
+                                        <a href="{{ route('hub.fleet.runsheet', $rUser->rider->id) }}" target="_blank" class="text-[10px] text-emerald-700 font-bold hover:underline"><i class="fa-solid fa-print mr-0.5"></i>DRS</a>
+                                    </div>
+                                @endif
                             @else
-                                <span class="text-gray-400">Unassigned</span>
+                                <span class="text-gray-400 font-medium">Unassigned</span>
                             @endif
                         </td>
                     </tr>

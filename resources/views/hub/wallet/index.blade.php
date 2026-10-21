@@ -109,7 +109,7 @@
                         <p class="text-xs text-amber-700 mb-4 leading-relaxed">
                             Your Franchise KYC must be approved by the Admin before you can add funds to your wallet or book shipments.
                         </p>
-                        <a href="{{ route('hub.dashboard') }}" class="inline-block px-5 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition shadow-sm">
+                        <a href="{{ route('hub.profile') }}?view=kyc" class="inline-block px-5 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-black transition shadow-sm">
                             <i class="fa-solid fa-id-card mr-1.5"></i> Complete KYC
                         </a>
                     </div>

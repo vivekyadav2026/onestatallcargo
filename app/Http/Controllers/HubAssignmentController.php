@@ -93,6 +93,7 @@ class HubAssignmentController extends Controller
         }
 
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
+            ->with(['assignedRider.rider', 'user'])
             ->orderBy('created_at', 'desc')
             ->paginate(15)->withQueryString();
             
@@ -149,6 +150,7 @@ class HubAssignmentController extends Controller
         }
 
         $shipments = $this->filterByScope($shipmentsQuery, $scope)
+            ->with(['assignedRider.rider', 'user'])
             ->orderBy('created_at', 'desc')
             ->paginate(15)->withQueryString();
             

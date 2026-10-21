@@ -21,12 +21,12 @@
                 <p class="text-sm text-red-700 mb-6 font-medium leading-relaxed">
                     To comply with logistics regulations and prevent fraud, all sellers must complete their KYC verification before creating bulk orders.
                 </p>
-                <a href="{{ route('seller.settings') }}?view=kyc" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4338ca] text-white text-sm font-bold rounded-xl hover:bg-[#3730a3] transition shadow-md">
+                <a href="{{ route('hub.profile') }}?view=kyc" class="inline-flex items-center gap-2 px-6 py-3 bg-[#1e1b4b] text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-md">
                     <i class="fa-solid fa-id-card"></i> Complete KYC Now
                 </a>
             </div>
         @else
-            <form action="{{ route('seller.bulk.post') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('hub.bulk.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             
             <i class="fa-solid fa-file-csv text-6xl text-gray-300 mb-4"></i>
