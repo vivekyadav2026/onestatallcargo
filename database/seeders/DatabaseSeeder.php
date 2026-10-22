@@ -18,9 +18,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Settings
+        // 1. Settings & API Docs
         $this->call([
             SettingSeeder::class,
+            ApiDocSeeder::class,
         ]);
 
         // 2. Couriers

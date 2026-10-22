@@ -25,7 +25,7 @@ Route::post('/franchise', [\App\Http\Controllers\FranchiseController::class, 'st
 
 Route::get('/track', [\App\Http\Controllers\TrackController::class, 'index'])->name('track');
 Route::post('/track', [\App\Http\Controllers\TrackController::class, 'track'])->name('track.post');
-Route::get('/api-docs', function () { $apiDocs = \App\Models\ApiDoc::all(); return view('public.developers.docs', compact('apiDocs')); })->name('api-docs');
+Route::get('/api-docs', function () { return redirect()->route('docs'); })->name('api-docs');
 Route::get('/pricing', function () { return view('pricing'); })->name('pricing');
 Route::get('/privacy', function () { return view('legal', ['title' => 'Privacy Policy']); })->name('privacy');
 Route::get('/terms', function () { return view('legal', ['title' => 'Terms of Service']); })->name('terms');
@@ -120,6 +120,10 @@ Route::get('/docs/openapi', function () {
 
 Route::get('/docs', function () {
     $apiDocs = \App\Models\ApiDoc::where('is_active', true)->orderBy('sort_order')->get();
+    if ($apiDocs->isEmpty()) {
+        (new \Database\Seeders\ApiDocSeeder())->run();
+        $apiDocs = \App\Models\ApiDoc::where('is_active', true)->orderBy('sort_order')->get();
+    }
     return view('public.developers.docs', compact('apiDocs'));
 })->name('docs');
 
