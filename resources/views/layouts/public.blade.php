@@ -11,6 +11,26 @@
     <title>@yield('title', setting('site_name', 'OneStall Cargo') . ' | ' . setting('site_tagline', 'Premium Logistics & Courier Platform'))</title>
     <meta name="description" content="@yield('meta_description', setting('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.'))">
     
+    <!-- Open Graph / WhatsApp / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ setting('site_name', 'OneStall Cargo') }}">
+    <meta property="og:title" content="@yield('og_title', @yield('title', setting('site_name', 'OneStall Cargo') . ' | ' . setting('site_tagline', 'Shipping Solutions Designed To Help You Grow')))">
+    <meta property="og:description" content="@yield('meta_description', setting('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.'))">
+    <meta property="og:image" content="{{ asset(setting('og_image', 'images/og-preview.jpg')) }}">
+    <meta property="og:image:secure_url" content="{{ asset(setting('og_image', 'images/og-preview.jpg')) }}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ setting('site_name', 'OneStall Cargo') }}">
+
+    <!-- Twitter / X Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="@yield('og_title', @yield('title', setting('site_name', 'OneStall Cargo')))">
+    <meta name="twitter:description" content="@yield('meta_description', setting('meta_description', 'OneStall Cargo is a complete logistics infrastructure covering B2C shipping, B2B/Cargo, international shipping, courier aggregation, and API integrations.'))">
+    <meta name="twitter:image" content="{{ asset(setting('og_image', 'images/og-preview.jpg')) }}">
+    
     <!-- Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
