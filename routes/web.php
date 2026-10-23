@@ -248,6 +248,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/kyc', [\App\Http\Controllers\KycController::class, 'adminIndex'])->name('admin.kyc.index');
         Route::post('/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'adminApprove'])->name('admin.kyc.approve');
         Route::post('/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'adminReject'])->name('admin.kyc.reject');
+        Route::post('/kyc/{id}/warehouse', [\App\Http\Controllers\KycController::class, 'adminCreateWarehouse'])->name('admin.kyc.warehouse');
         // Strictly Super Admin Only Routes
         Route::middleware(['role:admin'])->group(function() {
             Route::resource('settings', \App\Http\Controllers\AdminSettingController::class)->names('admin.settings');

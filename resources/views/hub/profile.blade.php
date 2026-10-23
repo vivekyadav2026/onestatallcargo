@@ -409,6 +409,31 @@
                     </div>
                 </div>
 
+                <!-- Section: Business Address -->
+                <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80">
+                    <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-[#1e1b4b] text-white flex items-center justify-center text-[10px]"><i class="fa-solid fa-location-dot"></i></span> Registered Business Address
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Street / Premise Address <span class="text-red-500">*</span></label>
+                            <input type="text" name="address" value="{{ old('address', $user->company_address ?? '') }}" placeholder="Building, Street, Area" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">City <span class="text-red-500">*</span></label>
+                            <input type="text" name="city" value="{{ old('city', $user->company_city ?? '') }}" placeholder="City name" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">State <span class="text-red-500">*</span></label>
+                            <input type="text" name="state" value="{{ old('state', $user->company_state ?? '') }}" placeholder="State name" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-bold text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Pincode <span class="text-red-500">*</span></label>
+                            <input type="text" maxlength="6" name="pincode" value="{{ old('pincode', $user->company_pincode ?? '') }}" placeholder="6-digit PIN" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-xs font-mono font-bold text-gray-800 outline-none focus:border-indigo-600 transition" required>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Section 2: Document File Uploads -->
                 <div class="bg-gray-50/70 p-5 rounded-2xl border border-gray-200/80">
                     <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">

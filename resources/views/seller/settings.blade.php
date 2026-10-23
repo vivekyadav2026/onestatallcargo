@@ -319,6 +319,31 @@
                           </div>
                       </div>
       
+                      <!-- Section: Registered Address -->
+                      <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                          <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">
+                              <span class="w-5 h-5 rounded-md bg-gray-200 text-gray-700 flex items-center justify-center text-[10px]"><i class="fa-solid fa-location-dot"></i></span> Registered Address & Pickup Location
+                          </h4>
+                          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                              <div class="md:col-span-2">
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Premises & Street Address <span class="text-red-500">*</span></label>
+                                  <input type="text" name="address" value="{{ old('address', Auth::user()->company_address ?? '') }}" placeholder="Shop/Office No., Street, Area" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">City <span class="text-red-500">*</span></label>
+                                  <input type="text" name="city" value="{{ old('city', Auth::user()->company_city ?? '') }}" placeholder="e.g. Mumbai" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">State <span class="text-red-500">*</span></label>
+                                  <input type="text" name="state" value="{{ old('state', Auth::user()->company_state ?? '') }}" placeholder="e.g. Maharashtra" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                              <div>
+                                  <label class="block text-[11px] font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Pincode <span class="text-red-500">*</span></label>
+                                  <input type="text" maxlength="6" name="pincode" value="{{ old('pincode', Auth::user()->company_pincode ?? '') }}" placeholder="6-digit PIN" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-mono text-gray-900 focus:outline-none focus:border-[#4338ca] focus:ring-1 focus:ring-[#4338ca] transition" required>
+                              </div>
+                          </div>
+                      </div>
+
                       <!-- Section 3 -->
                       <div class="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
                           <h4 class="text-xs font-bold text-gray-900 mb-4 flex items-center gap-2">

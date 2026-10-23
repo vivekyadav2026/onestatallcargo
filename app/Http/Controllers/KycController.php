@@ -29,6 +29,10 @@ class KycController extends Controller
             'account_number' => 'nullable|string|max:50',
             'ifsc_code' => 'nullable|string|max:11',
             'account_holder_name' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:1000',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'pincode' => 'nullable|string|max:10',
         ]);
 
         $user = Auth::user();
@@ -70,7 +74,37 @@ class KycController extends Controller
             $user->account_holder_name = $request->account_holder_name;
         }
 
+        // Save Registered Business/Pickup Address if provided
+        if ($request->filled('address')) {
+            $user->company_address = $request->address;
+        }
+        if ($request->filled('city')) {
+            $user->company_city = $request->city;
+        }
+        if ($request->filled('state')) {
+            $user->company_state = $request->state;
+        }
+        if ($request->filled('pincode')) {
+            $user->company_pincode = substr(preg_replace('/[^0-9]/', '', (string)$request->pincode), 0, 6);
+        }
+
         $user->save();
+
+        // If user has no warehouse and address is available, automatically create default warehouse
+        if ($user->warehouses()->count() === 0 && !empty($user->company_address) && !empty($user->company_pincode)) {
+            \App\Models\Warehouse::create([
+                'user_id' => $user->id,
+                'name' => $user->company_name ? ($user->company_name . ' Hub') : ($user->name . ' Warehouse'),
+                'contact_person' => $user->name,
+                'phone' => substr(preg_replace('/[^0-9]/', '', (string)$user->phone), -10) ?: '9999999999',
+                'email' => $user->email,
+                'address' => $user->company_address,
+                'city' => $user->company_city ?: 'City',
+                'state' => $user->company_state ?: 'State',
+                'pincode' => $user->company_pincode,
+                'is_default' => true,
+            ]);
+        }
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -84,11 +118,29 @@ class KycController extends Controller
     }
 
     /**
-     * Admin: List all KYC verification requests.
+     * Admin: List all KYC verification requests with search and counts.
      */
     public function adminIndex(Request $request)
     {
-        $query = Kyc::with('user');
+        $query = Kyc::with(['user', 'user.warehouses']);
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function($q) use ($search) {
+                $q->where('document_number', 'like', "%{$search}%")
+                  ->orWhere('pan_number', 'like', "%{$search}%")
+                  ->orWhere('gst_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%")
+                         ->orWhere('company_name', 'like', "%{$search}%")
+                         ->orWhere('company_city', 'like', "%{$search}%")
+                         ->orWhere('company_state', 'like', "%{$search}%")
+                         ->orWhere('company_pincode', 'like', "%{$search}%");
+                  });
+            });
+        }
 
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -99,19 +151,43 @@ class KycController extends Controller
 
         $kycs = $query->latest()->paginate(15)->withQueryString();
 
-        return view('admin.kyc.index', compact('kycs'));
+        $counts = [
+            'all' => Kyc::count(),
+            'pending' => Kyc::where('status', 'pending')->count(),
+            'approved' => Kyc::where('status', 'approved')->count(),
+            'rejected' => Kyc::where('status', 'rejected')->count(),
+        ];
+
+        return view('admin.kyc.index', compact('kycs', 'counts'));
     }
 
     /**
-     * Admin: Approve a seller's KYC.
+     * Admin: Approve a seller's KYC and ensure default warehouse exists.
      */
     public function adminApprove($id)
     {
-        $kyc = Kyc::findOrFail($id);
+        $kyc = Kyc::with('user.warehouses')->findOrFail($id);
         $kyc->status = 'approved';
         $kyc->approved_at = now();
         $kyc->rejection_reason = null;
         $kyc->save();
+
+        $user = $kyc->user;
+        // Auto-create default warehouse if user does not have any warehouse yet
+        if ($user && $user->warehouses->isEmpty() && (!empty($user->company_address) || !empty($user->company_pincode))) {
+            \App\Models\Warehouse::create([
+                'user_id' => $user->id,
+                'name' => $user->company_name ? ($user->company_name . ' Hub') : ($user->name . ' Warehouse'),
+                'contact_person' => $user->name,
+                'phone' => substr(preg_replace('/[^0-9]/', '', (string)$user->phone), -10) ?: '9999999999',
+                'email' => $user->email,
+                'address' => $user->company_address ?: 'Registered Business Address',
+                'city' => $user->company_city ?: 'City',
+                'state' => $user->company_state ?: 'State',
+                'pincode' => substr(preg_replace('/[^0-9]/', '', (string)$user->company_pincode), 0, 6) ?: '110001',
+                'is_default' => true,
+            ]);
+        }
 
         return back()->with('success', "KYC approved for seller: {$kyc->user->name}");
     }
@@ -132,6 +208,54 @@ class KycController extends Controller
         $kyc->save();
 
         return back()->with('success', "KYC rejected for seller: {$kyc->user->name}");
+    }
+
+    /**
+     * Admin: Create/assign a warehouse directly for a seller from KYC review.
+     */
+    public function adminCreateWarehouse(Request $request, $id)
+    {
+        $kyc = Kyc::findOrFail($id);
+        $user = $kyc->user;
+
+        $request->validate([
+            'warehouse_name' => 'required|string|max:255',
+            'contact_person' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:1000',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'pincode' => 'required|string|max:10',
+        ]);
+
+        $cleanedPhone = substr(preg_replace('/[^0-9]/', '', (string)$request->phone), -10) ?: '9999999999';
+        $cleanedPin = substr(preg_replace('/[^0-9]/', '', (string)$request->pincode), 0, 6);
+
+        $isFirst = $user->warehouses()->count() === 0;
+
+        $warehouse = \App\Models\Warehouse::create([
+            'user_id' => $user->id,
+            'name' => $request->warehouse_name,
+            'contact_person' => $request->contact_person,
+            'phone' => $cleanedPhone,
+            'email' => $user->email,
+            'address' => $request->address,
+            'city' => $request->city,
+            'state' => $request->state,
+            'pincode' => $cleanedPin,
+            'is_default' => $isFirst || $request->boolean('is_default'),
+        ]);
+
+        // Also update user company address if currently empty
+        if (empty($user->company_address)) {
+            $user->company_address = $request->address;
+            $user->company_city = $request->city;
+            $user->company_state = $request->state;
+            $user->company_pincode = $cleanedPin;
+            $user->save();
+        }
+
+        return back()->with('success', "Warehouse '{$warehouse->name}' added successfully for seller: {$user->name}");
     }
 }
 
